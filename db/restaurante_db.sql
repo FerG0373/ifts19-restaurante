@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-08-2025 a las 13:39:57
+-- Tiempo de generación: 30-08-2025 a las 01:14:38
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -114,6 +114,7 @@ CREATE TABLE `empleado` (
 
 CREATE TABLE `mesa` (
   `id` int(11) NOT NULL,
+  `nro_mesa` varchar(10) DEFAULT NULL,
   `capacidad` int(11) NOT NULL CHECK (`capacidad` > 0),
   `ubicacion` enum('salon','barra','exterior') NOT NULL,
   `estado_mesa` enum('libre','ocupada','reservada','inhabilitada') DEFAULT 'libre',
@@ -272,7 +273,8 @@ ALTER TABLE `empleado`
 -- Indices de la tabla `mesa`
 --
 ALTER TABLE `mesa`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_mesa_nro_mesa` (`nro_mesa`);
 
 --
 -- Indices de la tabla `pedido`
