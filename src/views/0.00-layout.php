@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Restaurante</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../public/assets/css/reset.css">
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../public/assets/img/ifts19_logo.png" >
 </head>
