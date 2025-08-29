@@ -1,5 +1,13 @@
 RewriteEngine On
 
+# Si el recurso pedido es un archivo físico, no lo reescribas
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Si es un directorio físico, tampoco
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
 RewriteRule ^(.*)$ index.php?url=$1 [NC,QSA,L]
 
 #NC = No Case Sensitive.

@@ -2,15 +2,15 @@
 namespace App\Core;
 
 class Router {
-    private string $rutaBase;
+    private string $rutaVistas;
     private array $rutas = [];
     
-    public function __construct(string $rutaBase) {
-        $this->rutaBase = $rutaBase;
+    public function __construct(string $rutaVistas) {
+        $this->rutaVistas = $rutaVistas;
     }
 
     public function agregarRuta(string $nombreRuta, string $nombreArchivo): void {
-        $this->rutas[$nombreRuta] = $this->rutaBase . '/' . $nombreArchivo;
+        $this->rutas[$nombreRuta] = $this->rutaVistas . '/' . $nombreArchivo;
     }
 
     public function obtenerPaginaSolicitada(): string {
@@ -20,8 +20,8 @@ class Router {
 
     public function renderizar(): void {
         $paginaSolicitada = $this->obtenerPaginaSolicitada();
-        $rutaNotFound = $this->rutaBase . '/9.00-notfound.php';
-        $rutaLayout = $this->rutaBase . '/0.00-layout.php';
+        $rutaNotFound = $this->rutaVistas . '/9.00-notfound.php';
+        $rutaLayout = $this->rutaVistas . '/0.00-layout.php';
 
          // Verifica si la vista actual existe en el array de rutas.
         if (!isset($this->rutas[$paginaSolicitada])) {

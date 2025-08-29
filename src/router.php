@@ -1,16 +1,14 @@
 <?php
 use App\Core\Router;
 
-$enrutador = new Router(__DIR__ . '/views');
+$rutaVistas = __DIR__ . '/views';
 
+$enrutador = new Router($rutaVistas);
 $enrutador->agregarRuta('login', '1.00-login.php');
 $enrutador->agregarRuta('home', '1.01-home.php');
 
 $enrutador->renderizar();
 ?>
-
-
-
 
 
 <?php
