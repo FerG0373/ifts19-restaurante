@@ -7,11 +7,13 @@
 </head>
 <body>
     <header>
-        <?php require_once __DIR__ . '/_partials/_header.php'; ?>
+        <?php
+        require_once __DIR__ . '/_partials/_header.php';
+        ?>
     </header>
     <main>
         <?php
-        require_once $contenido_principal;
+        require_once $contenidoPrincipal;
         ?> 
     </main>
     <footer>
