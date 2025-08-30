@@ -1,7 +1,9 @@
 <?php
 namespace App\Core;
 
+
 use PDO;
+use PDOException;
 use Dotenv\Dotenv;
 
 class AccesoDatos {
@@ -10,7 +12,7 @@ class AccesoDatos {
     public function __construct() {
         // 1. Crear el objeto Dotenv (createImmutable es un método estático, por eso usamos ::)
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-        // 2. Cargar las variables de entorno desde el archivo .env (método de instancia ->)
+        // 2. Cargar las variables de entorno desde el archivo .env en la superglobal $_ENV (método de instancia ->)
         $dotenv->load();
         // 3. Tomar las variables necesarias
         $host = $_ENV['DB_HOST'];
@@ -24,8 +26,8 @@ class AccesoDatos {
             $this->conexion = new PDO($dsn, $user, $pass);
             $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            throw new \Exception("Error de conexión a la DB: " . $e->getMessage());
+        } catch (PDOException $e) {
+            throw $e;
         }
     }
 }

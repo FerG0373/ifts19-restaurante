@@ -1,10 +1,5 @@
 <?php
-use App\Core\AccesoDatos;
+use App\Services\DatabaseService;
 
-// Crea una instancia de la conexión a la base de datos
-try {
-    $db = new AccesoDatos();
-    echo "Conexión a la DB exitosa!<br>";
-} catch (\Exception $e) {
-    die("Error de inicialización de la DB: " . $e->getMessage());
-}
+$dbService = new DatabaseService();
+$db = $dbService->getAccesoDatos();
