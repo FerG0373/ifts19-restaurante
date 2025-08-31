@@ -1,16 +1,16 @@
 <?php
 namespace App\Services;
 
-use App\Core\AccesoDatos;
+use App\Core\DataAccess;
 use Exception;
 
 
 class DatabaseService {
-    private AccesoDatos $accesoDatos;
+    private DataAccess $accesoDatos;
 
     public function __construct() {
         try {
-            $this->accesoDatos = new AccesoDatos();
+            $this->accesoDatos = new DataAccess();
             echo '✅ Conexión a la DB exitosa!';
         } catch (Exception $e) {
             $mensajeGenerico = '❌ Ha ocurrido un error de conexión. Intenta más tarde.';
@@ -22,7 +22,7 @@ class DatabaseService {
         }
     }
 
-    public function getAccesoDatos(): AccesoDatos {
+    public function getAccesoDatos(): DataAccess {
         return $this->accesoDatos;
     }
 }

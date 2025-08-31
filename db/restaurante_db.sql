@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-08-2025 a las 01:14:38
+-- Tiempo de generación: 31-08-2025 a las 04:58:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -106,6 +106,13 @@ CREATE TABLE `empleado` (
   `activo` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `empleado`
+--
+
+INSERT INTO `empleado` (`id`, `persona_id`, `puesto_id`, `activo`) VALUES
+(1, 1, 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -148,8 +155,15 @@ CREATE TABLE `pedido` (
 
 CREATE TABLE `perfil_acceso` (
   `id` int(11) NOT NULL,
-  `descripcion` varchar(20) DEFAULT NULL
+  `nombre` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `perfil_acceso`
+--
+
+INSERT INTO `perfil_acceso` (`id`, `nombre`) VALUES
+(1, 'Administrador');
 
 -- --------------------------------------------------------
 
@@ -169,6 +183,13 @@ CREATE TABLE `persona` (
   `sexo` enum('M','F','Sin especificar') DEFAULT NULL,
   `url_foto_perfil` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `persona`
+--
+
+INSERT INTO `persona` (`id`, `dni`, `nombre`, `apellido`, `telefono`, `email`, `fecha_nacimiento`, `creacion_registro`, `sexo`, `url_foto_perfil`) VALUES
+(1, '33225566', 'Persona1', 'Persona1', NULL, 'ejemplo@gmail.com', NULL, '2025-08-31 02:53:22', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -198,6 +219,13 @@ CREATE TABLE `puesto` (
   `descripcion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `puesto`
+--
+
+INSERT INTO `puesto` (`id`, `nombre`, `descripcion`) VALUES
+(1, 'Encargado', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -226,6 +254,13 @@ CREATE TABLE `usuario` (
   `pass_hash` varchar(100) NOT NULL,
   `activo` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `empleado_id`, `perfil_acceso_id`, `pass_hash`, `activo`) VALUES
+(1, 1, 1, '1234', 1);
 
 --
 -- Índices para tablas volcadas
@@ -290,7 +325,7 @@ ALTER TABLE `pedido`
 --
 ALTER TABLE `perfil_acceso`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_perfil_acceso_descripcion` (`descripcion`);
+  ADD UNIQUE KEY `uq_perfil_acceso_descripcion` (`nombre`);
 
 --
 -- Indices de la tabla `persona`
@@ -363,7 +398,7 @@ ALTER TABLE `detalle_pedido`
 -- AUTO_INCREMENT de la tabla `empleado`
 --
 ALTER TABLE `empleado`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `mesa`
@@ -381,13 +416,13 @@ ALTER TABLE `pedido`
 -- AUTO_INCREMENT de la tabla `perfil_acceso`
 --
 ALTER TABLE `perfil_acceso`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
@@ -399,7 +434,7 @@ ALTER TABLE `producto`
 -- AUTO_INCREMENT de la tabla `puesto`
 --
 ALTER TABLE `puesto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `registro_asistencia`
@@ -411,7 +446,7 @@ ALTER TABLE `registro_asistencia`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas

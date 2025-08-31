@@ -6,7 +6,7 @@ use PDO;
 use PDOException;
 use Dotenv\Dotenv;
 
-class AccesoDatos {
+class DataAccess {
     private ?PDO $conexion = null;
 
     public function __construct() {
