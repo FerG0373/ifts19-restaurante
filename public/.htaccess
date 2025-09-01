@@ -1,4 +1,13 @@
 RewriteEngine On
+RewriteBase /ifts19-restaurante/public
+
+# Si el recurso pedido es un archivo físico (como un CSS o una imagen), no se reescribe la url.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Si es un directorio físico, tampoco.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
 RewriteRule ^(.*)$ index.php?url=$1 [NC,QSA,L]
 
