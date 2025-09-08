@@ -1,8 +1,6 @@
 <?php
-// Carga las dependencias con Composer
-require_once __DIR__ . '/../vendor/autoload.php';
-// Carga la configuración y servicios
-require_once __DIR__ . '/../src/boot.php';
+require_once __DIR__ . '/../vendor/autoload.php';  // Carga las dependencias con Composer.
+require_once __DIR__ . '/../src/boot.php';  // Carga la configuración y servicios
 
 
 /* FUNCIÓN MAIN */

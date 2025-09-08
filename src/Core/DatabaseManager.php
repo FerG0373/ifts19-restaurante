@@ -5,7 +5,7 @@ use App\Core\DataAccess;
 use Exception;
 
 
-class DatabaseService {
+class DatabaseManager {
     private DataAccess $accesoDatos;
 
     public function __construct() {

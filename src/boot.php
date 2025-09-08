@@ -1,5 +1,7 @@
 <?php
-use App\Services\DatabaseService;
+use Dotenv\Dotenv;
 
-$dbService = new DatabaseService();
-$db = $dbService->getAccesoDatos();
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');  // Instancia el objeto Dotenv (createImmutable es un método estático, por eso usamos ::)
+$dotenv->load();  // Carga las variables de entorno desde el archivo .env en la superglobal $_ENV (método de instancia ->)
+
+?>
