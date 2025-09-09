@@ -3,6 +3,7 @@ namespace App\Core;
 
 use Exception;
 
+
 class Container {
     private static ?DataAccess $accesoDatos = null;
 
@@ -15,6 +16,7 @@ class Container {
                     $_ENV['DB_USER'],
                     $_ENV['DB_PASS']
                 );
+                echo '✅ Conexión a la DB exitosa!';
             } catch (Exception $e) {
                 $mensajeGenerico = '❌ Ha ocurrido un error de conexión. Intenta más tarde.';
                 if ($_ENV['APP_ENV'] === 'development') {
