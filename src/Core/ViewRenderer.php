@@ -3,32 +3,49 @@ namespace App\Core;
 
 
 class ViewRenderer {
-    private string $rutaVistas;
+    private string $rutaBaseVistas;
     private array $rutas;
 
-    public function __construct(string $rutaVistas, array $rutas) {
-        $this->rutaVistas = $rutaVistas;
-        $this->rutas = $rutas;
+    public function __construct(string $rutaBaseVistas, array $rutas) {
+        $this->rutaBaseVistas = $rutaBaseVistas;  // Ruta base de las vistas.
+        $this->rutas = $rutas;  // Array de rutas desde Router.
     }
 
-    private function obtenerPaginaSolicitada(): string {
-        $paginaSolicitada = $_GET['url'] ?? 'home';
-        return $paginaSolicitada === '' ? 'home' : $paginaSolicitada;
+    private function obtenerRutaSolicitada(): string {
+        $rutaSolicitada = $_GET['url'] ?? 'home';
+        return $rutaSolicitada === '' ? 'home' : $rutaSolicitada;
+    }
+
+    private function obtenerRutasNav(): array {
+        $rutasNav = [];
+        foreach ($this->rutas as $url => $definicionRuta) {
+            if (isset($definicionRuta['nav']) && $definicionRuta['nav'] === true) {
+                $rutasNav[$url] = $definicionRuta['archivo'];
+            }
+        }
+        return $rutasNav;
     }
 
     public function renderizar(): void {
-        $paginaSolicitada = $this->obtenerPaginaSolicitada();
-        $rutaNotFound = $this->rutaVistas . '/9.00-notfound.php';
-        $rutaLayout = $this->rutaVistas . '/0.00-layout.php';
+        $rutaSolicitada = $this->obtenerRutaSolicitada();
+        $rutaNotFound = $this->rutaBaseVistas . '/9.00-notfound.php';
+        $rutaLayout = $this->rutaBaseVistas . '/0.00-layout.php';
 
         // Verifica si la vista actual existe en el array de rutas.
-        if (!isset($this->rutas[$paginaSolicitada])) {
+        if (!isset($this->rutas[$rutaSolicitada])) {
             require_once $rutaNotFound;
             exit();
         }
 
-        $contenidoPrincipal = $this->rutas[$paginaSolicitada];
-        $arrayRutas = $this->rutas; // Para usar en el _header
+        $definicionRuta = $this->rutas[$rutaSolicitada];
+
+        if (!isset($definicionRuta['archivo'])) {
+            require_once $rutaNotFound;  // Manejo de error si la ruta está mal definida
+            exit();
+        }
+
+        $contenidoPrincipal = $definicionRuta['archivo'];
+        $arrayRutasNav = $this->obtenerRutasNav();        
         
         require_once $rutaLayout;
     }

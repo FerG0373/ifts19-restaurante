@@ -5,7 +5,7 @@
             <div class="card h-100 border-0 shadow-sm">
                 <div class="card-body text-center">
                     <h2 class="display-4 fw-bold text-primary mb-2">133</h2>
-                    <p class="card-text text-muted mb-0">ORDENES DEL DÍA</p>
+                    <p class="card-text text-muted mb-0">PEDIDOS DEL DÍA</p>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                         <div class="col-md-4 col-sm-6">
                             <button class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center">
                                 <i class="fas fa-plus-circle fa-2x mb-2"></i>
-                                <span class="fw-semibold">Nueva orden</span>
+                                <span class="fw-semibold">Nuevo pedido</span>
                             </button>
                         </div>
                         <div class="col-md-4 col-sm-6">
