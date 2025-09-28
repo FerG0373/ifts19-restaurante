@@ -6,7 +6,7 @@ use DateTimeInterface;
 use App\Enums\Sexo;
 use App\Enums\Puesto;
 
-class Empleado {
+class Personal {
     // ATRIBUTOS (PK y UQ)
     private ?int $id;  // PK + AI
     private string $dni;  // UQ

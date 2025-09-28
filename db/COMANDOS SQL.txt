@@ -1,168 +1,146 @@
-CREATE TABLE cliente (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	persona_id INT NOT NULL,
-	nro_cliente VARCHAR(20),
-	
-	CONSTRAINT uq_cliente_persona_id UNIQUE (persona_id),
-	CONSTRAINT uq_cliente_nro_cliente UNIQUE (nro_cliente)
-);
-
-
-CREATE TABLE persona (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    dni VARCHAR(15) NOT NULL,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    telefono VARCHAR(20) NULL,
-    email VARCHAR(50) NOT NULL,
-    fecha_nacimiento DATE NULL,
-    creacion_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    sexo ENUM('M', 'F', 'Sin especificar') NULL,
-    url_foto_perfil VARCHAR(255) NULL,
+CREATE TABLE personal (
+    id INT AUTO_INCREMENT,
+    dni VARCHAR(20) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    fecha_nacimiento DATE,
+    sexo ENUM('m', 'f', 'x') NOT NULL,
+    puesto ENUM('encargado', 'cocinero', 'mozo', 'cajero', 'bartender') NOT NULL,
+    fecha_contratacion DATE NOT NULL,
     
-    CONSTRAINT uq_persona_dni UNIQUE (dni),
-    CONSTRAINT uq_persona_email UNIQUE (email)
-);
-
-
-CREATE TABLE empleado (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	persona_id INT NOT NULL,
-	nro_empleado VARCHAR(20) NOT NULL,
-	puesto_id INT NOT NULL,
-	activo BOOLEAN DEFAULT TRUE,
-	
-	CONSTRAINT uq_empleado_persona_id UNIQUE (persona_id),
-	CONSTRAINT uq_empleado_nro_empleado UNIQUE (nro_empleado)
-);
-
-
-CREATE TABLE puesto (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nombre VARCHAR(20) NOT NULL,
-	descripcion VARCHAR(255) NULL,
-	
-	CONSTRAINT uq_puesto_nombre UNIQUE (nombre)
-);
-
-
-CREATE TABLE registro_asistencia (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	empleado_id INT NOT NULL,
-	fecha DATE NOT NULL,
-	hora_ingreso TIME NOT NULL,
-	hora_salida TIME NULL,
-	observaciones VARCHAR(255) NULL,
-	
-	CONSTRAINT uq_asistencia_empleado_fecha UNIQUE (fecha, empleado_id)
+    CONSTRAINT pk__personal__id PRIMARY KEY (id),
+    CONSTRAINT uq__personal__dni UNIQUE (dni),
+    CONSTRAINT uq__personal__email UNIQUE (email)
 );
 
 
 CREATE TABLE usuario (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	empleado_id INT NOT NULL,
-	perfil_acceso_id INT NOT NULL,
-	pass_hash VARCHAR(100) NOT NULL,
-	activo BOOLEAN DEFAULT TRUE
-	
-	CONSTRAINT uq_usuario_empleado_id UNIQUE (empleado_id)
+    id INT NOT NULL,
+    perfil_acceso ENUM('admin', 'encargado', 'mozo') NOT NULL,
+    pass_hash VARCHAR(255) NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    
+    CONSTRAINT pk__usuario__id PRIMARY KEY (id),
+    CONSTRAINT fk__usuario__id__personal__id 
+        FOREIGN KEY (id) REFERENCES personal (id) 
+        ON DELETE CASCADE
 );
 
 
-CREATE TABLE perfil_acceso (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	descripcion VARCHAR(20),
-	
-	CONSTRAINT uq_perfil_acceso_descripcion UNIQUE (descripcion)
+CREATE TABLE mesa (
+    id INT AUTO_INCREMENT,
+    numero_mesa VARCHAR(20) NOT NULL,
+    capacidad INT NOT NULL,
+    ubicacion ENUM('salon', 'barra', 'exterior') NOT NULL,
+    estado_mesa ENUM('libre', 'ocupada', 'reservada', 'inhabilitada') DEFAULT 'libre',
+    activo BOOLEAN DEFAULT TRUE,
+    
+    CONSTRAINT pk__mesa__id PRIMARY KEY (id),
+    CONSTRAINT uq__mesa__numero_mesa UNIQUE (numero_mesa)
+);
+
+
+CREATE TABLE reserva (
+    id INT AUTO_INCREMENT,
+    mesa_id INT NULL,
+    nombre_cliente VARCHAR(100) NOT NULL,
+    telefono_cliente VARCHAR(20),
+    fecha_reserva DATETIME NOT NULL,
+    cantidad_personas INT NOT NULL,
+    estado_reserva ENUM('confirmada', 'finalizada', 'cancelada') DEFAULT 'confirmada' NOT NULL,
+    
+    CONSTRAINT pk__reserva__id PRIMARY KEY (id),
+    CONSTRAINT fk__reserva__mesa__id 
+        FOREIGN KEY (mesa_id) REFERENCES mesa (id) 
+        ON DELETE SET NULL
 );
 
 
 CREATE TABLE asignacion_mesa (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	mesa_id INT NOT NULL,
-	empleado_id INT NOT NULL,
-	hora_inicio DATETIME NOT NULL,
-	hora_fin DATETIME NULL,
-);
-
-
--- Propósito: Garantizar que una mesa NO pueda estar asignada a dos empleados al mismo tiempo.
-DELIMITER //
-CREATE TRIGGER verificar_mesa_libre_antes_de_insertar
-BEFORE INSERT ON asignacion_mesa
-FOR EACH ROW
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM asignacion_mesa 
-        WHERE mesa_id = NEW.mesa_id 
-        AND hora_fin IS NULL
-    ) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'La mesa ya está asignada a otro empleado';
-    END IF;
-END//
-DELIMITER ;
-
-
-CREATE TABLE mesa (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nro_mesa VARCHAR(10) NOT NULL,
-	capacidad INT NOT NULL CHECK (capacidad > 0),
-	ubicacion ENUM('salon', 'barra', 'exterior') NOT NULL,
-	estado_mesa ENUM('libre', 'ocupada', 'reservada', 'inhabilitada') DEFAULT 'libre',
-	activo BOOLEAN DEFAULT TRUE,
-	
-	CONSTRAINT uq_mesa_nro_mesa UNIQUE (nro_mesa)
-);
-
-
-CREATE TABLE pedido (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nro_pedido VARCHAR(20) NOT NULL,
-	mesa_id INT NULL,
-	empleado_id INT NOT NULL,
-	cliente_id INT NULL,
-	fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
-	tipo_pedido ENUM('local', 'llevar', 'delivery') NOT NULL,
-	estado_pedido ENUM('pendiente', 'preparacion', 'listo', 'entregado', 'pagado', 'cancelado') DEFAULT 'pendiente',
-	total DECIMAL(10,2) DEFAULT 0.00,
-	direccion_entrega TEXT NULL,
-    observaciones TEXT NULL,
-    creacion_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	
-	CONSTRAINT uq_pedido_nro_pedido UNIQUE (nro_pedido)
-);
-
-
-CREATE TABLE detalle_pedido (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	pedido_id INT NOT NULL,
-	producto_id INT NOT NULL,
-	cantidad INT NOT NULL CHECK (cantidad > 0),
-	precio_unitario DECIMAL(10,2),
-	subtotal DECIMAL(10,2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
-	notas TEXT
+	id INT AUTO_INCREMENT,
+    mesa_id INT NOT NULL,
+    personal_id INT NOT NULL,
+    hora_inicio DATETIME NOT NULL,
+    hora_fin DATETIME NULL,
+    
+    CONSTRAINT pk__asignacion_mesa__id PRIMARY KEY (id),
+    CONSTRAINT fk__asignacion_mesa_id
+		FOREIGN KEY (mesa_id) REFERENCES mesa (id)
+        ON DELETE CASCADE,
+	CONSTRAINT fk__asignacion_mesa__personal_id
+		FOREIGN KEY (personal_id) REFERENCES personal (id)
+        ON DELETE CASCADE
 );
 
 
 CREATE TABLE producto (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nombre VARCHAR(50) NOT NULL,
-	descripcion VARCHAR(255) NULL,
-	precio DECIMAL(10,2) NOT NULL,
-	cantidad_stock INT NOT NULL DEFAULT 0,
-	categoria_id INT NOT NULL,
-	activo BOOLEAN DEFAULT TRUE,
-	
-	CONSTRAINT uq_producto_nombre UNIQUE (nombre)
+    id INT AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    precio DECIMAL(10,2) NOT NULL,
+    cantidad_stock INT NOT NULL,
+    categoria ENUM('entrada', 'principal', 'guarnicion', 'bebida', 'postre') NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    
+    CONSTRAINT pk__producto__id PRIMARY KEY (id),
+    CONSTRAINT uq__producto__nombre UNIQUE (nombre)
 );
 
 
-CREATE TABLE categoria (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nombre VARCHAR(50) NOT NULL,
-	descripcion VARCHAR(255) NULL,
-	activo BOOLEAN DEFAULT TRUE,
-	
-	 CONSTRAINT uq_categoria_nombre UNIQUE (nombre)
+CREATE TABLE pedido (
+    id INT AUTO_INCREMENT,
+    mesa_id INT NOT NULL,
+    personal_id INT NOT NULL,
+    fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo_pedido ENUM('mesa', 'domicilio', 'llevar') DEFAULT 'mesa',
+    estado_pedido ENUM('pendiente', 'preparacion', 'listo', 'entregado', 'cancelado') DEFAULT 'pendiente',
+    total DECIMAL(10,2) DEFAULT 0.00,
+    observaciones VARCHAR(255),
+    creacion_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT pk__pedido__id PRIMARY KEY (id),
+    CONSTRAINT fk__pedido__mesa_id 
+        FOREIGN KEY (mesa_id) REFERENCES mesa (id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk__pedido__personal_id
+        FOREIGN KEY (personal_id) REFERENCES personal (id) 
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE detalle_pedido (
+    id INT AUTO_INCREMENT,
+    pedido_id INT NOT NULL,
+    producto_id INT NOT NULL,
+    cantidad INT NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    instrucciones_preparacion VARCHAR(255),
+    
+    CONSTRAINT pk__detalle_pedido__id PRIMARY KEY (id),
+    CONSTRAINT fk__detalle_pedido__pedido_id 
+        FOREIGN KEY (pedido_id) REFERENCES pedido (id) 
+        ON DELETE CASCADE,
+    CONSTRAINT fk__detalle_pedido__producto_id 
+        FOREIGN KEY (producto_id) REFERENCES producto (id) 
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE factura (
+    id INT AUTO_INCREMENT,
+    pedido_id INT NOT NULL,
+    fecha_emision DATETIME DEFAULT CURRENT_TIMESTAMP,
+    subtotal DECIMAL(10,2) NOT NULL,
+    impuestos DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    total DECIMAL(10,2) NOT NULL,
+    metodo_pago ENUM('efectivo', 'tarjeta_debito', 'tarjeta_credito', 'transferencia', 'mercado_pago') NOT NULL,
+    estado ENUM('pendiente', 'pagada', 'cancelada') DEFAULT 'pendiente',
+    
+    CONSTRAINT pk__factura__id PRIMARY KEY (id),
+    CONSTRAINT uq_factura_pedido_id UNIQUE (pedido_id),
+    CONSTRAINT fk__factura__pedido_id 
+        FOREIGN KEY (pedido_id) REFERENCES pedido (id)
+        ON DELETE CASCADE    
 );

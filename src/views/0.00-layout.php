@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Restaurante</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="../public/assets/css/reset.css">
+    <!-- <link rel="stylesheet" href="../public/assets/css/reset.css"> -->
+    <!-- BOOTSTRAP -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../public/assets/img/ifts19_logo.png" >
 </head>
-<body>
+<body class="bg-light">
     <header>
         <?php
         require_once __DIR__ . '/_partials/_header.php';
@@ -23,5 +26,6 @@
     <footer>
 
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

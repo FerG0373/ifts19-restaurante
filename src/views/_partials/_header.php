@@ -1,8 +1,33 @@
-<nav>
-    <?php
-    foreach ($arrayRutas as $url => $rutaArchivo) {
-        $nombreEnlace = ucfirst($url);
-        echo "<a href='$url'>$nombreEnlace</a>";
-    }
-    ?>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">App Restaurante</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>   
+
+        <div class="collapse navbar-collapse" id="navbarNav">            
+            <ul class="navbar-nav me-auto">
+                <?php
+                foreach ($arrayRutas as $url => $rutaArchivo) {
+                    $nombreEnlace = ucfirst($url);
+                ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $url; ?>">
+                            <?php echo $nombreEnlace; ?>
+                        </a>
+                    </li>
+                <?php
+                }
+                ?>
+            </ul>            
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-user"></i> USUARIO</a>
+                </li>
+            </ul>            
+        </div>
+        
+    </div>
 </nav>
+
