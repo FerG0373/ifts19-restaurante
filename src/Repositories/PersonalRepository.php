@@ -123,7 +123,7 @@ class PersonalRepository {
 
 
     public function existeDni(string $dni): bool {
-        $sql = "CALL existeDni(:dni);  // Usamos SELECT 1 para ser más eficiente: solo chequeamos si existe 1 fila.
+        $sql = "CALL sp_personal_existe_dni(:dni)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':dni', $dni);
         $stmt->execute();        
