@@ -1,7 +1,7 @@
 DELIMITER //
 
 CREATE PROCEDURE sp_personal_select_by_id(
-    IN id_personal INT
+    IN personal_id INT
 )
 BEGIN
     SELECT 
@@ -17,9 +17,68 @@ BEGIN
         fecha_contratacion,
         activo
     FROM 
-        empleado
+        personal
     WHERE 
-        id = id_personal;
+        id = personal_id;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_personal_select_all()
+BEGIN
+    SELECT 
+        id, 
+        dni, 
+        nombre, 
+        apellido, 
+        fecha_nacimiento, 
+        email, 
+        telefono, 
+        sexo, 
+        puesto, 
+        fecha_contratacion,
+        activo
+    FROM 
+        personal;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_personal_existe_dni(
+    IN personal_dni VARCHAR(20)
+)
+BEGIN
+    SELECT 
+        1 
+    FROM 
+        personal
+    WHERE 
+        dni = personal_dni
+    LIMIT 1; -- Detiene la búsqueda después de la primera coincidencia
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_personal_existe_email(
+    IN personal_email VARCHAR(100)
+)
+BEGIN
+    SELECT 
+        1 
+    FROM 
+        personal
+    WHERE 
+        email = personal_email
+    LIMIT 1;
 END //
 
 DELIMITER ;

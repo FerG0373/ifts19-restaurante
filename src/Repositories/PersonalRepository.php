@@ -17,6 +17,42 @@ class PersonalRepository {
         $this->db = $dataAccess->obtenerConexion();
     }
 
+
+    public function listarPersonal(): array {
+        $sql = "CALL sp_personal_select_all()"; 
+        $listaDePersonal = [];
+            
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+
+            // Recorre todos los resultados
+            while ($filaRegistro = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // MAPEO DE FILA DE DATOS AL OBJETO. ASIGNA LOS VALORES DEL REGISTRO A LOS PARÁMETROS DEL CONSTRUCTOR (Recuperación de datos)
+                $listaDePersonal[] = new Personal(
+                    (int)$filaRegistro['id'],
+                    $filaRegistro['dni'],
+                    $filaRegistro['nombre'],
+                    $filaRegistro['apellido'],
+                    new DateTimeImmutable($filaRegistro['fecha_nacimiento']),
+                    $filaRegistro['email'],
+                    $filaRegistro['telefono'],
+                    Sexo::from($filaRegistro['sexo']),
+                    Puesto::from($filaRegistro['puesto']),
+                    new DateTimeImmutable($filaRegistro['fecha_contratacion'])
+                );
+            }
+
+            $stmt->closeCursor();
+
+            return $listaDePersonal;
+
+        } catch (PDOException $e) {
+            throw new \Exception("Error al listar personal: " . $e->getMessage());
+        }
+    }
+
+
     public function buscarPersonalPorId(int $id): ?Personal {
         $sql = "CALL sp_personal_select_by_id(:id)";
 
@@ -49,7 +85,8 @@ class PersonalRepository {
         }
     }
 
-    public function agregarPersonal(Personal $personal): Personal {
+
+    public function insertarPersonal(Personal $personal): Personal {
         $sql = "CALL sp_personal_insert(
             :dni, :nombre, :apellido, fechaNacimiento, :email, :telefono, :sexo, :puesto, :fechaContratacion
         )";
@@ -82,6 +119,24 @@ class PersonalRepository {
         } catch (PDOException $e) {
             throw new \Exception("Error al agregar personal: " . $e->getMessage());
         }
+    }
+
+
+    public function existeDni(string $dni): bool {
+        $sql = "SELECT 1 FROM empleado WHERE dni = :dni LIMIT 1";  // Usamos SELECT 1 para ser más eficiente: solo chequeamos si existe 1 fila.
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':dni', $dni);
+        $stmt->execute();        
+        return (bool)$stmt->fetchColumn();  // fetchColumn() devuelve el valor de la primera columna (el '1') si existe la fila, o false si no
+    }
+
+
+    public function existeEmail(string $email): bool {
+        $sql = "SELECT 1 FROM empleado WHERE email = :email LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return (bool)$stmt->fetchColumn();
     }
 
 }
