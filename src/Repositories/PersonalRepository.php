@@ -17,6 +17,38 @@ class PersonalRepository {
         $this->db = $dataAccess->obtenerConexion();
     }
 
+    public function buscarPersonalPorId(int $id): ?Personal {
+        $sql = "CALL sp_personal_select_by_id(:id)";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $filaRegistro = $stmt->fetch(PDO::FETCH_ASSOC);  // OBTIENE UNA SOLA FILA/REGISTRO (fetch) EN UN ARRAY ASOCIATIVO (::FETCH_ASSOC)
+
+            $stmt->closeCursor(); // LIMPIA EL CURSOR (OBLIGATORIO PARA STORED PROCEDURES)
+
+            if (!$filaRegistro) {
+                return null;  // RETORNA NULL SI NO SE ENCUENTRA EL REGISTRO
+            }
+            // MAPEO DE FILA DE DATOS AL OBJETO. ASIGNA LOS VALORES DEL REGISTRO A LOS PARÁMETROS DEL CONSTRUCTOR (Recuperación de datos)
+            return new Personal(
+                (int)$filaRegistro['id'],
+                $filaRegistro['dni'],
+                $filaRegistro['nombre'],
+                $filaRegistro['apellido'],
+                new DateTimeImmutable($filaRegistro['fecha_nacimiento']),  // CONVIERTE STRING A DateTimeImmutable
+                $filaRegistro['email'],
+                $filaRegistro['telefono'],
+                Sexo::from($filaRegistro['sexo']),  // CONVIERTE STRING A ENUM
+                Puesto::from($filaRegistro['puesto']),  // CONVIERTE STRING A ENUM
+                new DateTimeImmutable($filaRegistro['fecha_contratacion'])  // CONVIERTE STRING A DateTimeImmutable
+            );
+        } catch (PDOException $e) {
+            throw new \Exception("Error al buscar personal con ID {$id}: " . $e->getMessage());
+        }
+    }
+
     public function agregarPersonal(Personal $personal): Personal {
         $sql = "CALL sp_personal_insert(
             :dni, :nombre, :apellido, fechaNacimiento, :email, :telefono, :sexo, :puesto, :fechaContratacion
@@ -24,7 +56,7 @@ class PersonalRepository {
 
         try {
             $stmt = $this->db->prepare($sql);
-            // MAPEO DE OBJETOS PHP A PARÁMETOS DEL SP
+            // MAPEO DE ATRIBUTOS DEL OBJETO A LOS PARÁMETROS DEL STORED PROCEDURE (Persistencia de datos)
             $stmt->bindValue(':dni', $personal->getDni());
             $stmt->bindValue(':nombre', $personal->getNombre());
             $stmt->bindValue(':apellido', $personal->getApellido());
@@ -36,18 +68,17 @@ class PersonalRepository {
             $stmt->bindValue(':fechaContratacion', $personal->getFechaContratacion()->format('Y-m-d'));
 
             $stmt->execute();
-
-            // CAPTURAR EL ID DEVUELTO POR EL SP
-            $newId = (int)$stmt->fetchColumn();
-            // LIMPIAR EL CURSOR (OBLIGATORIO PARA STORED PROCEDURES)
-            $stmt->closeCursor();
-            // 4. RETORNAR EL OBJETO COMPLETO CON EL ID ASIGNADO
-            $personalPersistido = $this->findById($newId);
+            
+            $idPersonal = (int)$stmt->fetchColumn();  // CAPTURAR EL ID DEVUELTO POR EL SP
+            $stmt->closeCursor();            
+            $personalPersistido = $this->buscarPersonalPorId($idPersonal);  // RETORNAR EL OBJETO COMPLETO CON EL ID ASIGNADO
+            
             if ($personalPersistido === null) {
-             throw new \RuntimeException("Registro insertado (ID: {$newId}), pero no se pudo recuperar.");
+             throw new \RuntimeException("Registro insertado (ID: {$idPersonal}), pero no se pudo recuperar.");
             }
-        
+
             return $personalPersistido;
+            
         } catch (PDOException $e) {
             throw new \Exception("Error al agregar personal: " . $e->getMessage());
         }

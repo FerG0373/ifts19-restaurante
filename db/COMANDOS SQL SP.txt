@@ -1,0 +1,25 @@
+DELIMITER //
+
+CREATE PROCEDURE sp_personal_select_by_id(
+    IN id_personal INT
+)
+BEGIN
+    SELECT 
+        id, 
+        dni, 
+        nombre, 
+        apellido, 
+        fecha_nacimiento, 
+        email, 
+        telefono, 
+        sexo, 
+        puesto, 
+        fecha_contratacion,
+        activo
+    FROM 
+        empleado
+    WHERE 
+        id = id_personal;
+END //
+
+DELIMITER ;
