@@ -123,7 +123,7 @@ class PersonalRepository {
 
 
     public function existeDni(string $dni): bool {
-        $sql = "SELECT 1 FROM empleado WHERE dni = :dni LIMIT 1";  // Usamos SELECT 1 para ser más eficiente: solo chequeamos si existe 1 fila.
+        $sql = "CALL existeDni(:dni);  // Usamos SELECT 1 para ser más eficiente: solo chequeamos si existe 1 fila.
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':dni', $dni);
         $stmt->execute();        
@@ -132,7 +132,7 @@ class PersonalRepository {
 
 
     public function existeEmail(string $email): bool {
-        $sql = "SELECT 1 FROM empleado WHERE email = :email LIMIT 1";
+        $sql = "CALL sp_personal_existe_email(:email)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();

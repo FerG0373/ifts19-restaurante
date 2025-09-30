@@ -1,8 +1,6 @@
 <?php
 namespace App\Services;
 
-namespace App\Services;
-
 use App\Models\Personal;
 use App\Repositories\PersonalRepository;
 use App\Enums\Puesto;
@@ -10,6 +8,7 @@ use App\Enums\Sexo;
 use InvalidArgumentException;
 use RuntimeException;
 use DateTimeImmutable;
+
 
 class PersonalService {
     private PersonalRepository $personalRepository;
