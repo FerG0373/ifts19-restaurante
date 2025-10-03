@@ -20,15 +20,5 @@ class Router {
     public function getRutas(): array {
         return $this->rutas;
     }
-
-    public function getRutasNav(): array {
-        $rutasNav = [];
-        foreach ($this->rutas as $url => $infoRuta) {
-            if ($infoRuta['nav']) {
-                $rutasNav[$url] = $infoRuta['archivo'];
-            }
-        }
-        return $rutasNav;
-    }
 }
 ?>
