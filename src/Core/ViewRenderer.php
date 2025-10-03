@@ -5,10 +5,12 @@ namespace App\Core;
 class ViewRenderer {
     private string $rutaBaseVistas;
     private array $rutas;
+    private array $rutasNav;
 
     public function __construct(string $rutaBaseVistas, array $rutas) {
         $this->rutaBaseVistas = $rutaBaseVistas;  // Ruta base de las vistas.
         $this->rutas = $rutas;  // Array de rutas desde Router.
+        $this->rutasNav = $this->obtenerRutasNav();  // Rutas para la navegación.
     }
 
     private function obtenerRutaSolicitada(): string {
@@ -26,10 +28,10 @@ class ViewRenderer {
         return $rutasNav;
     }
 
-    public function renderizar(): void {
+    public function renderizarVistaDesdeUrl(): void {
         $rutaSolicitada = $this->obtenerRutaSolicitada();
-        $rutaNotFound = $this->rutaBaseVistas . '/9.00-notfound.php';
         $rutaLayout = $this->rutaBaseVistas . '/0.00-layout.php';
+        $rutaNotFound = $this->rutaBaseVistas . '/9.00-notfound.php';
 
         // Verifica si la vista actual existe en el array de rutas.
         if (!isset($this->rutas[$rutaSolicitada])) {
@@ -40,12 +42,28 @@ class ViewRenderer {
         $definicionRuta = $this->rutas[$rutaSolicitada];
 
         if (!isset($definicionRuta['archivo'])) {
-            require_once $rutaNotFound;  // Manejo de error si la ruta está mal definida
+            require_once $rutaNotFound;  // Manejo de error si la ruta está mal definida.
             exit();
         }
 
         $contenidoPrincipal = $definicionRuta['archivo'];
-        $arrayRutasNav = $this->obtenerRutasNav();        
+        $rutasNav = $this->rutasNav;
+        
+        require_once $rutaLayout;
+    }
+
+    public function renderizarVistaConDatos(string $vista, array $datos = []): void {
+        extract($datos);  // Extrae las variables del array para usarlas en la vista.
+
+        $rutaLayout = $this->rutaBaseVistas . '/0.00-layout.php';
+        $rutaVista = $this->rutaBaseVistas . '/' . $vista . '.php';
+        $rutasNav = $this->rutasNav;
+
+        if (file_exists($rutaVista)) {
+            $contenidoPrincipal = $rutaVista;
+        } else {
+            $contenidoPrincipal = $this->rutaBaseVistas . '/9.00-notfound.php';
+        }
         
         require_once $rutaLayout;
     }

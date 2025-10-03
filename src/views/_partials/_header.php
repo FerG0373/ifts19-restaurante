@@ -9,7 +9,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">            
             <ul class="navbar-nav me-auto">
                 <?php
-                foreach ($arrayRutasNav as $url => $rutaArchivo) {
+                foreach ($rutasNav as $url => $rutaArchivo) {
                     $nombreEnlace = ucfirst($url);
                 ?>
                     <li class="nav-item">

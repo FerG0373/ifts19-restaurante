@@ -13,5 +13,5 @@ $enrutador->agregarRuta('lista-personal', '2.01-personal-lista.php', false);
 
 $renderizadorVistas = new ViewRenderer($rutaBaseVistas, $enrutador->getRutas());
 
-$renderizadorVistas->renderizar();
+$renderizadorVistas->renderizarVistaDesdeUrl();
 ?>
