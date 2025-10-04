@@ -19,6 +19,7 @@ class Personal {
     private Sexo $sexo;
     private Puesto $puesto;
     private DateTimeImmutable $fechaContratacion;
+    private bool $activo;
 
     // CONSTRUCTOR
     public function __construct (
@@ -31,7 +32,8 @@ class Personal {
         string $telefono,
         Sexo $sexo,
         Puesto $puesto,
-        DateTimeInterface $fechaContratacion
+        DateTimeInterface $fechaContratacion,
+        bool $activo = true
     ) {
         $this->id = $id;
         $this->dni = $dni;
@@ -43,47 +45,30 @@ class Personal {
         $this->sexo = $sexo;
         $this->puesto = $puesto;
         $this->fechaContratacion = $fechaContratacion instanceof DateTimeImmutable ? $fechaContratacion : new DateTimeImmutable($fechaContratacion->format('Y-m-d'));
+        $this->activo = $activo;
     }
 
     // GETTERS
-    public function getId(): ?int {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getDni(): string {
-        return $this->dni;
-    }
+    public function getDni(): string { return $this->dni; }
 
-    public function getEmail(): string {
-        return $this->email;
-    }
+    public function getEmail(): string { return $this->email; }
 
-    public function getNombre(): string {
-        return $this->nombre;
-    }
+    public function getNombre(): string { return $this->nombre; }
 
-    public function getApellido(): string {
-        return $this->apellido;
-    }
+    public function getApellido(): string { return $this->apellido; }
 
-    public function getTelefono(): string {
-        return $this->telefono;
-    }
+    public function getTelefono(): string { return $this->telefono; }
 
-    public function getFechaNacimiento(): DateTimeInterface {
-        return $this->fechaNacimiento;
-    }
+    public function getFechaNacimiento(): DateTimeInterface { return $this->fechaNacimiento; }
 
-    public function getSexo(): Sexo {
-        return $this->sexo;
-    }
+    public function getSexo(): Sexo { return $this->sexo; }
 
-    public function getPuesto(): Puesto {
-        return $this->puesto;
-    }
+    public function getPuesto(): Puesto { return $this->puesto; }
 
-    public function getFechaContratacion(): DateTimeInterface {
-        return $this->fechaContratacion;
-    }
+    public function getFechaContratacion(): DateTimeInterface { return $this->fechaContratacion; }
+    
+    public function isActivo(): bool { return $this->activo; }
 }
 ?>

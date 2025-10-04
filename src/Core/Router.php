@@ -2,29 +2,22 @@
 namespace App\Core;
 
 use App\Core\DataAccess;
-use PDO;
+use App\Repositories\PersonalRepository;
+use App\Services\PersonalService;
 
-/**
- * El Router se encarga de mapear las URLs entrantes a Vistas estáticas
- * o a Controladores específicos (MVC). También maneja la inyección de la DB.
- */
+// Se encarga de mapear las URLs a vistas estáticas o controladores.
 class Router {
     private string $rutaBaseVistas;
     private array $rutas = [];
-    private DataAccess $dataAccess; // 👈 Guardamos el objeto DataAccess completo
+    private DataAccess $dataAccess;
 
     public function __construct(string $rutaBaseVistas, DataAccess $dataAccess) {
         $this->rutaBaseVistas = $rutaBaseVistas;
-        $this->dataAccess = $dataAccess; // 👈 Guardamos el DataAccess inyectado
+        $this->dataAccess = $dataAccess;
     }
 
-    /**
-     * Agrega una nueva ruta al mapa. El destino puede ser un string (nombre de archivo de vista)
-     * o un array [Clase::class, 'metodo'] para Controladores.
-     */
+    // Agrega una ruta al array. $destino puede ser string (nombre de archivo de vista) o array [Clase::class, 'metodo'] para controladores, ya que mixed lo permite.
     public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader): void {
-        // CORRECCIÓN CLAVE: NO PREFIJAMOS la ruta base aquí.
-        // Si es un string, ViewRenderer se encargará de buscar el archivo.
         $this->rutas[$nombreRuta] = [
             'destino' => $destino, 
             'nav' => $enNavHeader
@@ -60,10 +53,10 @@ class Router {
             // --- INYECCIÓN DE DEPENDENCIAS MANUAL ---
             // 1. Instanciar Repositorio: Le inyectamos el DataAccess que guardamos en el constructor del Router
             // Esto es crucial para que el Repositorio pueda obtener la conexión PDO.
-            $personalRepository = new \App\Repositories\PersonalRepository($this->dataAccess);
+            $personalRepository = new PersonalRepository($this->dataAccess);
 
             // 2. Instanciar Servicio: Le inyectamos el Repositorio
-            $personalService = new \App\Services\PersonalService($personalRepository);
+            $personalService = new PersonalService($personalRepository);
             
             // 3. Instanciar Controlador: Le inyectamos el Servicio y el Renderizador
             $controlador = new $controladorClase($personalService, $renderer);

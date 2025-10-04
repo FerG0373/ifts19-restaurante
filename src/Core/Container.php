@@ -3,10 +3,11 @@ namespace App\Core;
 
 use Exception;
 
-
+// Contenedor para gestionar la única instancia de DataAccess (Patrón de diseño Singleton).
 class Container {
     private static ?DataAccess $accesoDatos = null;
 
+    // Método estático para obtener la única instancia de DataAccess.
     public static function getDataAccess(): DataAccess {
         if (self::$accesoDatos === null) {
             try {

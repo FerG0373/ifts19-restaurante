@@ -27,19 +27,20 @@ class PersonalRepository {
             $stmt->execute();
 
             // Recorre todos los resultados
-            while ($filaRegistro = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 // MAPEO DE FILA DE DATOS AL OBJETO. ASIGNA LOS VALORES DEL REGISTRO A LOS PARÁMETROS DEL CONSTRUCTOR (Recuperación de datos)
                 $listaDePersonal[] = new Personal(
-                    (int)$filaRegistro['id'],
-                    $filaRegistro['dni'],
-                    $filaRegistro['nombre'],
-                    $filaRegistro['apellido'],
-                    new DateTimeImmutable($filaRegistro['fecha_nacimiento']),
-                    $filaRegistro['email'],
-                    $filaRegistro['telefono'],
-                    Sexo::from($filaRegistro['sexo']),
-                    Puesto::from($filaRegistro['puesto']),
-                    new DateTimeImmutable($filaRegistro['fecha_contratacion'])
+                    (int)$fila['id'],
+                    $fila['dni'],
+                    $fila['nombre'],
+                    $fila['apellido'],
+                    new DateTimeImmutable($fila['fecha_nacimiento']),
+                    $fila['email'],
+                    $fila['telefono'],
+                    Sexo::from($fila['sexo']),
+                    Puesto::from($fila['puesto']),
+                    new DateTimeImmutable($fila['fecha_contratacion']),
+                    (bool)$fila['activo']
                 );
             }
 
@@ -60,25 +61,26 @@ class PersonalRepository {
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            $filaRegistro = $stmt->fetch(PDO::FETCH_ASSOC);  // OBTIENE UNA SOLA FILA/REGISTRO (fetch) EN UN ARRAY ASOCIATIVO (::FETCH_ASSOC)
+            $fila = $stmt->fetch(PDO::FETCH_ASSOC);  // OBTIENE UNA SOLA FILA/REGISTRO (fetch) EN UN ARRAY ASOCIATIVO (::FETCH_ASSOC)
 
             $stmt->closeCursor(); // LIMPIA EL CURSOR (OBLIGATORIO PARA STORED PROCEDURES)
 
-            if (!$filaRegistro) {
+            if (!$fila) {
                 return null;  // RETORNA NULL SI NO SE ENCUENTRA EL REGISTRO
             }
             // MAPEO DE FILA DE DATOS AL OBJETO. ASIGNA LOS VALORES DEL REGISTRO A LOS PARÁMETROS DEL CONSTRUCTOR (Recuperación de datos)
             return new Personal(
-                (int)$filaRegistro['id'],
-                $filaRegistro['dni'],
-                $filaRegistro['nombre'],
-                $filaRegistro['apellido'],
-                new DateTimeImmutable($filaRegistro['fecha_nacimiento']),  // CONVIERTE STRING A DateTimeImmutable
-                $filaRegistro['email'],
-                $filaRegistro['telefono'],
-                Sexo::from($filaRegistro['sexo']),  // CONVIERTE STRING A ENUM
-                Puesto::from($filaRegistro['puesto']),  // CONVIERTE STRING A ENUM
-                new DateTimeImmutable($filaRegistro['fecha_contratacion'])  // CONVIERTE STRING A DateTimeImmutable
+                (int)$fila['id'],
+                $fila['dni'],
+                $fila['nombre'],
+                $fila['apellido'],
+                new DateTimeImmutable($fila['fecha_nacimiento']),  // CONVIERTE STRING A DateTimeImmutable
+                $fila['email'],
+                $fila['telefono'],
+                Sexo::from($fila['sexo']),  // CONVIERTE STRING A ENUM
+                Puesto::from($fila['puesto']),  // CONVIERTE STRING A ENUM
+                new DateTimeImmutable($fila['fecha_contratacion']),  // CONVIERTE STRING A DateTimeImmutable
+                (bool)$fila['activo']
             );
         } catch (PDOException $e) {
             throw new \Exception("Error al buscar personal con ID {$id}: " . $e->getMessage());

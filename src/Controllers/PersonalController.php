@@ -17,7 +17,7 @@ class PersonalController {
     }
 
     // GET /personal
-    public function mostrarListadoDePersonal(): void {
+    public function listarPersonal(): void {
         try {
             $listaPersonal = $this->personalService->listarTodoElPersonal();
 
@@ -29,9 +29,13 @@ class PersonalController {
         } catch (\Exception $e) {
             $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
                 'titulo' => 'Error de Sistema',
-                'mensaje' => 'Error al cargar el listado: ' . $e->getMessage()
+                'mensaje' => $e->getMessage()
             ]);
         }
+    }
+
+    public function listarPersonalActivo(): void {
+        
     }
 
 
