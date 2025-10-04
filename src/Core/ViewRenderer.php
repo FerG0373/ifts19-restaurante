@@ -22,7 +22,7 @@ class ViewRenderer {
         $rutasNav = [];
         foreach ($this->rutas as $url => $definicionRuta) {
             if (isset($definicionRuta['nav']) && $definicionRuta['nav'] === true) {
-                $rutasNav[$url] = $definicionRuta['archivo'];
+                $rutasNav[$url] = $definicionRuta['destino'];
             }
         }
         return $rutasNav;
@@ -41,12 +41,12 @@ class ViewRenderer {
 
         $definicionRuta = $this->rutas[$rutaSolicitada];
 
-        if (!isset($definicionRuta['archivo'])) {
+        if (!isset($definicionRuta['destino'])) {
             require_once $rutaNotFound;  // Manejo de error si la ruta está mal definida.
             exit();
         }
 
-        $contenidoPrincipal = $definicionRuta['archivo'];
+        $contenidoPrincipal = $definicionRuta['destino'];
         $rutasNav = $this->rutasNav;
         
         require_once $rutaLayout;
@@ -56,13 +56,14 @@ class ViewRenderer {
         extract($datos);  // Extrae las variables del array para usarlas en la vista.
 
         $rutaLayout = $this->rutaBaseVistas . '/0.00-layout.php';
+        $rutaNotFound = $this->rutaBaseVistas . '/9.00-notfound.php';
         $rutaVista = $this->rutaBaseVistas . '/' . $vista . '.php';
         $rutasNav = $this->rutasNav;
 
         if (file_exists($rutaVista)) {
             $contenidoPrincipal = $rutaVista;
         } else {
-            $contenidoPrincipal = $this->rutaBaseVistas . '/9.00-notfound.php';
+            $contenidoPrincipal = $rutaNotFound;
         }
         
         require_once $rutaLayout;

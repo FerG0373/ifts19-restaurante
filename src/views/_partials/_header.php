@@ -14,7 +14,7 @@
                 ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo $url; ?>">
-                            <?php echo $nombreEnlace; ?>
+                            <?php echo htmlspecialchars($nombreEnlace); ?>
                         </a>
                     </li>
                 <?php
