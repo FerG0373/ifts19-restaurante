@@ -1,8 +1,9 @@
 <?php
 namespace App\Core;
 
-use App\Repositories\PersonalRepository;
 use App\Services\PersonalService;
+use App\Controllers\PersonalController;
+use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
 class Router {
@@ -16,7 +17,7 @@ class Router {
     // Agrega una ruta al array. La variable $destino puede ser string (nombre de archivo de vista) o array [Clase::class, 'metodo'] para controladores, ya que mixed lo permite.
     public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader): void {
         $this->rutas[$nombreRuta] = [
-            'destino' => $destino, 
+            'destino' => $destino,
             'nav' => $enNavHeader
         ];
     }
@@ -36,14 +37,14 @@ class Router {
         
         if (is_string($destino)) {            
             $renderer->renderizarVistaDesdeUrl();
-
         // Verifica que es un array y que el array tenga exactamente 2 elementos: [Clase, 'metodo']. Ejemplo: [PersonalController::class, 'mostrarListado']).
         } elseif (is_array($destino) && count($destino) === 2) {            
             [$claseController, $metodo] = $destino;  // Destructuring assignment (asignación por desestructuración). Extrae los valores del array $destino into variables separadas.
             
-            $personalRepository = new PersonalRepository($this->dataAccess);
-            $personalService = new PersonalService($personalRepository);
-            $controlador = new $claseController($personalService, $renderer);  // Instancia el controlador dinámicamente con los servicios necesarios (inyección de dependencias). dynamic class instantiation
+            // $personalRepository = new PersonalRepository($this->dataAccess);
+            // $personalService = new PersonalService($personalRepository);
+            $service = $this->obtenerServiceParaControladores($claseController);
+            $controlador = new $claseController($service, $renderer);  // Instancia el controlador dinámicamente con los servicios necesarios (inyección de dependencias). dynamic class instantiation
             
             // 4. Ejecutar el método del Controlador (MVC)
             $controlador->$metodo();
@@ -52,6 +53,20 @@ class Router {
             // Manejar error de ruta mal configurada
             $renderer->renderizarVistaDesdeUrl(); 
         }
+    }
+
+    private function obtenerServiceParaControladores(string $claseController) {
+    $mapeoControllerService = [
+            // Para este Controller, éste Service.
+            PersonalController::class => PersonalService::class,
+            // Agregar acá otros controladores:
+        ];
+        
+        $claseService = $mapeoControllerService[$claseController] ?? null;
+        if ($claseService) {
+            return Container::getService($claseService);
+        }
+        throw new Exception("No se encontró service para el controlador: $claseController");
     }
     
     public function getRutas(): array {
