@@ -3,62 +3,59 @@ namespace App\Core;
 
 
 class ViewRenderer {
-    private string $rutaBaseVistas;
+    private string $directorioVistas;
     private array $rutas;
     private array $rutasNav;
 
-    public function __construct(string $rutaBaseVistas, array $rutas) {
-        $this->rutaBaseVistas = $rutaBaseVistas;  // Ruta base de las vistas.
+    public function __construct(string $directorioVistas, array $rutas) {
+        $this->directorioVistas = $directorioVistas;  // Ruta base de las vistas.
         $this->rutas = $rutas;  // Array de rutas desde Router.
         $this->rutasNav = $this->obtenerRutasNav();  // Rutas para la navegación.
     }
 
-    private function obtenerRutaSolicitada(): string {
-        $rutaSolicitada = $_GET['url'] ?? 'home';
-        return $rutaSolicitada === '' ? 'home' : $rutaSolicitada;
+    private function obtenerUrlSolicitada(): string {
+        $url = $_GET['url'] ?? 'home';
+        return $url === '' ? 'home' : $url;
     }
 
     private function obtenerRutasNav(): array {
-        $rutasNav = [];
-        foreach ($this->rutas as $url => $definicionRuta) {
+        foreach ($this->rutas as $claveUrl => $definicionRuta) {
             if (isset($definicionRuta['nav']) && $definicionRuta['nav'] === true) {
-                $rutasNav[$url] = $definicionRuta['destino'];
+                $rutasNav[$claveUrl] = $definicionRuta['destino'];
             }
         }
         return $rutasNav;
     }
 
     public function renderizarVistaDesdeUrl(): void {
-        $rutaSolicitada = $this->obtenerRutaSolicitada();
-        $rutaLayout = $this->rutaBaseVistas . '/0.00-layout.php';
-        $rutaNotFound = $this->rutaBaseVistas . '/9.00-notfound.php';
+        $url = $this->obtenerUrlSolicitada();
+        $layout = $this->directorioVistas . '/0.00-layout.php';
+        $notFound = $this->directorioVistas . '/9.00-notfound.php';
 
         // Verifica si la vista actual existe en el array de rutas.
-        if (!isset($this->rutas[$rutaSolicitada])) {
-            require_once $rutaNotFound;
+        if (!isset($this->rutas[$url])) {
+            require_once $notFound;
             exit();
         }
 
-        $definicionRuta = $this->rutas[$rutaSolicitada];
+        $definicionRuta = $this->rutas[$url];
 
         if (!isset($definicionRuta['destino'])) {
-            require_once $rutaNotFound;  // Manejo de error si la ruta está mal definida.
+            require_once $notFound;  // Manejo de error si la ruta está mal definida.
             exit();
         }
 
         $contenidoPrincipal = $definicionRuta['destino'];
-        $rutasNav = $this->rutasNav;
         
-        require_once $rutaLayout;
+        require_once $layout;
     }
 
     public function renderizarVistaConDatos(string $vista, array $datos = []): void {
         extract($datos);  // Extrae las variables del array para usarlas en la vista.
 
-        $rutaLayout = $this->rutaBaseVistas . '/0.00-layout.php';
-        $rutaNotFound = $this->rutaBaseVistas . '/9.00-notfound.php';
-        $rutaVista = $this->rutaBaseVistas . '/' . $vista . '.php';
-        $rutasNav = $this->rutasNav;
+        $rutaLayout = $this->directorioVistas . '/0.00-layout.php';
+        $rutaNotFound = $this->directorioVistas . '/9.00-notfound.php';
+        $rutaVista = $this->directorioVistas . '/' . $vista . '.php';        
 
         if (file_exists($rutaVista)) {
             $contenidoPrincipal = $rutaVista;

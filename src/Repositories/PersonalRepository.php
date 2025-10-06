@@ -14,7 +14,7 @@ class PersonalRepository {
     private PDO $db;
 
     public function __construct(DataAccess $dataAccess) {
-        $this->db = $dataAccess->obtenerConexion();
+        $this->db = $dataAccess->getDataAccess();
     }
 
 

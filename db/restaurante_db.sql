@@ -359,19 +359,23 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_select_all`()
 BEGIN
     SELECT 
-        id, 
-        dni, 
-        nombre, 
-        apellido, 
-        fecha_nacimiento, 
-        email, 
-        telefono, 
-        sexo, 
-        puesto, 
-        fecha_contratacion,
-        activo
+        p.id, 
+        p.dni, 
+        p.nombre, 
+        p.apellido, 
+        p.fecha_nacimiento, 
+        p.email, 
+        p.telefono, 
+        p.sexo, 
+        p.puesto, 
+        p.fecha_contratacion,
+        u.activo
     FROM 
-        personal;
+        personal p
+	INNER JOIN 
+    usuario u
+	ON 
+    p.id = u.id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -424,4 +428,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-30 19:41:32
+-- Dump completed on 2025-10-06  8:17:29

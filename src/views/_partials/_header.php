@@ -6,9 +6,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>   
 
-        <div class="collapse navbar-collapse" id="navbarNav">            
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <?php
+                $rutasNav = $this->rutasNav;
                 foreach ($rutasNav as $url => $rutaArchivo) {
                     $nombreEnlace = ucfirst($url);
                 ?>
@@ -20,7 +21,7 @@
                 <?php
                 }
                 ?>
-            </ul>            
+            </ul>
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="#"><i class="fas fa-user"></i> USUARIO</a>
