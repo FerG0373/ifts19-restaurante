@@ -3,8 +3,8 @@ namespace App\Services;
 
 use App\Models\Personal;
 use App\Repositories\PersonalRepository;
-use App\Enums\Puesto;
-use App\Enums\Sexo;
+use App\Shared\Enums\Puesto;
+use App\Shared\Enums\Sexo;
 use InvalidArgumentException;
 use RuntimeException;
 use DateTimeImmutable;
@@ -49,8 +49,10 @@ class PersonalService {
             $datos['telefono'],
             $sexo,
             $puesto,
-            $fechaContratacion
+            $fechaContratacion,
+            null
         );
+        
 
         // PERSISTENCIA (El Repositorio inserta y devuelve la versión final con ID)
         $personalGuardado = $this->personalRepository->insertarPersonal($personal);

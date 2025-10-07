@@ -7,6 +7,7 @@ use App\Enums\PerfilAcceso;
 use PDO;
 use PDOException;
 
+
 class UsuarioRepository {
     private PDO $db;
 

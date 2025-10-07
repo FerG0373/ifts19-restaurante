@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Shared\Enums\PerfilAcceso;
 
+
 class Usuario {
     // ATRIBUTOS
     private int $id;

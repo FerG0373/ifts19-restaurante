@@ -31,6 +31,7 @@ class PersonalController {
             ]);
         }
     }
+    
 
     public function listarPersonalActivo(): void {
         

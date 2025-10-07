@@ -46,7 +46,7 @@ class Personal {
         $this->sexo = $sexo;
         $this->puesto = $puesto;
         $this->fechaContratacion = $fechaContratacion instanceof DateTimeImmutable ? $fechaContratacion : new DateTimeImmutable($fechaContratacion->format('Y-m-d'));
-         $this->usuario = $usuario;
+        $this->usuario = $usuario;
     }
 
     // GETTERS

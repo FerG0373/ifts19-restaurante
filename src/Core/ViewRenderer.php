@@ -13,10 +13,12 @@ class ViewRenderer {
         $this->rutasNav = $this->obtenerRutasNav();  // Rutas para la navegación.
     }
 
+
     private function obtenerUrlSolicitada(): string {
         $url = $_GET['url'] ?? 'home';
         return $url === '' ? 'home' : $url;
     }
+
 
     private function obtenerRutasNav(): array {
         foreach ($this->rutas as $claveUrl => $definicionRuta) {
@@ -26,6 +28,7 @@ class ViewRenderer {
         }
         return $rutasNav;
     }
+    
 
     public function renderizarVistaDesdeUrl(): void {
         $url = $this->obtenerUrlSolicitada();
@@ -49,6 +52,7 @@ class ViewRenderer {
         
         require_once $layout;
     }
+    
 
     public function renderizarVistaConDatos(string $vista, array $datos = []): void {
         extract($datos);  // Extrae las variables del array para usarlas en la vista.

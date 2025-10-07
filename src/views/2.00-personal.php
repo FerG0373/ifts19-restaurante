@@ -2,20 +2,46 @@
 // Vista de Listado de Personal (2.00-personal.php)
 // Recibe: $titulo (string) y $personal (array de objetos App\Models\Personal)
 use App\Models\Personal;
+
+$filtroActivo = $_GET['filtro'] ?? 'activo';  // Por defecto, mostrar solo activos.
+$esFiltroActivo = ($filtroActivo === 'activo');
+$urlVerActivos = 'personal';  // URL por defecto, sin parámetros
+$urlVerTodos = 'personal?filtro=todos';  // URL con parámetro para ver a todos (incluye inactivos).
 ?>
 
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary"><?php echo htmlspecialchars($titulo ?? 'Listado'); ?></h2>
+        
+        <div class="d-flex align-items-center">
+            <h2 class="text-primary mb-0 me-3">
+                <?php echo htmlspecialchars($titulo ?? 'Listado'); ?>
+            </h2>
+
+            <div class="form-check form-switch pt-1 mt-2 ms-2">
+                <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    role="switch" 
+                    id="toggleActivos"
+                    <?= $esFiltroActivo ? '' : 'checked' ?> 
+                    onchange="window.location.href = this.checked ? '<?= $urlVerTodos ?>' : '<?= $urlVerActivos ?>';"
+                >
+                <label class="form-check-label small" for="toggleActivos">
+                    <?php if ($esFiltroActivo): ?>
+                        <span class="text-secondary" title="Mostrar también el personal inactivo">Ver Todos <i class="fas fa-eye"></i></span>
+                    <?php else: ?>
+                        <span class="text-info" title="Actualmente mostrando personal activo e inactivo">Solo Activos <i class="fas fa-user-check"></i></span>
+                    <?php endif; ?>
+                </label>
+            </div>
+        </div>
         <a href="personal/alta" class="btn btn-success">
             <i class="fas fa-plus-circle"></i> Agregar Personal
         </a>
     </div>
 
     <?php if (empty($personal)): ?>
-        <div class="alert alert-info">
-            No hay personal registrado en el sistema.
-        </div>
+        <div class="alert alert-info">No hay personal registrado en el sistema.</div>
     <?php else: ?>
         <div class="table-responsive">
             <table class="table table-striped table-hover shadow-sm">
@@ -25,8 +51,6 @@ use App\Models\Personal;
                         <th class="text-center">Nombre Completo</th>
                         <th class="text-center">Puesto</th>
                         <th class="text-center">DNI</th>
-                        <th class="text-center">Email</th>
-                        <th class="text-center">Fecha Contratación</th>
                         <th class="text-center">Activo</th>
                         <th class="text-center">Detalle</th>
                     </tr>
@@ -39,34 +63,19 @@ use App\Models\Personal;
                     <tr>
                         <td class="text-center"><?php echo htmlspecialchars($p->getId()); ?></td>
                         <td class="text-center">
-                            <?php echo htmlspecialchars($p->getNombre() . ' ' . $p->getApellido()); ?>
+                            <?php echo htmlspecialchars($p->getApellido() . ', ' . $p->getNombre()); ?>
                         </td>
                         <td class="text-center"><?php echo htmlspecialchars($p->getPuesto()->name); ?></td>
                         <td class="text-center"><?php echo htmlspecialchars($p->getDni()); ?></td>
-                        <td class="text-center"><?php echo htmlspecialchars($p->getEmail()); ?></td>
-                        <td class="text-center"><?php echo htmlspecialchars($p->getFechaContratacion()->format('d/m/Y')); ?></td>
-                        
                         <td class="text-center">
                             <?php if ($p->isActivo()): ?>
                                 <span class="badge bg-success">Sí</span>
                             <?php else: ?>
                                 <span class="badge bg-danger">No</span>
                             <?php endif; ?>
-                        </td>
-                        
+                        </td>                        
                         <td class="text-center">
-                            <a href="personal/detalle?id=<?php echo $p->getId(); ?>" class="text-decoration-none" title="Ver Detalles">
-                                🔍
-                            </a>
-                            <!-- <a href="personal/editar?id=<?php echo $p->getId(); ?>" class="btn btn-sm btn-warning" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form method="POST" action="personal/baja" style="display:inline;">
-                                <input type="hidden" name="id" value="<?php echo $p->getId(); ?>">
-                                <button type="submit" class="btn btn-sm btn-<?php echo $p->isActivo() ? 'danger' : 'success'; ?>" title="<?php echo $p->isActivo() ? 'Dar de Baja' : 'Dar de Alta'; ?>">
-                                    <i class="fas fa-<?php echo $p->isActivo() ? 'user-slash' : 'user-plus'; ?>"></i>
-                                </button>
-                            </form> -->
+                            <a href="personal/detalle?id=<?php echo $p->getId(); ?>" class="text-decoration-none" title="Ver Detalles">🔍</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
