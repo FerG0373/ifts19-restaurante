@@ -25,27 +25,29 @@ END //
 DELIMITER ;
 
 
-DELIMITER //
-
 CREATE PROCEDURE sp_personal_select_all()
 BEGIN
     SELECT 
-        p.id, 
-        p.dni, 
-        p.nombre, 
-        p.apellido, 
-        p.fecha_nacimiento, 
-        p.email, 
-        p.telefono, 
-        p.sexo, 
-        p.puesto, 
+        p.id,
+        p.dni,
+        p.nombre,
+        p.apellido,
+        p.fecha_nacimiento,
+        p.email,
+        p.telefono,
+        p.sexo,
+        p.puesto,
         p.fecha_contratacion,
+        
+        u.id 'idUsuario',
+        u.pass_hash,
+        u.perfil_acceso,
         u.activo
-    FROM 
+    FROM
         personal p
-	INNER JOIN 
+	INNER JOIN
     usuario u
-	ON 
+	ON
     p.id = u.id;
 END //
 

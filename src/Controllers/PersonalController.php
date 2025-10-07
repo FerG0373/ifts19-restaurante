@@ -3,8 +3,6 @@ namespace App\Controllers;
 
 use App\Services\PersonalService;
 use App\Core\ViewRenderer;
-use InvalidArgumentException;
-use RuntimeException;
 
 
 class PersonalController {

@@ -192,7 +192,7 @@ CREATE TABLE `personal` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__personal__dni` (`dni`),
   UNIQUE KEY `uq__personal__email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,6 +201,7 @@ CREATE TABLE `personal` (
 
 LOCK TABLES `personal` WRITE;
 /*!40000 ALTER TABLE `personal` DISABLE KEYS */;
+INSERT INTO `personal` VALUES (1,'40123456','Carlos','Sánchez','sanchez.carlos@gmail.com','1123236921','1990-01-01','m','encargado','2023-10-06');
 /*!40000 ALTER TABLE `personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -286,6 +287,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES (1,'encargado','1234',1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -365,11 +367,15 @@ BEGIN
         p.apellido, 
         p.fecha_nacimiento, 
         p.email, 
-        p.telefono, 
+        p.telefono,
         p.sexo, 
         p.puesto, 
         p.fecha_contratacion,
-        u.activo
+        
+        u.id 'idUsuario',
+        u.pass_hash,
+        u.perfil_acceso,
+        u.activo 
     FROM 
         personal p
 	INNER JOIN 
@@ -428,4 +434,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-06  8:17:29
+-- Dump completed on 2025-10-06 23:45:42

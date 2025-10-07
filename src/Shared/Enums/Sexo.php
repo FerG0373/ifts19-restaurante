@@ -1,5 +1,5 @@
 <?php
-namespace App\Enums;
+namespace App\Shared\Enums;
 
 enum Sexo: string {
     case M = 'm';

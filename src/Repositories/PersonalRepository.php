@@ -1,10 +1,12 @@
 <?php
 namespace App\Repositories;
 
-use App\Models\Personal;
-use App\Enums\Puesto;
-use App\Enums\Sexo;
 use App\Core\DataAccess;
+use App\Models\Personal;
+use App\Models\Usuario;
+use App\Shared\Enums\Puesto; 
+use App\Shared\Enums\Sexo;
+use App\Shared\Enums\PerfilAcceso;
 use PDO;
 use PDOException;
 use DateTimeImmutable;
@@ -14,7 +16,7 @@ class PersonalRepository {
     private PDO $db;
 
     public function __construct(DataAccess $dataAccess) {
-        $this->db = $dataAccess->getDataAccess();
+        $this->db = $dataAccess->getConexion();
     }
 
 
@@ -28,6 +30,14 @@ class PersonalRepository {
 
             // Recorre todos los resultados
             while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // Crear el objeto Usuario asociado.
+                $usuario = new Usuario(
+                    (int)$fila['idUsuario'],      
+                    $fila['pass_hash'],            
+                    PerfilAcceso::from($fila['perfil_acceso']), 
+                    (bool)$fila['activo']
+                );
+                
                 // MAPEO DE FILA DE DATOS AL OBJETO. ASIGNA LOS VALORES DEL REGISTRO A LOS PARÁMETROS DEL CONSTRUCTOR (Recuperación de datos)
                 $listaDePersonal[] = new Personal(
                     (int)$fila['id'],
@@ -40,7 +50,7 @@ class PersonalRepository {
                     Sexo::from($fila['sexo']),
                     Puesto::from($fila['puesto']),
                     new DateTimeImmutable($fila['fecha_contratacion']),
-                    (bool)$fila['activo']
+                    $usuario
                 );
             }
 
@@ -68,6 +78,18 @@ class PersonalRepository {
             if (!$fila) {
                 return null;  // RETORNA NULL SI NO SE ENCUENTRA EL REGISTRO
             }
+
+            if (!empty($fila['idUsuario'])) {
+                $usuario = new Usuario(
+                    (int)$fila['idUsuario'],
+                    $fila['pass_hash'],
+                    PerfilAcceso::from($fila['perfil_acceso']),
+                    (bool)$fila['activo']
+                );
+            } else {
+                $usuario = null;
+            }
+
             // MAPEO DE FILA DE DATOS AL OBJETO. ASIGNA LOS VALORES DEL REGISTRO A LOS PARÁMETROS DEL CONSTRUCTOR (Recuperación de datos)
             return new Personal(
                 (int)$fila['id'],
@@ -80,7 +102,7 @@ class PersonalRepository {
                 Sexo::from($fila['sexo']),  // CONVIERTE STRING A ENUM
                 Puesto::from($fila['puesto']),  // CONVIERTE STRING A ENUM
                 new DateTimeImmutable($fila['fecha_contratacion']),  // CONVIERTE STRING A DateTimeImmutable
-                (bool)$fila['activo']
+                $usuario
             );
         } catch (PDOException $e) {
             throw new \Exception("Error al buscar personal con ID {$id}: " . $e->getMessage());

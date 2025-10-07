@@ -41,12 +41,9 @@ class Router {
         } elseif (is_array($destino) && count($destino) === 2) {            
             [$claseController, $metodo] = $destino;  // Destructuring assignment (asignación por desestructuración). Extrae los valores del array $destino into variables separadas.
             
-            // $personalRepository = new PersonalRepository($this->dataAccess);
-            // $personalService = new PersonalService($personalRepository);
             $service = $this->obtenerServiceParaControladores($claseController);
             $controlador = new $claseController($service, $renderer);  // Instancia el controlador dinámicamente con los servicios necesarios (inyección de dependencias). dynamic class instantiation
             
-            // 4. Ejecutar el método del Controlador (MVC)
             $controlador->$metodo();
 
         } else {

@@ -3,8 +3,9 @@ namespace App\Models;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use App\Enums\Sexo;
-use App\Enums\Puesto;
+use App\Shared\Enums\Sexo;
+use App\Shared\Enums\Puesto;
+use App\Models\Usuario;
 
 
 class Personal {
@@ -19,7 +20,7 @@ class Personal {
     private Sexo $sexo;
     private Puesto $puesto;
     private DateTimeImmutable $fechaContratacion;
-    private bool $activo;
+    private ?Usuario $usuario; // Relación 1 a 1 con Usuario. Puede ser null si el empleado no tiene usuario.
 
     // CONSTRUCTOR
     public function __construct (
@@ -33,7 +34,7 @@ class Personal {
         Sexo $sexo,
         Puesto $puesto,
         DateTimeInterface $fechaContratacion,
-        bool $activo = true
+        ?Usuario $usuario
     ) {
         $this->id = $id;
         $this->dni = $dni;
@@ -45,7 +46,7 @@ class Personal {
         $this->sexo = $sexo;
         $this->puesto = $puesto;
         $this->fechaContratacion = $fechaContratacion instanceof DateTimeImmutable ? $fechaContratacion : new DateTimeImmutable($fechaContratacion->format('Y-m-d'));
-        $this->activo = $activo;
+         $this->usuario = $usuario;
     }
 
     // GETTERS
@@ -69,6 +70,8 @@ class Personal {
 
     public function getFechaContratacion(): DateTimeInterface { return $this->fechaContratacion; }
     
-    public function isActivo(): bool { return $this->activo; }
+    public function getUsuario(): ?Usuario { return $this->usuario; }
+    
+    public function isActivo(): bool { return $this->usuario != null && $this->usuario->isActivo(); }
 }
 ?>

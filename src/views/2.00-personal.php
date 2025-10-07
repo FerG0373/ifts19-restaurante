@@ -1,9 +1,9 @@
 <?php 
-/**
- * Vista de Listado de Personal (2.00-personal.php)
- * Recibe: $titulo (string) y $personal (array de objetos App\Models\Personal)
- */
+// Vista de Listado de Personal (2.00-personal.php)
+// Recibe: $titulo (string) y $personal (array de objetos App\Models\Personal)
+use App\Models\Personal;
 ?>
+
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary"><?php echo htmlspecialchars($titulo ?? 'Listado'); ?></h2>
@@ -21,30 +21,30 @@
             <table class="table table-striped table-hover shadow-sm">
                 <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
-                        <th>Nombre Completo</th>
-                        <th>Puesto</th>
-                        <th>DNI</th>
-                        <th>Email</th>
-                        <th>Contratación</th>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Nombre Completo</th>
+                        <th class="text-center">Puesto</th>
+                        <th class="text-center">DNI</th>
+                        <th class="text-center">Email</th>
+                        <th class="text-center">Fecha Contratación</th>
                         <th class="text-center">Activo</th>
-                        <th class="text-center">Acciones</th>
+                        <th class="text-center">Detalle</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    /** @var App\Models\Personal $p */
+                    /** @var Personal $p */
                     foreach ($personal as $p): 
                     ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($p->getId()); ?></td>
-                        <td>
+                        <td class="text-center"><?php echo htmlspecialchars($p->getId()); ?></td>
+                        <td class="text-center">
                             <?php echo htmlspecialchars($p->getNombre() . ' ' . $p->getApellido()); ?>
                         </td>
-                        <td><?php echo htmlspecialchars($p->getPuesto()->name); ?></td>
-                        <td><?php echo htmlspecialchars($p->getDni()); ?></td>
-                        <td><?php echo htmlspecialchars($p->getEmail()); ?></td>
-                        <td><?php echo htmlspecialchars($p->getFechaContratacion()->format('d/m/Y')); ?></td>
+                        <td class="text-center"><?php echo htmlspecialchars($p->getPuesto()->name); ?></td>
+                        <td class="text-center"><?php echo htmlspecialchars($p->getDni()); ?></td>
+                        <td class="text-center"><?php echo htmlspecialchars($p->getEmail()); ?></td>
+                        <td class="text-center"><?php echo htmlspecialchars($p->getFechaContratacion()->format('d/m/Y')); ?></td>
                         
                         <td class="text-center">
                             <?php if ($p->isActivo()): ?>
@@ -55,10 +55,10 @@
                         </td>
                         
                         <td class="text-center">
-                            <a href="personal/detalle?id=<?php echo $p->getId(); ?>" class="btn btn-sm btn-info" title="Ver Detalles">
-                                <i class="fas fa-eye"></i>
+                            <a href="personal/detalle?id=<?php echo $p->getId(); ?>" class="text-decoration-none" title="Ver Detalles">
+                                🔍
                             </a>
-                            <a href="personal/editar?id=<?php echo $p->getId(); ?>" class="btn btn-sm btn-warning" title="Editar">
+                            <!-- <a href="personal/editar?id=<?php echo $p->getId(); ?>" class="btn btn-sm btn-warning" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <form method="POST" action="personal/baja" style="display:inline;">
@@ -66,7 +66,7 @@
                                 <button type="submit" class="btn btn-sm btn-<?php echo $p->isActivo() ? 'danger' : 'success'; ?>" title="<?php echo $p->isActivo() ? 'Dar de Baja' : 'Dar de Alta'; ?>">
                                     <i class="fas fa-<?php echo $p->isActivo() ? 'user-slash' : 'user-plus'; ?>"></i>
                                 </button>
-                            </form>
+                            </form> -->
                         </td>
                     </tr>
                     <?php endforeach; ?>
