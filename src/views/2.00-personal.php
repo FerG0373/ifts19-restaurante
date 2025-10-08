@@ -2,11 +2,6 @@
 // Vista de Listado de Personal (2.00-personal.php)
 // Recibe: $titulo (string) y $personal (array de objetos App\Models\Personal)
 use App\Models\Personal;
-
-$filtroActivo = $_GET['filtro'] ?? 'activo';  // Por defecto, mostrar solo activos.
-$esFiltroActivo = ($filtroActivo === 'activo');
-$urlVerActivos = 'personal';  // URL por defecto, sin parámetros
-$urlVerTodos = 'personal?filtro=todos';  // URL con parámetro para ver a todos (incluye inactivos).
 ?>
 
 <div class="container my-5">
@@ -23,11 +18,11 @@ $urlVerTodos = 'personal?filtro=todos';  // URL con parámetro para ver a todos 
                     type="checkbox" 
                     role="switch" 
                     id="toggleActivos"
-                    <?= $esFiltroActivo ? '' : 'checked' ?> 
+                    <?= $esActivo ? '' : 'checked' ?> 
                     onchange="window.location.href = this.checked ? '<?= $urlVerTodos ?>' : '<?= $urlVerActivos ?>';"
                 >
                 <label class="form-check-label small" for="toggleActivos">
-                    <?php if ($esFiltroActivo): ?>
+                    <?php if ($esActivo): ?>
                         <span class="text-secondary" title="Mostrar también el personal inactivo">Ver Todos <i class="fas fa-eye"></i></span>
                     <?php else: ?>
                         <span class="text-info" title="Actualmente mostrando personal activo e inactivo">Solo Activos <i class="fas fa-user-check"></i></span>

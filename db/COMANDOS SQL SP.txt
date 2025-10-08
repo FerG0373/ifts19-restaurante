@@ -56,6 +56,39 @@ DELIMITER ;
 
 DELIMITER //
 
+CREATE PROCEDURE sp_personal_select_activo()
+BEGIN
+    SELECT 
+        p.id, 
+        p.dni, 
+        p.nombre, 
+        p.apellido, 
+        p.fecha_nacimiento, 
+        p.email, 
+        p.telefono,
+        p.sexo, 
+        p.puesto, 
+        p.fecha_contratacion,
+        
+        u.id 'idUsuario',
+        u.pass_hash,
+        u.perfil_acceso,
+        u.activo 
+    FROM 
+        personal p
+	INNER JOIN 
+    usuario u
+	ON 
+    p.id = u.id
+    WHERE
+		u.activo = 1;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
 CREATE PROCEDURE sp_personal_existe_dni(
     IN personal_dni VARCHAR(20)
 )

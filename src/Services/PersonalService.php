@@ -17,6 +17,17 @@ class PersonalService {
         $this->personalRepository = $personalRepository;
     }
 
+    // Método por defecto para la ruta principal (/personal)
+    public function listarPersonalActivo(): array {
+        return $this->personalRepository->listarPersonal(true); 
+    }
+
+
+    public function listarTodoElPersonal(): array {
+        return $this->personalRepository->listarPersonal(false);
+    }
+
+
     public function altaPersonal(array $datos): Personal {
         // VALIDACIONES DE NEGOCIO
         if ($this->personalRepository->existeDni($datos['dni'] ?? '')) {
@@ -58,10 +69,6 @@ class PersonalService {
         $personalGuardado = $this->personalRepository->insertarPersonal($personal);
 
         return $personalGuardado;
-    }
-
-    public function listarTodoElPersonal(): array {
-        return $this->personalRepository->listarPersonal();
-    }
+    }    
 }
 ?>

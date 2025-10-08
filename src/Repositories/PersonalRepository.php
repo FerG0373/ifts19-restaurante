@@ -20,8 +20,13 @@ class PersonalRepository {
     }
 
 
-    public function listarPersonal(): array {
-        $sql = "CALL sp_personal_select_all()"; 
+    public function listarPersonal(bool $activo): array {
+        if ($activo) {
+            $sql = "CALL sp_personal_select_activo()";
+        } else {
+            $sql = "CALL sp_personal_select_all()";
+        }
+
         $listaDePersonal = [];
             
         try {
