@@ -46,10 +46,10 @@ class PersonalController {
             ]);
         }
     }
-    
 
-    public function listarPersonalActivo(): void {
-        
+
+    public function verDetalle(): void {
+
     }
 
 

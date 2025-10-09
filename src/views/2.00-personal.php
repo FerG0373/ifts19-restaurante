@@ -70,7 +70,10 @@ use App\Models\Personal;
                             <?php endif; ?>
                         </td>                        
                         <td class="text-center">
-                            <a href="personal/detalle?id=<?php echo $p->getId(); ?>" class="text-decoration-none" title="Ver Detalles">🔍</a>
+                            <form method="POST" action="personal/detalle">
+                                <input type="hidden" name="id" value="<?php echo $p->getId(); ?>">
+                                <button type="submit" class="btn btn-link text-decoration-none p-0 border-0 bg-transparent" title="Ver detalle">🔍</button>
+                            </form>
                         </td>
                     </tr>
                     <?php endforeach; ?>
