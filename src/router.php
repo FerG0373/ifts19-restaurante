@@ -14,8 +14,9 @@ $enrutador = new Router($dataAccess);
 $enrutador->agregarRuta('login', '1.00-login.php', true);
 $enrutador->agregarRuta('home', '1.01-home.php', true);
 $enrutador->agregarRuta('lista-personal', '2.01-personal-lista.php', false);
-// Rutas dinámicas con datos.
-$enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'], true);
+// Rutas dinámicas con datos (Controladores).
+$enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'], true);  // Listado de personal (GET).
+$enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDetalle'], false, 'POST');  // Detalle de personal (POST)
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);

@@ -15,10 +15,11 @@ class Router {
     }
 
     // Agrega una ruta al array. La variable $destino puede ser string (nombre de archivo de vista) o array [Clase::class, 'metodo'] para controladores, ya que mixed lo permite.
-    public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader): void {
+    public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader, string $metodo = 'GET'): void {
         $this->rutas[$nombreRuta] = [
             'destino' => $destino,
-            'nav' => $enNavHeader
+            'nav' => $enNavHeader,
+            'metodo' => strtoupper($metodo)  // Guarda el método en mayúsculas.
         ];
     }
 
@@ -26,14 +27,32 @@ class Router {
     public function despacharRuta(ViewRenderer $renderer): void {
         $rutaSolicitada = $_GET['url'] ?? 'home';
         $rutaSolicitada = rtrim($rutaSolicitada, '/');
+        
+        $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';  // OBTENER EL MÉTODO HTTP REAL DE LA SOLICITUD
 
-        // Verifica si la ruta existe en el array de rutas.
-        if (!isset($this->rutas[$rutaSolicitada])) {            
-            $renderer->renderizarVistaDesdeUrl();  // Ruta no encontrada, renderiza 404.
+        // 👈 CREAR UNA CLAVE ÚNICA DE BÚSQUEDA (Ruta + Método)
+        // Buscaremos rutas con una clave como 'personal@GET' o 'personal/detalle@POST'
+        $claveBusqueda = $rutaSolicitada . '@' . $metodo;
+        
+        // --- LÓGICA DE BÚSQUEDA ---
+        // Buscar la ruta exacta (ej: 'personal/detalle@POST')
+        $rutaEncontrada = null;
+        foreach ($this->rutas as $nombreRuta => $definicion) {
+            if ($nombreRuta === $rutaSolicitada && $definicion['metodo'] === $metodo) {
+                $rutaEncontrada = $definicion;
+                break;
+            }
+        }
+        
+        // Verificar si se encontró la ruta
+        if (!$rutaEncontrada) {
+            // Si no se encuentra la ruta exacta, intentar renderizar la vista estática 404.
+            $renderer->renderizarVistaDesdeUrl();
             return;
         }
 
-        $destino = $this->rutas[$rutaSolicitada]['destino'];
+        // Usar $rutaEncontrada['destino'] en lugar de $this->rutas[$rutaSolicitada]['destino']
+        $destino = $rutaEncontrada['destino'];
         
         if (is_string($destino)) {            
             $renderer->renderizarVistaDesdeUrl();

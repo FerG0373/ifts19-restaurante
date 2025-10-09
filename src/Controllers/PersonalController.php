@@ -47,7 +47,7 @@ class PersonalController {
         }
     }
 
-
+    // POST /personal/detalle
     public function verDetalle(): void {
 
     }
