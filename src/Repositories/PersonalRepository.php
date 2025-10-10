@@ -69,7 +69,7 @@ class PersonalRepository {
     }
 
 
-    public function buscarPersonalPorId(int $id): ?Personal {
+    public function obtenerPersonalPorId(int $id): ?Personal {
         $sql = "CALL sp_personal_select_by_id(:id)";
 
         try {
@@ -137,7 +137,7 @@ class PersonalRepository {
             
             $idPersonal = (int)$stmt->fetchColumn();  // CAPTURAR EL ID DEVUELTO POR EL SP
             $stmt->closeCursor();            
-            $personalPersistido = $this->buscarPersonalPorId($idPersonal);  // RETORNAR EL OBJETO COMPLETO CON EL ID ASIGNADO
+            $personalPersistido = $this->obtenerPersonalPorId($idPersonal);  // RETORNAR EL OBJETO COMPLETO CON EL ID ASIGNADO
             
             if ($personalPersistido === null) {
              throw new \RuntimeException("Registro insertado (ID: {$idPersonal}), pero no se pudo recuperar.");

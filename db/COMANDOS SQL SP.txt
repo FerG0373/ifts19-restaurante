@@ -1,5 +1,4 @@
 DELIMITER //
-
 CREATE PROCEDURE sp_personal_select_by_id(
     IN personal_id INT
 )
@@ -21,10 +20,11 @@ BEGIN
     WHERE 
         id = personal_id;
 END //
-
 DELIMITER ;
 
 
+
+DELIMITER //
 CREATE PROCEDURE sp_personal_select_all()
 BEGIN
     SELECT 
@@ -50,13 +50,14 @@ BEGIN
 	ON
     p.id = u.id;
 END //
-
 DELIMITER ;
 
 
-DELIMITER //
 
-CREATE PROCEDURE sp_personal_select_activo()
+DELIMITER //
+CREATE PROCEDURE sp_personal_select_by_id(
+    IN personal_id INT
+)
 BEGIN
     SELECT 
         p.id, 
@@ -65,30 +66,28 @@ BEGIN
         p.apellido, 
         p.fecha_nacimiento, 
         p.email, 
-        p.telefono,
+        p.telefono, 
         p.sexo, 
         p.puesto, 
         p.fecha_contratacion,
-        
         u.id 'idUsuario',
         u.pass_hash,
         u.perfil_acceso,
-        u.activo 
+        u.activo
     FROM 
         personal p
-	INNER JOIN 
-    usuario u
-	ON 
-    p.id = u.id
-    WHERE
-		u.activo = 1;
+	INNER JOIN
+		usuario u
+	ON
+		p.id = u.id    
+    WHERE 
+        p.id = 1;
 END //
-
 DELIMITER ;
 
 
-DELIMITER //
 
+DELIMITER //
 CREATE PROCEDURE sp_personal_existe_dni(
     IN personal_dni VARCHAR(20)
 )
@@ -101,12 +100,11 @@ BEGIN
         dni = personal_dni
     LIMIT 1; -- Detiene la búsqueda después de la primera coincidencia
 END //
-
 DELIMITER ;
 
 
-DELIMITER //
 
+DELIMITER //
 CREATE PROCEDURE sp_personal_existe_email(
     IN personal_email VARCHAR(100)
 )
@@ -119,5 +117,4 @@ BEGIN
         email = personal_email
     LIMIT 1;
 END //
-
 DELIMITER ;

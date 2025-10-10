@@ -28,31 +28,24 @@ class Router {
         $rutaSolicitada = $_GET['url'] ?? 'home';
         $rutaSolicitada = rtrim($rutaSolicitada, '/');
         
-        $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';  // OBTENER EL MÉTODO HTTP REAL DE LA SOLICITUD
+        $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';  // Obtener el método HTTP de la solicitud.
 
-        // 👈 CREAR UNA CLAVE ÚNICA DE BÚSQUEDA (Ruta + Método)
-        // Buscaremos rutas con una clave como 'personal@GET' o 'personal/detalle@POST'
-        $claveBusqueda = $rutaSolicitada . '@' . $metodo;
-        
-        // --- LÓGICA DE BÚSQUEDA ---
-        // Buscar la ruta exacta (ej: 'personal/detalle@POST')
+        // Buscar la ruta que coincide tanto con la URL solicitada como con el Método HTTP usado.
         $rutaEncontrada = null;
-        foreach ($this->rutas as $nombreRuta => $definicion) {
-            if ($nombreRuta === $rutaSolicitada && $definicion['metodo'] === $metodo) {
-                $rutaEncontrada = $definicion;
+        foreach ($this->rutas as $nombreRuta => $definicionRuta) {
+            if ($nombreRuta === $rutaSolicitada && $definicionRuta['metodo'] === $metodo) {
+                $rutaEncontrada = $definicionRuta;
                 break;
             }
         }
         
-        // Verificar si se encontró la ruta
+        // Verificar si se encontró la ruta.
         if (!$rutaEncontrada) {
-            // Si no se encuentra la ruta exacta, intentar renderizar la vista estática 404.
-            $renderer->renderizarVistaDesdeUrl();
+            $renderer->renderizarVistaDesdeUrl();  // Si no se encuentra la ruta exacta, intentar renderizar la vista estática 404.
             return;
         }
 
-        // Usar $rutaEncontrada['destino'] en lugar de $this->rutas[$rutaSolicitada]['destino']
-        $destino = $rutaEncontrada['destino'];
+        $destino = $rutaEncontrada['destino'];  // Puede ser string (vista) o array [Clase::class, 'metodo'] (controlador).
         
         if (is_string($destino)) {            
             $renderer->renderizarVistaDesdeUrl();
@@ -65,15 +58,14 @@ class Router {
             
             $controlador->$metodo();
 
-        } else {
-            // Manejar error de ruta mal configurada
-            $renderer->renderizarVistaDesdeUrl(); 
+        } else {            
+            $renderer->renderizarVistaDesdeUrl();  // Si el destino no es ni string ni array válido, renderiza la vista estática 404.
         }
     }
 
 
     private function obtenerServiceParaControladores(string $claseController) {
-    $mapeoControllerService = [
+        $mapeoControllerService = [
             // Para este Controller, éste Service.
             PersonalController::class => PersonalService::class,
             // Agregar acá otros controladores:

@@ -44,14 +44,14 @@ if (empty($personal)) {
                     <dt class="col-sm-4 text-nowrap">Apellido:</dt>
                     <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getApellido()); ?></dd>
                     
+                    <dt class="col-sm-4 text-nowrap">Fecha de Nacimiento:</dt>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getFechaNacimiento()->format('d/m/Y')); ?></dd>
+
                     <dt class="col-sm-4 text-nowrap">Email:</dt>
                     <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getEmail()); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">Teléfono:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getTelefono()); ?></dd>
-                    
-                    <dt class="col-sm-4 text-nowrap">Fecha de Nacimiento:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getFechaNacimiento()->format('d/m/Y')); ?></dd>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getTelefono()); ?></dd>                    
                     
                     <dt class="col-sm-4 text-nowrap">Sexo:</dt>
                     <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getSexo()->name); ?></dd>

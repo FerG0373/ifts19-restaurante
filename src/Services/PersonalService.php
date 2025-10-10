@@ -28,6 +28,11 @@ class PersonalService {
     }
 
 
+    public function mostrarDetalle(int $id): ?Personal {
+        return $this->personalRepository->obtenerPersonalPorId($id);
+    }
+
+
     public function altaPersonal(array $datos): Personal {
         // VALIDACIONES DE NEGOCIO
         if ($this->personalRepository->existeDni($datos['dni'] ?? '')) {
@@ -69,6 +74,6 @@ class PersonalService {
         $personalGuardado = $this->personalRepository->insertarPersonal($personal);
 
         return $personalGuardado;
-    }    
+    }
 }
 ?>

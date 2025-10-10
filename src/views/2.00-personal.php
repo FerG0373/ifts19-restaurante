@@ -1,6 +1,4 @@
-<?php 
-// Vista de Listado de Personal (2.00-personal.php)
-// Recibe: $titulo (string) y $personal (array de objetos App\Models\Personal)
+<?php
 use App\Models\Personal;
 ?>
 

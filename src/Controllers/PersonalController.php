@@ -49,10 +49,37 @@ class PersonalController {
 
     // POST /personal/detalle
     public function verDetalle(): void {
+        try {
+            // Validar y obtener el ID desde $_POST. Si no es un POST o falta el ID, redirigir a la lista o mostrar un error.
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['id'])) {                
+                // Para simplificar, redirigiremos.
+                header('Location: personal');
+                return;
+            }
+            // El ID viene del campo oculto del formulario de la tabla.
+            $idPersonal = (int)$_POST['id'];
 
+            // Llamar al Service para obtener el objeto Personal completo
+            $personal = $this->personalService->mostrarDetalle($idPersonal);
+            
+            // Verificar si el personal fue encontrado.
+            if (!$personal) {
+                throw new \Exception("El personal con ID {$idPersonal} no fue encontrado.");
+            }
+
+            // Renderizar la vista de detalle con los datos
+            $this->viewRenderer->renderizarVistaConDatos('2.01-personal-detalle', [
+                'personal' => $personal,  // Pasamos el objeto completo.
+                'titulo' => 'Detalle de ' . $personal->getNombre()
+            ]);
+
+        } catch (\Exception $e) {
+            // Manejo de errores (ej: ID no encontrado, error de DB)
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error al Cargar Detalle',
+                'mensaje' => $e->getMessage()
+            ]);
+        }
     }
-
-
-
 }
 ?>
