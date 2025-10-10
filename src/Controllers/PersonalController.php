@@ -70,7 +70,7 @@ class PersonalController {
             // Renderizar la vista de detalle con los datos
             $this->viewRenderer->renderizarVistaConDatos('2.01-personal-detalle', [
                 'personal' => $personal,  // Pasamos el objeto completo.
-                'titulo' => 'Detalle de ' . $personal->getNombre()
+                'titulo' => 'Detalle de ' . $personal->getNombre() . ' ' . $personal->getApellido()
             ]);
 
         } catch (\Exception $e) {
@@ -79,6 +79,7 @@ class PersonalController {
                 'titulo' => 'Error al Cargar Detalle',
                 'mensaje' => $e->getMessage()
             ]);
+            return;
         }
     }
 }

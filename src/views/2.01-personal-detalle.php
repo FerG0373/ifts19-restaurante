@@ -1,17 +1,5 @@
 <?php
-// Vista de Detalle de Personal (2.01-personal-detalle.php)
-// Recibe: $personal (Objeto App\Models\Personal)
 use App\Models\Personal;
-
-/** @var Personal $personal */
-
-if (empty($personal)) {
-    // Si el objeto personal no existe (ej: ID no encontrado), mostramos un error simple.
-    $titulo = 'Personal No Encontrado';
-    $mensaje = 'El registro de personal solicitado no existe o fue eliminado.';
-} else {
-    $titulo = 'Detalle de Personal';
-}
 ?>
 
 <div class="container my-5">
@@ -19,16 +7,17 @@ if (empty($personal)) {
         <h2 class="text-primary"><?php echo htmlspecialchars($titulo); ?></h2>
         
         <a href="personal" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver a la Lista
+            <i class="fas fa-arrow-left"></i> Volver a la lista
         </a>
     </div>
 
-    <?php if (empty($personal)): ?>
+    <?php /** @var Personal $personal */
+    if (empty($personal)): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($mensaje); ?></div>
     <?php else: ?>
-        <div class="card shadow-sm mx-auto" style="max-width: 600px;">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0">Información del Personal</h4>
+        <div class="card shadow-sm mx-auto mt-5" style="max-width: 600px;">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">Información personal</h4>
             </div>
             <div class="card-body">
                 <dl class="row mb-0">
@@ -72,8 +61,6 @@ if (empty($personal)) {
                     </dd>
                 </dl>
             </div>
-            <div class="card-footer text-end">
-                </div>
         </div>
     <?php endif; ?>
 </div>

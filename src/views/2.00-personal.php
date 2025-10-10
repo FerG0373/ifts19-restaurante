@@ -3,8 +3,7 @@ use App\Models\Personal;
 ?>
 
 <div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        
+    <div class="d-flex justify-content-between align-items-center mb-4">        
         <div class="d-flex align-items-center">
             <h2 class="text-primary mb-0 me-3">
                 <?php echo htmlspecialchars($titulo ?? 'Listado'); ?>
