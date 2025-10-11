@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">App Restaurante</a>
+        <a class="navbar-brand fw-bold" href="<?=APP_BASE_URL?>">App Restaurante</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -14,7 +14,7 @@
                     $nombreEnlace = ucfirst($url);
                 ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo $url; ?>">
+                        <a class="nav-link" href="<?php echo APP_BASE_URL, $url; ?>">
                             <?php echo htmlspecialchars($nombreEnlace); ?>
                         </a>
                     </li>

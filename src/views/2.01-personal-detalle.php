@@ -6,7 +6,7 @@ use App\Models\Personal;
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary"><?php echo htmlspecialchars($titulo); ?></h2>
         
-        <a href="personal" class="btn btn-secondary">
+        <a href="<?=APP_BASE_URL?>personal" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver a la lista
         </a>
     </div>
