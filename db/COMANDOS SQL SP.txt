@@ -46,9 +46,10 @@ BEGIN
     FROM
         personal p
 	INNER JOIN
-    usuario u
+		usuario u
 	ON
-    p.id = u.id;
+		p.id = u.id
+	ORDER BY apellido;
 END //
 DELIMITER ;
 

@@ -39,10 +39,9 @@ use App\Models\Personal;
             <table class="table table-striped table-hover shadow-sm">
                 <thead class="table-dark">
                     <tr>
-                        <th class="text-center">ID</th>
+                        <th class="text-center">DNI</th>
                         <th class="text-center">Nombre Completo</th>
                         <th class="text-center">Puesto</th>
-                        <th class="text-center">DNI</th>
                         <th class="text-center">Activo</th>
                         <th class="text-center">Detalle</th>
                     </tr>
@@ -53,12 +52,11 @@ use App\Models\Personal;
                     foreach ($personal as $p): 
                     ?>
                     <tr>
-                        <td class="text-center"><?php echo htmlspecialchars($p->getId()); ?></td>
+                        <td class="text-center"><?php echo htmlspecialchars($p->getDni()); ?></td>
                         <td class="text-center">
                             <?php echo htmlspecialchars($p->getApellido() . ', ' . $p->getNombre()); ?>
                         </td>
                         <td class="text-center"><?php echo htmlspecialchars($p->getPuesto()->name); ?></td>
-                        <td class="text-center"><?php echo htmlspecialchars($p->getDni()); ?></td>
                         <td class="text-center">
                             <?php if ($p->isActivo()): ?>
                                 <span class="badge bg-success">Sí</span>

@@ -403,27 +403,28 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_select_all`()
 BEGIN
     SELECT 
-        p.id, 
-        p.dni, 
-        p.nombre, 
-        p.apellido, 
-        p.fecha_nacimiento, 
-        p.email, 
+        p.id,
+        p.dni,
+        p.nombre,
+        p.apellido,
+        p.fecha_nacimiento,
+        p.email,
         p.telefono,
-        p.sexo, 
-        p.puesto, 
+        p.sexo,
+        p.puesto,
         p.fecha_contratacion,
         
         u.id 'idUsuario',
         u.pass_hash,
         u.perfil_acceso,
-        u.activo 
-    FROM 
+        u.activo
+    FROM
         personal p
-	INNER JOIN 
-    usuario u
-	ON 
-    p.id = u.id;
+	INNER JOIN
+		usuario u
+	ON
+		p.id = u.id
+	ORDER BY apellido;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -445,21 +446,28 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_select_by_id`(
 )
 BEGIN
     SELECT 
-        id, 
-        dni, 
-        nombre, 
-        apellido, 
-        fecha_nacimiento, 
-        email, 
-        telefono, 
-        sexo, 
-        puesto, 
-        fecha_contratacion,
-        activo
+        p.id, 
+        p.dni, 
+        p.nombre, 
+        p.apellido, 
+        p.fecha_nacimiento, 
+        p.email, 
+        p.telefono, 
+        p.sexo, 
+        p.puesto, 
+        p.fecha_contratacion,
+        u.id 'idUsuario',
+        u.pass_hash,
+        u.perfil_acceso,
+        u.activo
     FROM 
-        personal
+        personal p
+	INNER JOIN
+		usuario u
+	ON
+		p.id = u.id    
     WHERE 
-        id = personal_id;
+        p.id = personal_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -476,4 +484,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-08  8:44:06
+-- Dump completed on 2025-10-11  9:47:39
