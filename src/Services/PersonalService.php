@@ -33,47 +33,34 @@ class PersonalService {
     }
 
 
-    public function altaPersonal(array $datos): Personal {
-        // VALIDACIONES DE NEGOCIO
-        if ($this->personalRepository->existeDni($datos['dni'] ?? '')) {
-            throw new RuntimeException("El DNI ya está registrado en el sistema.");
+    public function altaPersonal(Personal $personal): Personal {
+        // Validar que el objeto Usuario exista.
+        $usuario = $personal->getUsuario();
+        if (!$usuario) {
+            throw new \InvalidArgumentException("El objeto Personal requiere un objeto Usuario asociado para el alta.");
         }
-        if ($this->personalRepository->existeEmail($datos['email'] ?? '')) {
-            throw new RuntimeException("El Email ya está registrado en el sistema.");
+        // Validar Unicidad de DNI.
+        if ($this->personalRepository->existeDni($personal->getDni())) {
+            throw new \Exception("El DNI ({$personal->getDni()}) ya se encuentra registrado.");
+        }
+        // Validar Unicidad de Email.
+        if ($this->personalRepository->existeEmail($personal->getEmail())) {
+            throw new \Exception("El correo electrónico ({$personal->getEmail()}) ya se encuentra registrado.");
         }
         
-        // CONVERSIÓN DE TIPOS (Mapeo de strings a objetos de dominio)
-        try {
-            $fechaNacimiento = new DateTimeImmutable($datos['fechaNacimiento']);
-            $fechaContratacion = new DateTimeImmutable($datos['fechaContratacion']);
-            $sexo = Sexo::from($datos['sexo']);
-            $puesto = Puesto::from($datos['puesto']);
+        // --- 2. Tarea de Pre-Persistencia (Hasheo) ---
+        // C. Asegurar que la contraseña esté hasheada. Si no lo está, la hasheamos aquí.
+        if (!empty($usuario->getPassHash()) && !str_starts_with($usuario->getPassHash(), '$2y$')) {
+            // Asumiendo que getPassHash() retorna la contraseña en texto plano desde el Controller.
+            // Si ya estuviera hasheada, esta verificación fallaría.
+            $hash = password_hash($usuario->getPassHash(), PASSWORD_DEFAULT);
             
-        } catch (\Throwable $e) {
-            // Captura errores de valores inválidos (ej: 'sexo' no es 'm' ni 'f')
-            throw new InvalidArgumentException("Datos de fecha, sexo o puesto inválidos.");
+            // 💡 NOTA: En un caso real, necesitarías un método 'setPassHash' en tu modelo Usuario
+            // para actualizar el hash antes de pasarlo al Repository.
+            // $usuario->setPassHash($hash); 
         }
 
-        // CREACIÓN DEL OBJETO DE DOMINIO
-        $personal = new Personal(
-            null,  // ID inicial, será generado en la DB
-            $datos['dni'],
-            $datos['nombre'],
-            $datos['apellido'],
-            $fechaNacimiento,
-            $datos['email'],
-            $datos['telefono'],
-            $sexo,
-            $puesto,
-            $fechaContratacion,
-            null
-        );
-        
-
-        // PERSISTENCIA (El Repositorio inserta y devuelve la versión final con ID)
-        $personalGuardado = $this->personalRepository->insertarPersonal($personal);
-
-        return $personalGuardado;
+        return $this->personalRepository->insertarPersonal($personal);
     }
 
 

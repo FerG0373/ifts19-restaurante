@@ -148,13 +148,13 @@ class PersonalRepository {
             
             $idPersonal = (int)$stmt->fetchColumn();  // CAPTURAR EL ID DEVUELTO POR EL SP
             $stmt->closeCursor();            
-            $personalPersistido = $this->obtenerPersonalPorId($idPersonal);  // RETORNAR EL OBJETO COMPLETO CON EL ID ASIGNADO
+            $nuevoPersonal = $this->obtenerPersonalPorId($idPersonal);  // RETORNAR EL OBJETO COMPLETO CON EL ID ASIGNADO
             
-            if ($personalPersistido === null) {
+            if ($nuevoPersonal === null) {
              throw new \RuntimeException("Registro insertado (ID: {$idPersonal}), pero no se pudo recuperar.");
             }
 
-            return $personalPersistido;
+            return $nuevoPersonal;
             
         } catch (PDOException $e) {
             throw new \Exception("Error al agregar personal: " . $e->getMessage());
