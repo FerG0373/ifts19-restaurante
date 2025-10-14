@@ -119,3 +119,38 @@ BEGIN
     LIMIT 1;
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_personal_insert(
+    -- Parámetros de Personal (los campos no automatizados)
+    IN p_dni VARCHAR(20),
+    IN p_nombre VARCHAR(100),
+    IN p_apellido VARCHAR(100),
+    IN p_email VARCHAR(100),
+    IN p_telefono VARCHAR(20),
+    IN p_fecha_nacimiento DATE,
+    IN p_sexo CHAR(1),
+    IN p_puesto VARCHAR(50),
+    -- Parámetros de Usuario (los campos no automatizados)
+    IN u_perfil_acceso VARCHAR(50),
+    IN u_pass_hash VARCHAR(255)    
+)
+BEGIN
+    START TRANSACTION;
+    -- 1. Insertar en Personal
+    INSERT INTO personal (dni, nombre, apellido, email, telefono, fecha_nacimiento, sexo, puesto, fecha_contratacion)
+    VALUES (p_dni, p_nombre, p_apellido, p_email, p_telefono, p_fecha_nacimiento, p_sexo, p_puesto, CURDATE());
+
+    SET @personal_id = LAST_INSERT_ID();
+
+    -- 2. Insertar en Usuario
+    INSERT INTO usuario (id, perfil_acceso, pass_hash, activo) 
+    VALUES (@personal_id, u_perfil_acceso, u_pass_hash, TRUE);
+
+COMMIT;
+	-- 3. Select para devolver el ID nuevo id generado.
+    SELECT @personal_id 'nuevoId';
+END //
+DELIMITER ;

@@ -13,13 +13,13 @@ class Usuario {
 
     public function __construct(
         int $id,
-        string $passHash, 
         PerfilAcceso $perfilAcceso, 
+        string $passHash, 
         bool $activo = true
     ) {
         $this->id = $id;
-        $this->passHash = $passHash;
         $this->perfilAcceso = $perfilAcceso;
+        $this->passHash = $passHash;
         $this->activo = $activo;
     }
 
@@ -28,7 +28,7 @@ class Usuario {
 
     public function getPassHash(): string { return $this->passHash; }
 
-    public function getPerfil(): PerfilAcceso { return $this->perfilAcceso; }
+    public function getPerfilAcceso(): PerfilAcceso { return $this->perfilAcceso; }
 
     public function isActivo(): bool { return $this->activo; }
 }

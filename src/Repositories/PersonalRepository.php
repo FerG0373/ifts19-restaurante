@@ -38,8 +38,8 @@ class PersonalRepository {
                 // Crear el objeto Usuario asociado.
                 $usuario = new Usuario(
                     (int)$fila['idUsuario'],      
-                    $fila['pass_hash'],            
                     PerfilAcceso::from($fila['perfil_acceso']), 
+                    $fila['pass_hash'],
                     (bool)$fila['activo']
                 );
                 
@@ -87,8 +87,8 @@ class PersonalRepository {
             if (!empty($fila['idUsuario'])) {
                 $usuario = new Usuario(
                     (int)$fila['idUsuario'],
-                    $fila['pass_hash'],
                     PerfilAcceso::from($fila['perfil_acceso']),
+                    $fila['pass_hash'],
                     (bool)$fila['activo']
                 );
             } else {
@@ -117,21 +117,32 @@ class PersonalRepository {
 
     public function insertarPersonal(Personal $personal): Personal {
         $sql = "CALL sp_personal_insert(
-            :dni, :nombre, :apellido, fechaNacimiento, :email, :telefono, :sexo, :puesto, :fechaContratacion
+        :dni, :nombre, :apellido, :email, :telefono, :fecha_nacimiento, :sexo, :puesto,
+        :perfil_acceso, :pass_hash
         )";
 
         try {
             $stmt = $this->db->prepare($sql);
             // MAPEO DE ATRIBUTOS DEL OBJETO A LOS PARÁMETROS DEL STORED PROCEDURE (Persistencia de datos)
-            $stmt->bindValue(':dni', $personal->getDni());
-            $stmt->bindValue(':nombre', $personal->getNombre());
-            $stmt->bindValue(':apellido', $personal->getApellido());
-            $stmt->bindValue(':fechaNacimiento', $personal->getFechaNacimiento()->format('Y-m-d'));
-            $stmt->bindValue(':email', $personal->getEmail());
-            $stmt->bindValue(':telefono', $personal->getTelefono());
-            $stmt->bindValue(':sexo', $personal->getSexo()->value);
-            $stmt->bindValue(':puesto', $personal->getPuesto()->value);
-            $stmt->bindValue(':fechaContratacion', $personal->getFechaContratacion()->format('Y-m-d'));
+            // --- Parámetros de Personal ---
+            $stmt->bindValue(':p_dni', $personal->getDni());
+            $stmt->bindValue(':p_nombre', $personal->getNombre());
+            $stmt->bindValue(':p_apellido', $personal->getApellido());
+            $stmt->bindValue(':p_email', $personal->getEmail());
+            $stmt->bindValue(':p_telefono', $personal->getTelefono());
+            $stmt->bindValue(':p_fecha_nacimiento', $personal->getFechaNacimiento()->format('Y-m-d'));
+            $stmt->bindValue(':p_sexo', $personal->getSexo()->value);
+            $stmt->bindValue(':p_puesto', $personal->getPuesto()->value);
+
+            // --- Parámetros de Usuario ---
+            $usuario = $personal->getUsuario();
+
+            if (!$usuario) {
+                throw new \Exception("Error de persistencia: El objeto Personal debe incluir un objeto Usuario para el alta.");
+            }
+
+            $stmt->bindValue(':perfil_acceso', $usuario->getPerfilAcceso()->value);            
+            $stmt->bindValue(':pass_hash', $usuario->getPassHash());  // La contraseña DEBE estar hasheada antes de llegar hasta acá.
 
             $stmt->execute();
             

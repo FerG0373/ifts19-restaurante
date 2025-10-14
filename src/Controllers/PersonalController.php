@@ -82,5 +82,10 @@ class PersonalController {
             return;
         }
     }
+
+
+    public function altaPersonal(): void {
+        
+    }
 }
 ?>

@@ -75,5 +75,23 @@ class PersonalService {
 
         return $personalGuardado;
     }
+
+
+    // PersonalService.php (El Service llama al Repository)  POSIBLE MÉTODO A IMPLEMENTAR
+    public function crearPersonal(Personal $personal) {
+    
+        // 1. Lógica de Negocio: VALIDAR unicidad usando el Repository
+        if ($this->personalRepository->existeDni($personal->getDni())) {
+            // En un caso real, podrías lanzar una excepción o devolver un error específico
+            throw new \Exception("Ya existe un empleado con el DNI proporcionado.");
+        }
+
+        if ($this->personalRepository->existeEmail($personal->getEmail())) {
+            throw new \Exception("El email ya está registrado por otro empleado.");
+        }
+        
+        // 2. Si las validaciones pasan, llamar al Repository para GUARDAR
+        return $this->personalRepository->insertarPersonal($personal);
+    }
 }
 ?>
