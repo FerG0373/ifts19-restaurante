@@ -117,8 +117,8 @@ class PersonalRepository {
 
     public function insertarPersonal(Personal $personal): Personal {
         $sql = "CALL sp_personal_insert(
-        :dni, :nombre, :apellido, :email, :telefono, :fecha_nacimiento, :sexo, :puesto,
-        :perfil_acceso, :pass_hash
+        :p_dni, :p_nombre, :p_apellido, :p_email, :p_telefono, :p_fecha_nacimiento, :p_sexo, :p_puesto,
+        :u_perfil_acceso, :u_pass_hash
         )";
 
         try {
@@ -141,8 +141,8 @@ class PersonalRepository {
                 throw new \Exception("Error de persistencia: El objeto Personal debe incluir un objeto Usuario para el alta.");
             }
 
-            $stmt->bindValue(':perfil_acceso', $usuario->getPerfilAcceso()->value);            
-            $stmt->bindValue(':pass_hash', $usuario->getPassHash());  // La contraseña DEBE estar hasheada antes de llegar hasta acá.
+            $stmt->bindValue(':u_perfil_acceso', $usuario->getPerfilAcceso()->value);            
+            $stmt->bindValue(':u_pass_hash', $usuario->getPassHash());  // La contraseña DEBE estar hasheada antes de llegar hasta acá.
 
             $stmt->execute();
             

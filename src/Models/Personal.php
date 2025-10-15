@@ -33,7 +33,7 @@ class Personal {
         string $telefono,
         Sexo $sexo,
         Puesto $puesto,
-        DateTimeInterface $fechaContratacion,
+        ?DateTimeInterface $fechaContratacion,
         ?Usuario $usuario
     ) {
         $this->id = $id;

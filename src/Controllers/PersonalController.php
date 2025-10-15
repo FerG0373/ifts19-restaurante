@@ -3,6 +3,9 @@ namespace App\Controllers;
 
 use App\Services\PersonalService;
 use App\Core\ViewRenderer;
+use App\DTOs\PersonalAltaDTO;  // <-- Incluimos el DTO
+use InvalidArgumentException;  // Excepciones del DTO/Mapeo
+use RuntimeException;  // Excepciones del Service/Negocio
 
 
 class PersonalController {
@@ -83,9 +86,47 @@ class PersonalController {
         }
     }
 
+    // POST /personal/alta
+    public function altaPersonal(): void {        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', ['titulo' => 'Alta de Nuevo Personal']);
+            return;
+        }
 
-    public function altaPersonal(): void {
-        
+        $datos = $_POST;  // Capturamos los datos del formulario.
+
+        try {            
+            $altaDTO = PersonalAltaDTO::fromArray($datos);  // Mapeo: crear el DTO y validar campos obligatorios/formato.            
+            $modeloPersonal = $altaDTO->toPersonalModel();  // Conversión: DTO a Modelo de Dominio (Personal).
+            $nuevoPersonal = $this->personalService->agregarPersonal($modeloPersonal);  // Service: Lógica de negocio (hasheo, unicidad) y Persistencia.
+            
+            // Es la forma más limpia de evitar el doble POST (Post/Redirect/Get pattern)
+            header('Location: personal/detalle/' . $nuevoPersonal->getId());  // Éxito: Redirigir a la lista del personal.
+            exit;
+
+        } catch (InvalidArgumentException $e) {            
+            $this->mostrarErrorDeAlta("Error de datos: " . $e->getMessage(), $datos);  // Errores de Formato/Mapeo (vienen del DTO o toPersonalModel).
+            
+        } catch (RuntimeException $e) {            
+            $this->mostrarErrorDeAlta("Error de negocio: " . $e->getMessage(), $datos);  // Errores de Negocio (vienen del Service, ej.: DNI duplicado, Email duplicado).
+            
+        } catch (\Throwable $e) {
+            // Errores Inesperados (ej.: Error de DB en el Repository)
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error de Sistema',
+                'mensaje' => 'No se pudo completar el alta. Intente nuevamente. Detalles: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+    // Método auxiliar para renderizar el formulario de alta con errores y datos precargados.
+    private function mostrarErrorDeAlta(string $mensajeError, array $datosPrecargados): void {
+        $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', [
+            'titulo' => 'Alta de Personal (Error)',
+            'error' => $mensajeError,
+            'datos' => $datosPrecargados  // Pasamos los datos que el usuario ingresó para precargar el formulario.
+        ]);
     }
 }
 ?>

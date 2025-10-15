@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Shared\Enums\PerfilAcceso;
+use InvalidArgumentException;
 
 
 class Usuario {
@@ -12,7 +13,7 @@ class Usuario {
     private bool $activo;
 
     public function __construct(
-        int $id,
+        ?int $id,
         PerfilAcceso $perfilAcceso, 
         string $passHash, 
         bool $activo = true
@@ -31,5 +32,17 @@ class Usuario {
     public function getPerfilAcceso(): PerfilAcceso { return $this->perfilAcceso; }
 
     public function isActivo(): bool { return $this->activo; }
+
+    // SETTERS
+    public function setPassHash(string $passHash): void {
+        if (empty($passHash)) {
+            throw new InvalidArgumentException("El hash de la contraseña no puede ser una cadena vacía.");
+        }
+        $this->passHash = $passHash;
+    }
+
+    public function setActivo(bool $activo): void {
+        $this->activo = $activo;
+    }
 }
 ?>
