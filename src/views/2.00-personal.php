@@ -27,7 +27,7 @@ use App\DTOs\PersonalVistaDTO;
                 </label>
             </div>
         </div>
-        <a href="personal/alta" class="btn btn-success">
+        <a href="personal/formulario" class="btn btn-success">
             <i class="fas fa-plus-circle"></i> Agregar Personal
         </a>
     </div>

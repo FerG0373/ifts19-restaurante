@@ -22,18 +22,19 @@ class PersonalAltaDTO
     public string $puesto;
     public string $perfilAcceso;
     public string $passTextoPlano;
+    private string $passConfirmacion;
     
     
     // Factory Method que construye el DTO a partir del array de datos del formulario ($_POST).
     public static function fromArray(array $datosInput): self {
         // Verificar que los campos críticos existan y no estén vacíos.
-        $camposObligatorios = ['dni', 'nombre', 'apellido', 'fecha_nacimiento', 'sexo', 'puesto', 'perfil_acceso', 'passTextoPlano'];
+        $camposObligatorios = ['dni', 'nombre', 'apellido', 'fecha_nacimiento', 'sexo', 'puesto', 'perfil_acceso', 'pass', 'pass_confirmacion'];
         foreach ($camposObligatorios as $campo) {
             if (empty($datosInput[$campo])) { 
                 throw new InvalidArgumentException("El campo '{$campo}' es obligatorio.");
             }
-
         }
+
         $dto = new self();
         // Mapeo simple de array a propiedades del DTO (usando array access para los campos del formulario)
         $dto->dni = $datosInput['dni'];
@@ -53,7 +54,7 @@ class PersonalAltaDTO
 
     // Convierte el DTO en el Objeto de Domino (Personal y Usuario). Realiza el mapeo de tipos (strings a Enums y DateTimeImmutable).
     public function toPersonalModel(): Personal {
-        // 1. Conversión de Tipos (mapeo a Enums y DateTimeImmutable)
+        // Conversión de Tipos (mapeo a Enums y DateTimeImmutable)
         try {
             $fechaNacimiento = new DateTimeImmutable($this->fechaNacimiento);
             $sexo = Sexo::from($this->sexo);
