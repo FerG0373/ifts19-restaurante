@@ -1,5 +1,5 @@
 <?php
-use App\Models\Personal;
+use App\DTOs\PersonalVistaDTO;
 ?>
 
 <div class="container my-5">
@@ -11,49 +11,43 @@ use App\Models\Personal;
         </a>
     </div>
 
-    <?php /** @var Personal $personal */
+    <?php
+    /** @var PersonalVistaDTO $personal */
     if (empty($personal)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($mensaje); ?></div>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($mensaje ?? 'No se encontró el personal.'); ?></div>
     <?php else: ?>
         <div class="card shadow-sm mx-auto mt-5" style="max-width: 600px;">
             <div class="card-header bg-dark text-white">
-                <h4 class="mb-0">Información personal</h4>
+                <h4 class="mb-0">Información Personal y Laboral</h4>
             </div>
             <div class="card-body">
                 <dl class="row mb-0">
+                    
                     <dt class="col-sm-4 text-nowrap">ID:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getId()); ?></dd>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->id); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">DNI:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getDni()); ?></dd>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->dni); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">Nombre:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getNombre()); ?></dd>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->nombre); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">Apellido:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getApellido()); ?></dd>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->apellido); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">Fecha de Nacimiento:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getFechaNacimiento()->format('d/m/Y')); ?></dd>
-
-                    <dt class="col-sm-4 text-nowrap">Email:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getEmail()); ?></dd>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->fechaNacimiento); ?></dd> <dt class="col-sm-4 text-nowrap">Email:</dt>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->email); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">Teléfono:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getTelefono()); ?></dd>                    
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->telefono); ?></dd>
                     
                     <dt class="col-sm-4 text-nowrap">Sexo:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getSexo()->name); ?></dd>
-                    
-                    <dt class="col-sm-4 text-nowrap">Puesto:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getPuesto()->name); ?></dd>
-                    
-                    <dt class="col-sm-4 text-nowrap">Fecha de Contratación:</dt>
-                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->getFechaContratacion()->format('d/m/Y')); ?></dd>
-                    
-                    <dt class="col-sm-4 text-nowrap">Activo:</dt>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->sexo); ?></dd> <dt class="col-sm-4 text-nowrap">Puesto:</dt>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->puesto); ?></dd> <dt class="col-sm-4 text-nowrap">Fecha de Contratación:</dt>
+                    <dd class="col-sm-8"><?php echo htmlspecialchars($personal->fechaContratacion); ?></dd> <dt class="col-sm-4 text-nowrap">Activo:</dt>
                     <dd class="col-sm-8">
-                        <?php if ($personal->isActivo()): ?>
+                        <?php if ($personal->activo): ?>
                             <span class="text-success fw-bold">Sí</span>
                         <?php else: ?>
                             <span class="text-danger fw-bold">No</span>

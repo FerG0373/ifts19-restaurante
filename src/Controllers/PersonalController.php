@@ -3,9 +3,10 @@ namespace App\Controllers;
 
 use App\Services\PersonalService;
 use App\Core\ViewRenderer;
-use App\DTOs\PersonalAltaDTO;  // <-- Incluimos el DTO
-use InvalidArgumentException;  // Excepciones del DTO/Mapeo
-use RuntimeException;  // Excepciones del Service/Negocio
+use App\DTOs\PersonalVistaDTO;
+use App\DTOs\PersonalAltaDTO;
+use InvalidArgumentException;
+use RuntimeException;
 
 
 class PersonalController {
@@ -20,26 +21,31 @@ class PersonalController {
     // GET /personal
     public function listarPersonal(): void {
         try {
-            // Determinar el filtro a partir del parámetro GET.
-            $filtro = $_GET['filtro'] ?? 'activo';  // Por defecto, solo se ve el personal activo.
+            $filtro = $_GET['filtro'] ?? 'activo';
             $esActivo = ($filtro === 'activo');
             
-            $listaPersonal = [];
-            // Ejecutar lógica de negocio basada en el filtro.
+            $listaPersonalModelos = [];  // Array de objetos Personal.
+            
             if ($esActivo) {
-                $listaPersonal = $this->personalService->listarPersonalActivo();  // Llama al método que lista al personal activo (comportamiento por defecto).
-                $titulo = 'Listado de Personal';                
-            } else {               
-                $listaPersonal = $this->personalService->listarTodoElPersonal();  // Llama al método que lista a TODO el personal (activos e inactivos).
+                $listaPersonalModelos = $this->personalService->listarPersonalActivo();
+                $titulo = 'Listado de Personal';
+            } else {
+                $listaPersonalModelos = $this->personalService->listarTodoElPersonal();
                 $titulo = 'Listado de Personal (Activos e Inactivos)';
             }
+            
+            // Mapeo de Modelo a DTO.
+            $listaDTOs = array_map(function($personalModelo) {
+                return PersonalVistaDTO::fromModel($personalModelo);
+            }, $listaPersonalModelos);
+
             // Renderizar la vista con los datos.
             $this->viewRenderer->renderizarVistaConDatos('2.00-personal', [
-                'personal' => $listaPersonal,
-                'titulo' => $titulo, // Usamos el título dinámico para reflejar el filtro.
+                'personal' => $listaDTOs,
+                'titulo' => $titulo, 
                 'esActivo' => $esActivo,
-                'urlVerActivos' => 'personal',  // URL por defecto, sin parámetros
-                'urlVerTodos' => 'personal?filtro=todos'  // URL con parámetro para ver a todos (incluye inactivos).
+                'urlVerActivos' => 'personal',
+                'urlVerTodos' => 'personal?filtro=todos'
             ]);
 
         } catch (\Exception $e) {
@@ -53,27 +59,28 @@ class PersonalController {
     // POST /personal/detalle
     public function verDetalle(): void {
         try {
-            // Validar y obtener el ID desde $_POST. Si no es un POST o falta el ID, redirigir a la lista o mostrar un error.
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['id'])) {                
-                // Para simplificar, redirigiremos.
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['id'])) { 
                 header('Location: personal');
                 return;
             }
-            // El ID viene del campo oculto del formulario de la tabla.
+            
             $idPersonal = (int)$_POST['id'];
 
-            // Llamar al Service para obtener el objeto Personal completo
-            $personal = $this->personalService->mostrarDetalle($idPersonal);
-            
+            // Llamar al Service para obtener el objeto Personal completo.
+            $personalModelo = $this->personalService->mostrarDetalle($idPersonal);
+
             // Verificar si el personal fue encontrado.
-            if (!$personal) {
+            if (!$personalModelo) {
                 throw new \Exception("El personal con ID {$idPersonal} no fue encontrado.");
             }
 
-            // Renderizar la vista de detalle con los datos
+            // Mapeo de Modelo a DTO.
+            $personalDTO = PersonalVistaDTO::fromModel($personalModelo);
+
+            // Renderizar la vista de detalle con los datos.
             $this->viewRenderer->renderizarVistaConDatos('2.01-personal-detalle', [
-                'personal' => $personal,  // Pasamos el objeto completo.
-                'titulo' => 'Detalle de ' . $personal->getNombre() . ' ' . $personal->getApellido()
+                'personal' => $personalDTO,
+                'titulo' => 'Detalle de ' . $personalDTO->apellido . ', ' . $personalDTO->nombre
             ]);
 
         } catch (\Exception $e) {
@@ -82,6 +89,7 @@ class PersonalController {
                 'titulo' => 'Error al Cargar Detalle',
                 'mensaje' => $e->getMessage()
             ]);
+
             return;
         }
     }
@@ -118,7 +126,6 @@ class PersonalController {
             ]);
         }
     }
-
 
     // Método auxiliar para renderizar el formulario de alta con errores y datos precargados.
     private function mostrarErrorDeAlta(string $mensajeError, array $datosPrecargados): void {
