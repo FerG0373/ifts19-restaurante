@@ -54,7 +54,7 @@ class PersonalRepository {
                     $fila['telefono'],
                     Sexo::from($fila['sexo']),
                     Puesto::from($fila['puesto']),
-                    new DateTimeImmutable($fila['fecha_contratacion']),
+                    !empty($fila['fecha_contratacion']) ? new DateTimeImmutable($fila['fecha_contratacion']) : null,
                     $usuario
                 );
             }
@@ -106,7 +106,7 @@ class PersonalRepository {
                 $fila['telefono'],
                 Sexo::from($fila['sexo']),  // CONVIERTE STRING A ENUM
                 Puesto::from($fila['puesto']),  // CONVIERTE STRING A ENUM
-                new DateTimeImmutable($fila['fecha_contratacion']),  // CONVIERTE STRING A DateTimeImmutable
+                !empty($fila['fecha_contratacion']) ? new DateTimeImmutable($fila['fecha_contratacion']) : null,  // CONVIERTE STRING A DateTimeImmutable
                 $usuario
             );
         } catch (PDOException $e) {

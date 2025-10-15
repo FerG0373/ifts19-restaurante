@@ -1,12 +1,11 @@
 <?php
-// Usamos APP_BASE_URL para construir la URL de acción si es necesario
 // Asumimos que los datos y el error vienen del controlador en caso de fallo.
 $datos = $datos ?? []; // Inicializamos $datos si no existen (primer acceso)
 $error = $error ?? null; // Inicializamos $error si no existe
 
 // Función auxiliar para obtener el valor precargado del array $datos
-function get_value(array $data, string $key): string {
-    return htmlspecialchars($data[$key] ?? '');
+function get_value(array $datos, string $clave): string {
+    return htmlspecialchars($datos[$clave] ?? '');
 }
 ?>
 
@@ -24,7 +23,7 @@ function get_value(array $data, string $key): string {
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="personal/formulario/alta" class="p-4 border rounded shadow-sm">
+    <form method="POST" action="<?= APP_BASE_URL ?>personal/formulario/alta" class="p-4 border rounded shadow-sm">
         
         <h5 class="text-secondary mb-3">Datos Personales</h5>        
         <div class="row g-3 mb-4">
@@ -75,10 +74,12 @@ function get_value(array $data, string $key): string {
                     <option value="">Seleccione...</option>
                     <?php 
                         $sexoSeleccionado = get_value($datos, 'sexo');
-                        $sexosDisponibles = ['M', 'F', 'X'];
-                        foreach ($sexosDisponibles as $s): 
+                        $sexosDisponibles = ['m' => 'MASCULINO', 'f' => 'FEMENINO', 'x' => 'X'];
+                        foreach ($sexosDisponibles as $valorDB => $etiqueta): 
                     ?>
-                        <option value="<?= $s ?>" <?= ($s == $sexoSeleccionado) ? 'selected' : '' ?>> <?= $s ?> </option>
+                        <option value="<?= $valorDB ?>" <?= ($valorDB == $sexoSeleccionado) ? 'selected' : '' ?>>
+                            <?= $etiqueta ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -95,11 +96,11 @@ function get_value(array $data, string $key): string {
                 <input type="password" class="form-control" id="pass_confirmacion" name="pass_confirmacion" required>
             </div>
             <div class="col-md-6">
-                <label for="perfilAcceso" class="form-label">Perfil de Acceso</label>
-                <select class="form-select" id="perfilAcceso" name="perfilAcceso" required>
+                <label for="perfil_acceso" class="form-label">Perfil de Acceso</label>
+                <select class="form-select" id="perfil_acceso" name="perfil_acceso" required>
                     <option value="">Seleccione...</option>
                     <?php 
-                        $perfilSeleccionado = get_value($datos, 'perfilAcceso');
+                        $perfilSeleccionado = get_value($datos, 'perfil_acceso');
                         $perfilesDisponibles = ['ENCARGADO', 'MOZO'];
                         foreach ($perfilesDisponibles as $p): 
                     ?>

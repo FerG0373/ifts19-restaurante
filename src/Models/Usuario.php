@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 class Usuario {
     // ATRIBUTOS
-    private int $id;
+    private ?int $id;
     private PerfilAcceso $perfilAcceso;
     private string $passHash;
     private bool $activo;

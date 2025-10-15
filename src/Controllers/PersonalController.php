@@ -94,22 +94,16 @@ class PersonalController {
         }
     }
 
-    // POST /personal/alta
+    // POST /personal/formulario/alta
     public function altaPersonal(): void {        
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', ['titulo' => 'Alta de Nuevo Personal']);
-            return;
-        }
-
         $datos = $_POST;  // Capturamos los datos del formulario.
 
         try {            
             $altaDTO = PersonalAltaDTO::fromArray($datos);  // Mapeo: crear el DTO y validar campos obligatorios/formato.            
             $modeloPersonal = $altaDTO->toPersonalModel();  // Conversión: DTO a Modelo de Dominio (Personal).
             $nuevoPersonal = $this->personalService->agregarPersonal($modeloPersonal);  // Service: Lógica de negocio (hasheo, unicidad) y Persistencia.
-            
-            // Es la forma más limpia de evitar el doble POST (Post/Redirect/Get pattern)
-            header('Location: personal/detalle/' . $nuevoPersonal->getId());  // Éxito: Redirigir a la lista del personal.
+           
+            header('Location: ' . APP_BASE_URL . 'personal');  // Éxito: Redirigir a la lista del personal.
             exit;
 
         } catch (InvalidArgumentException $e) {            
@@ -125,6 +119,11 @@ class PersonalController {
                 'mensaje' => 'No se pudo completar el alta. Intente nuevamente. Detalles: ' . $e->getMessage()
             ]);
         }
+    }
+
+
+    public function mostrarFormulario(): void {
+        $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', ['titulo' => 'Alta de Nuevo Personal']);
     }
 
     // Método auxiliar para renderizar el formulario de alta con errores y datos precargados.

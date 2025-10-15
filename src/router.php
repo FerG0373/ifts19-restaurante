@@ -18,7 +18,7 @@ $enrutador->agregarRuta('lista-personal', '2.01-personal-lista.php', false);
 $enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'], true);  // Listado de personal (GET).
 $enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDetalle'], false, 'POST');  // Detalle de personal (POST).
 
-$enrutador->agregarRuta('personal/formulario', [PersonalController::class, 'altaPersonal'], false, 'GET');  // GET para mostrar el formulario.
+$enrutador->agregarRuta('personal/formulario', [PersonalController::class, 'mostrarFormulario'], false, 'GET');  // GET para mostrar el formulario.
 $enrutador->agregarRuta('personal/formulario/alta', [PersonalController::class, 'altaPersonal'], false, 'POST');  // POST para procesar el envío de datos.
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
