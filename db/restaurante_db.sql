@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `restaurante_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `restaurante_db`;
--- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: restaurante_db
+-- Host: localhost    Database: restaurante_db
 -- ------------------------------------------------------
--- Server version	8.0.40
+-- Server version	9.4.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -60,7 +60,7 @@ CREATE TABLE `detalle_pedido` (
   `producto_id` int NOT NULL,
   `cantidad` int NOT NULL,
   `precio_unitario` decimal(10,2) NOT NULL,
-  `instrucciones_preparacion` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `instrucciones_preparacion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk__detalle_pedido__pedido_id` (`pedido_id`),
   KEY `fk__detalle_pedido__producto_id` (`producto_id`),
@@ -92,8 +92,8 @@ CREATE TABLE `factura` (
   `subtotal` decimal(10,2) NOT NULL,
   `impuestos` decimal(10,2) NOT NULL DEFAULT '0.00',
   `total` decimal(10,2) NOT NULL,
-  `metodo_pago` enum('efectivo','tarjeta_debito','tarjeta_credito','transferencia','mercado_pago') COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `estado` enum('pendiente','pagada','cancelada') COLLATE utf8mb4_unicode_520_ci DEFAULT 'pendiente',
+  `metodo_pago` enum('efectivo','tarjeta_debito','tarjeta_credito','transferencia','mercado_pago') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `estado` enum('pendiente','pagada','cancelada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT 'pendiente',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_factura_pedido_id` (`pedido_id`),
   CONSTRAINT `fk__factura__pedido_id` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE CASCADE
@@ -118,10 +118,10 @@ DROP TABLE IF EXISTS `mesa`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mesa` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `numero_mesa` varchar(20) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `numero_mesa` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `capacidad` int NOT NULL,
-  `ubicacion` enum('salon','barra','exterior') COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `estado_mesa` enum('libre','ocupada','reservada','inhabilitada') COLLATE utf8mb4_unicode_520_ci DEFAULT 'libre',
+  `ubicacion` enum('salon','barra','exterior') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `estado_mesa` enum('libre','ocupada','reservada','inhabilitada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT 'libre',
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__mesa__numero_mesa` (`numero_mesa`)
@@ -149,10 +149,10 @@ CREATE TABLE `pedido` (
   `mesa_id` int NOT NULL,
   `personal_id` int NOT NULL,
   `fecha_hora` datetime DEFAULT CURRENT_TIMESTAMP,
-  `tipo_pedido` enum('mesa','domicilio','llevar') COLLATE utf8mb4_unicode_520_ci DEFAULT 'mesa',
-  `estado_pedido` enum('pendiente','preparacion','listo','entregado','cancelado') COLLATE utf8mb4_unicode_520_ci DEFAULT 'pendiente',
+  `tipo_pedido` enum('mesa','domicilio','llevar') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT 'mesa',
+  `estado_pedido` enum('pendiente','preparacion','listo','entregado','cancelado') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT 'pendiente',
   `total` decimal(10,2) DEFAULT '0.00',
-  `observaciones` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `creacion_registro` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk__pedido__mesa_id` (`mesa_id`),
@@ -180,19 +180,19 @@ DROP TABLE IF EXISTS `personal`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `personal` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `dni` varchar(20) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `nombre` varchar(100) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `apellido` varchar(100) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `telefono` varchar(20) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `dni` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `apellido` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `telefono` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
-  `sexo` enum('m','f','x') COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `puesto` enum('encargado','cocinero','mozo','cajero','bartender') COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `sexo` enum('m','f','x') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `puesto` enum('encargado','cocinero','mozo','cajero','bartender') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `fecha_contratacion` date NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__personal__dni` (`dni`),
   UNIQUE KEY `uq__personal__email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,7 +201,7 @@ CREATE TABLE `personal` (
 
 LOCK TABLES `personal` WRITE;
 /*!40000 ALTER TABLE `personal` DISABLE KEYS */;
-INSERT INTO `personal` VALUES (1,'40123456','Carlos','Sánchez','sanchez.carlos@gmail.com','1123236921','1990-01-01','m','encargado','2023-10-06'),(2,'42664123','Julio','Castro','castro.julio@gmail.com','1152448712','1996-03-09','m','mozo','2023-10-08');
+INSERT INTO `personal` VALUES (1,'40123456','Carlos','Sánchez','sanchez.carlos@gmail.com','1123236921','1990-01-01','m','encargado','2023-10-06'),(2,'42664123','Julio','Castro','castro.julio@gmail.com','1152448712','1996-03-09','m','mozo','2023-10-08'),(3,'3811238987','Jose','Conti','jose.conti@gmail.com','1123903112','1994-10-19','m','cocinero','2025-10-15'),(4,'3712332341','Carla','Sanchez','carla.sanchez@gmail.com','1141415341','1993-06-15','f','bartender','2025-10-15'),(5,'34123321','Santiago','Castro','casto.s@gmial.com','1143519098','1989-02-20','m','cocinero','2025-10-15'),(6,'41223456','Luca','Iglesias','inglesias.luca@gmail.com','1123335141','2001-09-06','m','cajero','2025-10-15'),(7,'29123008','Jorge','Casto','castro.jorge@gmail.com','1123412315','1979-10-25','m','cocinero','2025-10-15'),(8,'36123455','Julia','Santoro','santoro.julia@gmail.com','1154679890','1987-09-04','m','bartender','2025-10-15');
 /*!40000 ALTER TABLE `personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -214,11 +214,11 @@ DROP TABLE IF EXISTS `producto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `producto` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `descripcion` varchar(255) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `precio` decimal(10,2) NOT NULL,
   `cantidad_stock` int NOT NULL,
-  `categoria` enum('entrada','principal','guarnicion','bebida','postre') COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `categoria` enum('entrada','principal','guarnicion','bebida','postre') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__producto__nombre` (`nombre`)
@@ -244,11 +244,11 @@ DROP TABLE IF EXISTS `reserva`;
 CREATE TABLE `reserva` (
   `id` int NOT NULL AUTO_INCREMENT,
   `mesa_id` int DEFAULT NULL,
-  `nombre_cliente` varchar(100) COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `telefono_cliente` varchar(20) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `nombre_cliente` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `telefono_cliente` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `fecha_reserva` datetime NOT NULL,
   `cantidad_personas` int NOT NULL,
-  `estado_reserva` enum('confirmada','finalizada','cancelada') COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'confirmada',
+  `estado_reserva` enum('confirmada','finalizada','cancelada') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'confirmada',
   PRIMARY KEY (`id`),
   KEY `fk__reserva__mesa__id` (`mesa_id`),
   CONSTRAINT `fk__reserva__mesa__id` FOREIGN KEY (`mesa_id`) REFERENCES `mesa` (`id`) ON DELETE SET NULL
@@ -273,8 +273,8 @@ DROP TABLE IF EXISTS `usuario`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario` (
   `id` int NOT NULL,
-  `perfil_acceso` enum('admin','encargado','mozo') COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `pass_hash` varchar(255) COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `perfil_acceso` enum('admin','encargado','mozo') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `pass_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   CONSTRAINT `fk__usuario__id__personal__id` FOREIGN KEY (`id`) REFERENCES `personal` (`id`) ON DELETE CASCADE
@@ -287,7 +287,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'encargado','1234',1),(2,'mozo','1234',0);
+INSERT INTO `usuario` VALUES (1,'encargado','1234',1),(2,'mozo','1234',0),(3,'mozo','$2y$10$XJhwH93erj8RwgVdG.mfPO5CXtJ/IR/LUfnu9m1vFUNnP2yatuhpe',1),(4,'mozo','$2y$10$FFIndJVrSdpFyc6Injqktecnkhd1pAN0ywNtDDsSL5sdTsloVMqj2',1),(5,'mozo','$2y$10$wxJo6zwkS989DHqsyOiygeGu/JMvRkbCNTfrs64RQo98vCIN2ei2C',1),(6,'mozo','$2y$10$C8ADL2EX21Zk8wactPVlseVXIAuuhTV8xf1nfSusA98FWwWRUjKOe',1),(7,'mozo','$2y$10$/vFBdNaLzdPm45RSHOXFS.6hhlVCdYFAB4dzZB9v1hjj1ywrvZxWa',1),(8,'mozo','$2y$10$XHmzYvrE7Ztx6eva5EfvkOneb6/fAIUd9RXXiZK9u2CnTUqSdvRQK',1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,6 +342,51 @@ BEGIN
     WHERE 
         email = personal_email
     LIMIT 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_personal_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_insert`(
+    -- Parámetros de Personal (los campos no automatizados)
+    IN p_dni VARCHAR(20),
+    IN p_nombre VARCHAR(100),
+    IN p_apellido VARCHAR(100),
+    IN p_email VARCHAR(100),
+    IN p_telefono VARCHAR(20),
+    IN p_fecha_nacimiento DATE,
+    IN p_sexo CHAR(1),
+    IN p_puesto VARCHAR(50),
+    -- Parámetros de Usuario (los campos no automatizados)
+    IN u_perfil_acceso VARCHAR(50),
+    IN u_pass_hash VARCHAR(255)    
+)
+BEGIN
+    START TRANSACTION;
+    -- 1. Insertar en Personal
+    INSERT INTO personal (dni, nombre, apellido, email, telefono, fecha_nacimiento, sexo, puesto, fecha_contratacion)
+    VALUES (p_dni, p_nombre, p_apellido, p_email, p_telefono, p_fecha_nacimiento, p_sexo, p_puesto, CURDATE());
+
+    SET @personal_id = LAST_INSERT_ID();
+
+    -- 2. Insertar en Usuario
+    INSERT INTO usuario (id, perfil_acceso, pass_hash, activo) 
+    VALUES (@personal_id, u_perfil_acceso, u_pass_hash, TRUE);
+
+COMMIT;
+	-- 3. Select para devolver el ID nuevo id generado.
+    SELECT @personal_id 'nuevoId';
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -484,4 +529,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-11  9:47:39
+-- Dump completed on 2025-10-15 22:16:43

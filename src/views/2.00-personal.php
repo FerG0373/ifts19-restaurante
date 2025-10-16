@@ -33,7 +33,7 @@ use App\DTOs\PersonalVistaDTO;
     </div>
 
     <?php if (!empty($exito)): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show autoclose-alert" role="alert">
             <i class="fas fa-check-circle"></i> Alta Exitosa: <?php echo htmlspecialchars($exito); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

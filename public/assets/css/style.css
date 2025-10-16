@@ -1,0 +1,7 @@
+/* MENSAJE DE ÉXITO */
+.autoclose-alert {
+    animation: fadeOut 1s ease-out 4s forwards;
+}
+@keyframes fadeOut {
+    to { opacity: 0; display: none; }
+}
