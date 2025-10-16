@@ -20,6 +20,11 @@ class PersonalController {
 
     // GET /personal
     public function listarPersonal(): void {
+        $exito = $_SESSION['msj_exito'] ?? null;
+        if (isset($_SESSION['msj_exito'])) {
+            unset($_SESSION['msj_exito']);
+        }
+
         try {
             $filtro = $_GET['filtro'] ?? 'activo';
             $esActivo = ($filtro === 'activo');
@@ -45,7 +50,8 @@ class PersonalController {
                 'titulo' => $titulo, 
                 'esActivo' => $esActivo,
                 'urlVerActivos' => 'personal',
-                'urlVerTodos' => 'personal?filtro=todos'
+                'urlVerTodos' => 'personal?filtro=todos',
+                'exito' => $exito
             ]);
 
         } catch (\Exception $e) {
@@ -103,6 +109,7 @@ class PersonalController {
             $modeloPersonal = $altaDTO->toPersonalModel();  // Conversión: DTO a Modelo de Dominio (Personal).
             $nuevoPersonal = $this->personalService->agregarPersonal($modeloPersonal);  // Service: Lógica de negocio (hasheo, unicidad) y Persistencia.
            
+            $_SESSION['msj_exito'] = "El nuevo personal ha sido registrado exitosamente.";
             header('Location: ' . APP_BASE_URL . 'personal');  // Éxito: Redirigir a la lista del personal.
             exit;
 

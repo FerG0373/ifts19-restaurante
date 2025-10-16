@@ -36,11 +36,11 @@ class PersonalAltaDTO
         }
 
         if ($datosInput['pass'] !== $datosInput['pass_confirmacion']) {
-            throw new InvalidArgumentException("La Contraseña y la Confirmación no coinciden.");
+            throw new InvalidArgumentException("La contraseña y la confirmación no coinciden.");
         }
 
         $dto = new self();
-        // Mapeo simple de array a propiedades del DTO (usando array access para los campos del formulario)
+        // Mapeo de array a propiedades del DTO (usando array access para los campos del formulario)
         $dto->dni = $datosInput['dni'];
         $dto->nombre = $datosInput['nombre'];
         $dto->apellido = $datosInput['apellido'];
@@ -73,7 +73,7 @@ class PersonalAltaDTO
 
         // Creación del Objeto Usuario
         $usuario = new Usuario(
-            null, // null al inicio
+            null,  // null al inicio
             $perfilAcceso, 
             $this->passTextoPlano,
             true
@@ -90,7 +90,7 @@ class PersonalAltaDTO
             $this->telefono,
             $sexo,
             $puesto,
-            null, // Fecha Contratación: null, se asigna en la DB y se recupera en el Repository
+            null,  // Fecha Contratación: null, se asigna en la DB y se recupera en el Repository.
             $usuario
         );
 

@@ -58,7 +58,7 @@ function get_value(array $datos, string $clave): string {
             <div class="col-md-6">
                 <label for="puesto" class="form-label">Puesto</label>
                 <select class="form-select" id="puesto" name="puesto" required>
-                    <option value="">Seleccione...</option>
+                    <option value="">-- Seleccionar --</option>
                     <?php
                         $puestoSeleccionado = get_value($datos, 'puesto');
                         $puestosDisponibles = ['ENCARGADO', 'COCINERO', 'MOZO', 'CAJERO', 'BARTENDER'];
@@ -71,7 +71,7 @@ function get_value(array $datos, string $clave): string {
              <div class="col-md-6">
                 <label for="sexo" class="form-label">Sexo</label>
                 <select class="form-select" id="sexo" name="sexo" required>
-                    <option value="">Seleccione...</option>
+                    <option value="">-- Seleccionar --</option>
                     <?php 
                         $sexoSeleccionado = get_value($datos, 'sexo');
                         $sexosDisponibles = ['m' => 'MASCULINO', 'f' => 'FEMENINO', 'x' => 'X'];
@@ -98,7 +98,7 @@ function get_value(array $datos, string $clave): string {
             <div class="col-md-6">
                 <label for="perfil_acceso" class="form-label">Perfil de Acceso</label>
                 <select class="form-select" id="perfil_acceso" name="perfil_acceso" required>
-                    <option value="">Seleccione...</option>
+                    <option value="">-- Seleccionar --</option>
                     <?php 
                         $perfilSeleccionado = get_value($datos, 'perfil_acceso');
                         $perfilesDisponibles = ['ENCARGADO', 'MOZO'];
@@ -110,7 +110,7 @@ function get_value(array $datos, string $clave): string {
             </div>
         </div>
 
-        <button type="submit" class="btn btn-success mt-3">
+        <button type="submit" class="btn btn-primary mt-3">
             <i class="fas fa-save"></i> Guardar Personal
         </button>
     </form>

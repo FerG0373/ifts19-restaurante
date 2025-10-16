@@ -27,10 +27,17 @@ use App\DTOs\PersonalVistaDTO;
                 </label>
             </div>
         </div>
-        <a href="personal/formulario" class="btn btn-success">
+        <a href="personal/formulario" class="btn btn-primary">
             <i class="fas fa-plus-circle"></i> Agregar Personal
         </a>
     </div>
+
+    <?php if (!empty($exito)): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> Alta Exitosa: <?php echo htmlspecialchars($exito); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <?php if (empty($personal)): ?>
         <div class="alert alert-info">No hay personal registrado en el sistema.</div>

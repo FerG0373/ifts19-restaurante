@@ -14,12 +14,12 @@ class Personal {
     private string $dni;  // UQ
     private string $nombre;
     private string $apellido;
-    private DateTimeImmutable  $fechaNacimiento;
+    private ?DateTimeImmutable  $fechaNacimiento;
     private string $email;  // UQ
     private string $telefono;
     private Sexo $sexo;
     private Puesto $puesto;
-    private DateTimeImmutable $fechaContratacion;
+    private ?DateTimeImmutable $fechaContratacion;
     private ?Usuario $usuario; // Relación 1 a 1 con Usuario. Puede ser null si el empleado no tiene usuario.
 
     // CONSTRUCTOR
@@ -28,7 +28,7 @@ class Personal {
         string $dni,
         string $nombre,
         string $apellido,
-        DateTimeInterface $fechaNacimiento,
+        ?DateTimeInterface $fechaNacimiento,
         string $email,
         string $telefono,
         Sexo $sexo,
@@ -40,12 +40,12 @@ class Personal {
         $this->dni = $dni;
         $this->nombre = $nombre;
         $this->apellido = $apellido;
-        $this->fechaNacimiento = $fechaNacimiento instanceof DateTimeImmutable ? $fechaNacimiento : new DateTimeImmutable($fechaNacimiento->format('Y-m-d'));
+        $this->fechaNacimiento = new DateTimeImmutable($fechaNacimiento->format('Y-m-d'));
         $this->email = $email;
         $this->telefono = $telefono;
         $this->sexo = $sexo;
         $this->puesto = $puesto;
-        $this->fechaContratacion = $fechaContratacion instanceof DateTimeImmutable ? $fechaContratacion : new DateTimeImmutable($fechaContratacion->format('Y-m-d'));
+        $this->fechaContratacion = $fechaContratacion ? new DateTimeImmutable($fechaContratacion->format('Y-m-d')) : null;
         $this->usuario = $usuario;
     }
 
