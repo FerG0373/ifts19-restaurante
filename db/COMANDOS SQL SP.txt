@@ -154,3 +154,55 @@ COMMIT;
     SELECT @personal_id 'nuevoId';
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_personal_update(
+    IN p_id INT,
+    IN p_dni VARCHAR(20), 
+    IN p_nombre VARCHAR(100),
+    IN p_apellido VARCHAR(100),
+    IN p_email VARCHAR(100),
+    IN p_telefono VARCHAR(20),
+    IN p_fecha_nacimiento DATE,
+    IN p_sexo CHAR(1),
+    IN p_puesto VARCHAR(50),
+    
+    IN u_id INT,
+    IN u_perfil_acceso VARCHAR(50),
+    IN u_activo TINYINT(1)
+)
+BEGIN
+    -- Definine un manejador para cualquier error SQL.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Deshacer si algo falló.
+        ROLLBACK;
+        -- Re-lanzar la excepción para que el PDO de PHP la capture.
+        RESIGNAL;
+    END;
+    START TRANSACTION;
+    -- Actualiza la tabla Personal.
+    UPDATE personal
+    SET
+        nombre = p_nombre,
+        apellido = p_apellido,
+        email = p_email,
+        telefono = p_telefono,
+        fecha_nacimiento = p_fecha_nacimiento,
+        sexo = p_sexo,
+        puesto = p_puesto
+    WHERE 
+        id = p_id;        
+    -- Actualizar la tabla Usuario.
+    UPDATE usuario
+    SET
+        perfil_acceso = u_perfil_acceso,
+        activo = u_activo
+    WHERE 
+        id = u_id;
+    -- Si todo es correcto, confirmar la transacción.
+    COMMIT;
+END //
+DELIMITER ;

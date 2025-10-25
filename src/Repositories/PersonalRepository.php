@@ -179,5 +179,44 @@ class PersonalRepository {
         return (bool)$stmt->fetchColumn();
     }
 
+    public function update(Personal $personal): void {
+        $sql = "CALL sp_personal_update(
+            :p_id, :p_dni, :p_nombre, :p_apellido, :p_email, :p_telefono, :p_fecha_nacimiento, :p_sexo, :p_puesto,
+            :u_id, :u_perfil_acceso, :u_pass_hash, :u_activo
+        )";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            // MAPEO DE ATRIBUTOS DEL OBJETO A LOS PARÁMETROS DEL STORED PROCEDURE (Persistencia de datos)
+            // --- Parámetros de Personal ---
+            $stmt->bindValue(':p_id', $personal->getId(), PDO::PARAM_INT);
+            $stmt->bindValue(':p_dni', $personal->getDni());
+            $stmt->bindValue(':p_nombre', $personal->getNombre());
+            $stmt->bindValue(':p_apellido', $personal->getApellido());
+            $stmt->bindValue(':p_email', $personal->getEmail());
+            $stmt->bindValue(':p_telefono', $personal->getTelefono());
+            $stmt->bindValue(':p_fecha_nacimiento', $personal->getFechaNacimiento()->format('Y-m-d'));
+            $stmt->bindValue(':p_sexo', $personal->getSexo()->value);
+            $stmt->bindValue(':p_puesto', $personal->getPuesto()->value);
+
+            // --- Parámetros de Usuario ---
+            $usuario = $personal->getUsuario();
+
+            if (!$usuario) {
+                throw new \Exception("Error de persistencia: El objeto Personal debe incluir un objeto Usuario para la actualización.");
+            }
+
+            $stmt->bindValue(':u_id', $usuario->getId(), PDO::PARAM_INT);            
+            $stmt->bindValue(':u_perfil_acceso', $usuario->getPerfilAcceso()->value);
+            $stmt->bindValue(':u_activo', $usuario->isActivo(), PDO::PARAM_BOOL);
+
+            $stmt->execute();            
+            $stmt->closeCursor();            
+            
+        } catch (PDOException $e) {
+            throw new \Exception("Error al actualizar personal con ID {$personal->getId()}: " . $e->getMessage());
+        }
+    }
+
 }
 ?>

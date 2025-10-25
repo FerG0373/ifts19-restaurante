@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Personal;
+use App\Models\Usuario;
 use App\Repositories\PersonalRepository;
 use InvalidArgumentException;
 use RuntimeException;
@@ -57,6 +58,51 @@ class PersonalService {
         $usuario->setPassHash($passHash);  // Actualizamos el objeto Usuario con el HASH.
              
         return $this->personalRepository->insertarPersonal($personal);  // Persistencia: el Repository ahora insertará el HASH en vez de texto plano.
+    }
+
+
+    public function actualizarPersonal(Personal $personalActualizado): void {    
+        // Obteniene los datos actuales (antiguos) de la DB. Usamos obtenerPersonalPorId para cargar el objeto completo, incluyendo el Usuario.
+        $personalAntiguo = $this->personalRepository->obtenerPersonalPorId($personalActualizado->getId());
+
+        if (!$personalAntiguo) {
+            throw new RuntimeException("No se pudo encontrar al personal con ID {$personalActualizado->getId()} para actualizar.");
+        }
+        
+        $usuarioAntiguo = $personalAntiguo->getUsuario();
+        $usuarioActualizado = $personalActualizado->getUsuario();
+
+        // Verifica que el Email no esté duplicado (si se cambió).
+        if ($personalActualizado->getEmail() !== $personalAntiguo->getEmail()) {
+            if ($this->personalRepository->existeEmail($personalActualizado->getEmail())) {
+                throw new RuntimeException("El Email '{$personalActualizado->getEmail()}' ya está registrado en el sistema.");
+            }
+        }
+        // FUSIONAR DATOS DE USUARIO: Usamos los valores antiguos para Contraseña e ID del Usuario.
+        $usuarioFusionado = new Usuario(
+            $usuarioAntiguo->getId(),
+            $usuarioActualizado->getPerfilAcceso(),
+            $usuarioAntiguo->getPassHash(),
+            $usuarioActualizado->isActivo()
+        );
+
+        // FUSIONAR DATOS DE PERSONAL: Usamos la Fecha de Contratación antigua.
+        $personalFusionado = new Personal(
+            $personalActualizado->getId(),
+            $personalActualizado->getDni(),
+            $personalActualizado->getNombre(),
+            $personalActualizado->getApellido(),
+            $personalActualizado->getFechaNacimiento(),
+            $personalActualizado->getEmail(),
+            $personalActualizado->getTelefono(),
+            $personalActualizado->getSexo(),
+            $personalActualizado->getPuesto(),
+            $personalAntiguo->getFechaContratacion(),
+            $usuarioFusionado
+        );
+
+        // Persistencia: Enviar el objeto fusionado al Repository para la actualización.
+        $this->personalRepository->update($personalFusionado);
     }
 }
 ?>

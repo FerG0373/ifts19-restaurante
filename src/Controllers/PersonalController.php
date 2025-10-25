@@ -5,6 +5,8 @@ use App\Services\PersonalService;
 use App\Core\ViewRenderer;
 use App\DTOs\PersonalVistaDTO;
 use App\DTOs\PersonalAltaDTO;
+use App\DTOs\PersonalEdicionDTO;
+use App\Mappers\PersonalMapper;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -138,7 +140,88 @@ class PersonalController {
         $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', [
             'titulo' => 'Alta de Personal (Error)',
             'error' => $mensajeError,
-            'datos' => $datosPrecargados  // Pasamos los datos que el usuario ingresó para precargar el formulario.
+            'datos' => $datosPrecargados,  // Pasamos los datos que el usuario ingresó para precargar el formulario.
+            'esEdicion' => false
+        ]);
+    }
+
+    public function cargarFormularioEdicion(): void {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['id'])) { 
+                header('Location: personal');  // Redirigir si no es POST o no hay ID.
+                return;
+            }
+            
+            $idPersonal = (int)$_POST['id'];
+
+            // Obtener el Personal de la DB (usando el Service).
+            $personalModelo = $this->personalService->mostrarDetalle($idPersonal);
+
+            // Verificar si el personal fue encontrado.
+            if (!$personalModelo) {
+                throw new \Exception("El personal con ID {$idPersonal} no fue encontrado.");
+            }
+
+            // Mapear Modelo a DTO de Edición para precargar la vista.
+            $personalDTO = PersonalMapper::toDtoEdicion($personalModelo);
+
+            // Renderizar la vista de formulario de edición con los datos.
+            $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', [
+                'titulo' => 'Editar Personal',
+                'datos' => $personalDTO->toArray(),  // Se pasa el array del DTO, NO el DTO en sí, para que funcione get_value() en la vista.
+                'esEdicion' => true 
+            ]);
+
+        } catch (\Exception $e) {
+            // Manejo de errores (ej: ID no encontrado, error de DB)
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error al Cargar Formulario de Edición',
+                'mensaje' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    // POST /personal/formulario/editar
+    public function editarPersonal(): void {
+        $datos = $_POST;  // Capturamos los datos del formulario (incluye ID y activo).
+
+        try {
+            // Mapeo: Crea el DTO y valida campos obligatorios/formato. Si hay error de validación, lanza InvalidArgumentException.
+            $DtoEdicion = PersonalEdicionDTO::fromArray($datos);            
+            // Mapeo: DTO a Modelo de Dominio (Personal). Esto crea el objeto Personal parcial con el ID, y el Usuario con el estado 'activo'.
+            $modeloPersonal = PersonalMapper::fromDtoEdicion($DtoEdicion);             
+            // Service: Lógica de negocio (actualización, permisos) y Persistencia.
+            $this->personalService->actualizarPersonal($modeloPersonal); 
+            
+            $_SESSION['msj_exito'] = "Los datos del personal han sido actualizados exitosamente.";
+            header('Location: ' . APP_BASE_URL . 'personal'); // Éxito: Redirigir a la lista.
+            exit;
+
+        } catch (InvalidArgumentException $e) { 
+            // Errores de Formato/Mapeo (vienen del DTO o Mappers).
+            $this->mostrarErrorDeEdicion("Error de datos: " . $e->getMessage(), $datos);
+            
+        } catch (RuntimeException $e) { 
+            // Errores de Negocio (vienen del Service, ej.: email duplicado, ID no encontrado).
+            $this->mostrarErrorDeEdicion("Error de negocio: " . $e->getMessage(), $datos);
+            
+        } catch (\Throwable $e) {
+            // Errores Inesperados (ej.: Error de DB en el Repository)
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error de Sistema',
+                'mensaje' => 'No se pudo completar la edición. Detalles: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // MÉTODO AUXILIAR para renderizar el formulario de edición con errores y datos precargados.
+    private function mostrarErrorDeEdicion(string $mensajeError, array $datosPrecargados): void {
+        $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', [
+            'titulo' => 'Editar Personal (Error)',
+            'error' => $mensajeError,
+            'datos' => $datosPrecargados,  // Pasamos los datos que el usuario ingresó para precargar.
+            'esEdicion' => true  // Mantiene la vista en modo Edición.
         ]);
     }
 }

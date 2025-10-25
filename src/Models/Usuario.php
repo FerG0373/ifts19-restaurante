@@ -9,13 +9,13 @@ class Usuario {
     // ATRIBUTOS
     private ?int $id;
     private PerfilAcceso $perfilAcceso;
-    private string $passHash;
+    private ?string $passHash;  // Permite null para evitar pasar la contraseña en operaciones de Edición.
     private bool $activo;
 
     public function __construct(
         ?int $id,
         PerfilAcceso $perfilAcceso, 
-        string $passHash, 
+        ?string $passHash, 
         bool $activo = true
     ) {
         $this->id = $id;
