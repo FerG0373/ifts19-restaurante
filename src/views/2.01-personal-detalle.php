@@ -6,9 +6,12 @@ use App\DTOs\PersonalVistaDTO;
     <div class="d-flex justify-content-between align-items-center mb-4">        
         <div class="d-flex align-items-center">            
             <h2 class="text-primary mb-0 me-3"><?php echo htmlspecialchars($titulo); ?></h2>                        
-            <button type="button" class="btn btn-link fa-lg mt-2" title="Editar Personal" onclick="editarPersonal(<?= htmlspecialchars($personal->id) ?>)">
-                <i class="fas fa-edit"></i>
-            </button>
+            <form action="<?= APP_BASE_URL ?>personal/formulario/editar" method="POST" class="d-inline">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($personal->id); ?>">
+                <button type="submit" class="btn btn-link fa-lg mt-2" title="Editar Personal">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </form>
         </div>
         <a href="<?=APP_BASE_URL?>personal" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver a la lista
@@ -71,33 +74,3 @@ use App\DTOs\PersonalVistaDTO;
     <?php endif; ?>
 </div>
 
-
-<script>
-    async function editarPersonal(id) {
-        const formData = new FormData();
-        formData.append('id', id);
-
-        try {
-            const response = await fetch("<?= APP_BASE_URL ?>personal/formulario/editar", {
-            method: "POST",
-            body: formData
-            });
-
-            if (response.redirected) {
-            // Si el servidor redirige, seguimos normalmente
-            window.location.href = response.url;
-            } else {
-            const html = await response.text();
-
-            // Reemplazamos el contenido actual
-            document.body.innerHTML = html;
-
-            // 🔥 Actualizamos la URL mostrada en la barra del navegador
-            // sin recargar la página
-            window.history.pushState({}, "", "<?= APP_BASE_URL ?>personal/formulario");
-            }
-        } catch (err) {
-            console.error("Error al abrir el formulario de edición:", err);
-        }
-    }
-</script>

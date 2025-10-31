@@ -11,6 +11,7 @@ class ViewRenderer {
         $this->directorioVistas = $directorioVistas;  // Ruta base de las vistas.
         $this->rutas = $rutas;  // Array de rutas desde Router.
         $this->rutasNav = $this->obtenerRutasNav();  // Rutas para la navegación.
+        $this->cargarHelpers();
     }
 
 
@@ -68,5 +69,13 @@ class ViewRenderer {
         }
         
         require_once $rutaLayout;
+    }
+
+
+    private function cargarHelpers(): void {
+        $helperPath = __DIR__ . '/../../Helpers/form_helper.php';
+        if (file_exists($helperPath)) {
+            require_once $helperPath;
+        }
     }
 }

@@ -1,17 +1,9 @@
 <?php
-// Asumimos que los datos y el error vienen del controlador en caso de fallo.
-$datos = $datos ?? []; 
-$error = $error ?? null; 
-$esEdicion = $esEdicion ?? false;
+// Incluir helper de formularios
+require_once __DIR__ . '/../helpers/form_helper.php';
 
-// Función auxiliar para obtener el valor precargado del array $datos.
-function get_value(array $datos, string $clave): string {
-    // El DTO/Mapper convierte bool a string '1'/'0' para que esto funcione.
-    if ($clave === 'activo') {
-        return htmlspecialchars($datos[$clave] ?? '1'); 
-    }
-    return htmlspecialchars($datos[$clave] ?? '');
-}
+// Inicializar variables usando el helper
+init_form_variables($datos, $error, $esEdicion);
 ?>
 
 <div class="container my-5">
