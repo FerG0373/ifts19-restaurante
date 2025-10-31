@@ -94,21 +94,7 @@ function get_value(array $datos, string $clave): string {
                     <?php endforeach; ?>
                 </select>
             </div>
-            
-            <?php if ($esEdicion): ?>
-                <div class="col-md-6">
-                    <label for="activo" class="form-label">Estado (Activo)</label>
-                    <select class="form-select" id="activo" name="activo" required>
-                        <?php 
-                            // El valor es '1' o '0' (cadenas), según la lógica del Mapper/DTO
-                            $activoSeleccionado = get_value($datos, 'activo');
-                        ?>
-                        <option value="1" <?= ('1' == $activoSeleccionado) ? 'selected' : '' ?>>ACTIVO</option>
-                        <option value="0" <?= ('0' == $activoSeleccionado) ? 'selected' : '' ?>>INACTIVO (Baja)</option>
-                    </select>
-                </div>
-            <?php endif; ?>
-            </div>
+        </div>
         
         <h5 class="text-secondary mb-3">Seguridad</h5>
         <div class="row g-3 mb-4">
@@ -138,7 +124,20 @@ function get_value(array $datos, string $clave): string {
                     <?php endforeach; ?>
                 </select>
             </div>
-            
+
+            <?php if ($esEdicion): ?>
+                <div class="col-md-6">
+                    <label for="activo" class="form-label">Estado</label>
+                    <select class="form-select" id="activo" name="activo" required>
+                        <?php 
+                            // El valor es '1' o '0' (cadenas), según la lógica del Mapper/DTO
+                            $activoSeleccionado = get_value($datos, 'activo');
+                        ?>
+                        <option value="1" <?= ('1' == $activoSeleccionado) ? 'selected' : '' ?>>ACTIVO</option>
+                        <option value="0" <?= ('0' == $activoSeleccionado) ? 'selected' : '' ?>>INACTIVO (Baja)</option>
+                    </select>
+                </div>
+            <?php endif; ?>            
         </div>
         
         <button type="submit" class="btn btn-primary mt-3">
