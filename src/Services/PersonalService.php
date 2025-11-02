@@ -102,7 +102,7 @@ class PersonalService {
         );
 
         // Persistencia: Enviar el objeto fusionado al Repository para la actualización.
-        $this->personalRepository->update($personalFusionado);
+        $this->personalRepository->updatePersonal($personalFusionado);
     }
 }
 ?>

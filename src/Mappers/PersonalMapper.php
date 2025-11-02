@@ -33,7 +33,7 @@ class PersonalMapper {
         $dto->sexo = strtolower($personal->getSexo()->value);
         $dto->puesto = strtolower($personal->getPuesto()->value);
         $dto->perfilAcceso = strtolower($usuario->getPerfilAcceso()->value);
-        $dto->activo = $usuario->isActivo() ? '1' : '0';
+        $dto->activo = $usuario->isActivo();
         
         return $dto;
     }

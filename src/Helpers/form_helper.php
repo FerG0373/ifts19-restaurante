@@ -1,11 +1,25 @@
 <?php
-//Función auxiliar para obtener el valor precargado del array $datos.
-// El DTO/Mapper convierte bool a string '1'/'0' para que esto funcione.
+// Obtiene y prepara un valor para precargar un campo de formulario.
+// Los valores de $datos provienen de un DTO::toArray(), manteniendo 'activo' como booleano.
+
 function get_value(array $datos, string $clave): string {
+    // Si la clave existe en el array de datos (Modo Edición).
+    if (isset($datos[$clave])) {
+        $valor = $datos[$clave];        
+        // Manejo especial para 'activo', convertimos el booleano (true/false) a la cadena ('1'/'0').
+        if ($clave === 'activo') {
+            return (string)(int)(bool)$valor;
+        }        
+        // Para todas las demás claves se asegura que sea string y escapa HTML.
+        return htmlspecialchars((string)$valor);
+    }     
+    // Si la clave no está presente (ej. formulario de alta)
     if ($clave === 'activo') {
-        return htmlspecialchars($datos[$clave] ?? '1'); 
-    }
-    return htmlspecialchars($datos[$clave] ?? '');
+        // En el formulario de alta, por defecto el personal está activo.
+        return '1'; 
+    }    
+    // Para cualquier otro campo que falte, retorna una cadena vacía.
+    return '';
 }
 
 // Inicializa las variables por defecto para el formulario.

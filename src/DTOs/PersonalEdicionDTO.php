@@ -26,11 +26,16 @@ class PersonalEdicionDTO {
     // Factory Method para validar datos DESDE el Formulario POST
     public static function fromArray(array $datosInput): self {
         // Validación de campos obligatorios para edición (ID es la clave)
-        $camposObligatorios = ['id', 'dni', 'nombre', 'apellido', 'email', 'fecha_nacimiento', 'sexo', 'puesto', 'perfil_acceso', 'activo'];
+        $camposObligatorios = ['id', 'dni', 'nombre', 'apellido', 'email', 'fecha_nacimiento', 'sexo', 'puesto', 'perfil_acceso'];
         foreach ($camposObligatorios as $campo) {
             if (empty($datosInput[$campo])) { 
                 throw new InvalidArgumentException("El campo '{$campo}' es obligatorio para la edición.");
             }
+        }
+
+        // Debe existir y no ser null o cadena vacía, pero DEBE aceptar la cadena '0'.
+        if (!isset($datosInput['activo']) || $datosInput['activo'] === null || $datosInput['activo'] === '') {
+             throw new InvalidArgumentException("El campo 'activo' es obligatorio para la edición.");
         }
         
         $dto = new self();

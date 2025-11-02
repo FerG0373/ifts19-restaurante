@@ -21,7 +21,7 @@ init_form_variables($datos, $error, $esEdicion);
     <?php endif; ?>
 
     <form method="POST" 
-          action="<?= APP_BASE_URL ?>personal/<?= $esEdicion ? 'editar' : 'formulario/alta' ?>" 
+          action="<?= APP_BASE_URL ?>personal/<?= $esEdicion ? 'formulario/editar' : 'formulario/alta' ?>" 
           class="p-4 border rounded shadow-sm">
         
         <?php if ($esEdicion): ?>
@@ -125,8 +125,8 @@ init_form_variables($datos, $error, $esEdicion);
                             // El valor es '1' o '0' (cadenas), según la lógica del Mapper/DTO
                             $activoSeleccionado = get_value($datos, 'activo');
                         ?>
-                        <option value="1" <?= ('1' == $activoSeleccionado) ? 'selected' : '' ?>>ACTIVO</option>
-                        <option value="0" <?= ('0' == $activoSeleccionado) ? 'selected' : '' ?>>INACTIVO (Baja)</option>
+                        <option value="1" <?= ('1' === $activoSeleccionado) ? 'selected' : '' ?>>ACTIVO</option>
+                        <option value="0" <?= ('0' === $activoSeleccionado) ? 'selected' : '' ?>>INACTIVO (Baja)</option>
                     </select>
                 </div>
             <?php endif; ?>            

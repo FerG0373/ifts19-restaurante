@@ -6,7 +6,7 @@ use App\DTOs\PersonalVistaDTO;
     <div class="d-flex justify-content-between align-items-center mb-4">        
         <div class="d-flex align-items-center">            
             <h2 class="text-primary mb-0 me-3"><?php echo htmlspecialchars($titulo); ?></h2>                        
-            <form action="<?= APP_BASE_URL ?>personal/formulario/editar" method="POST" class="d-inline">
+            <form action="<?= APP_BASE_URL ?>personal/formulario/cargar" method="POST" class="d-inline">
                 <input type="hidden" name="id" value="<?= htmlspecialchars($personal->id); ?>">
                 <button type="submit" class="btn btn-link fa-lg mt-2" title="Editar Personal">
                     <i class="fas fa-edit"></i>

@@ -20,7 +20,8 @@ $enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDeta
 
 $enrutador->agregarRuta('personal/formulario', [PersonalController::class, 'mostrarFormulario'], false, 'GET');  // GET para mostrar el formulario.
 $enrutador->agregarRuta('personal/formulario/alta', [PersonalController::class, 'altaPersonal'], false, 'POST');  // POST para procesar el envío de datos.
-$enrutador->agregarRuta('personal/formulario/editar', [PersonalController::class, 'cargarFormularioEdicion'], false, 'POST'); // POST para cargar datos.
+$enrutador->agregarRuta('personal/formulario/cargar', [PersonalController::class, 'cargarFormularioEdicion'], false, 'POST'); // POST para cargar datos.
+$enrutador->agregarRuta('personal/formulario/editar', [PersonalController::class, 'editarPersonal'], false, 'POST');  // POST para procesar la edición.
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);
