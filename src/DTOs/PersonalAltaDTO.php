@@ -1,12 +1,6 @@
 <?php
 namespace App\DTOs;
 
-use App\Models\Personal;
-use App\Models\Usuario;
-use App\Shared\Enums\Puesto;
-use App\Shared\Enums\Sexo;
-use App\Shared\Enums\PerfilAcceso;
-use DateTimeImmutable;
 use InvalidArgumentException;
 
 
@@ -55,45 +49,4 @@ class PersonalAltaDTO
         
         return $dto;
     }
-
-
-    // Convierte el DTO en el Objeto de Domino (Personal y Usuario). Realiza el mapeo de tipos (strings a Enums y DateTimeImmutable).
-    public function toPersonalModel(): Personal {
-        // Conversión de Tipos (mapeo a Enums y DateTimeImmutable)
-        try {
-            $fechaNacimiento = new DateTimeImmutable($this->fechaNacimiento);
-            $sexo = Sexo::from($this->sexo);
-            $puesto = Puesto::from($this->puesto);
-            $perfilAcceso = PerfilAcceso::from($this->perfilAcceso);
-            
-        } catch (\Throwable $e) {
-            // Captura errores si, por ejemplo, el Enum no existe o la fecha es inválida.
-            throw new InvalidArgumentException("Error en el formato de datos de Sexo, Puesto, Perfil o Fecha de Nacimiento.", 0, $e);
-        }
-
-        // Creación del Objeto Usuario
-        $usuario = new Usuario(
-            null,  // null al inicio
-            $perfilAcceso, 
-            $this->passTextoPlano,
-            true
-        );
-
-        // Creación del Objeto Personal
-        $personal = new Personal(
-            null,
-            $this->dni,
-            $this->nombre,
-            $this->apellido,
-            $fechaNacimiento,
-            $this->email,
-            $this->telefono,
-            $sexo,
-            $puesto,
-            null,  // Fecha Contratación: null, se asigna en la DB y se recupera en el Repository.
-            $usuario
-        );
-
-        return $personal;
-    }    
 }

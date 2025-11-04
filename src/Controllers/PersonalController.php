@@ -108,7 +108,7 @@ class PersonalController {
 
         try {            
             $altaDTO = PersonalAltaDTO::fromArray($datos);  // Mapeo: crear el DTO y validar campos obligatorios/formato.            
-            $modeloPersonal = $altaDTO->toPersonalModel();  // Conversión: DTO a Modelo de Dominio (Personal).
+            $modeloPersonal = PersonalMapper::fromDtoAlta($altaDTO);  // Conversión: DTO a Modelo de Dominio (Personal).
             $nuevoPersonal = $this->personalService->agregarPersonal($modeloPersonal);  // Service: Lógica de negocio (hasheo, unicidad) y Persistencia.
            
             $_SESSION['msj_exito'] = "El nuevo personal ha sido registrado exitosamente.";
@@ -145,6 +145,7 @@ class PersonalController {
         ]);
     }
 
+
     public function cargarFormularioEdicion(): void {
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['id'])) { 
@@ -180,7 +181,6 @@ class PersonalController {
             ]);
         }
     }
-
 
     // POST /personal/formulario/editar
     public function editarPersonal(): void {

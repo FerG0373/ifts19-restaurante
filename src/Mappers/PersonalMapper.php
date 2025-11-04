@@ -2,6 +2,7 @@
 namespace App\Mappers;
 
 use App\DTOs\PersonalEdicionDTO;
+use App\DTOs\PersonalAltaDTO;
 use App\Models\Personal;
 use App\Models\Usuario;
 use App\Shared\Enums\Puesto;
@@ -9,6 +10,7 @@ use App\Shared\Enums\Sexo;
 use App\Shared\Enums\PerfilAcceso;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use Throwable;
 
 
 class PersonalMapper {
@@ -75,5 +77,45 @@ class PersonalMapper {
         );
 
         return $personal;
-    } 
+    }
+
+    // Convierte el DTO en el Objeto de Domino (Personal y Usuario). Realiza el mapeo de tipos (strings a Enums y DateTimeImmutable).
+    public static function fromDtoAlta(PersonalAltaDTO $dto): Personal {
+        // Conversión de Tipos (mapeo a Enums y DateTimeImmutable)
+        try {
+            $fechaNacimiento = new DateTimeImmutable($dto->fechaNacimiento);
+            $sexo = Sexo::from($dto->sexo);
+            $puesto = Puesto::from($dto->puesto);
+            $perfilAcceso = PerfilAcceso::from($dto->perfilAcceso);
+            
+        } catch (\Throwable $e) {
+            // Captura errores si, por ejemplo, el Enum no existe o la fecha es inválida.
+            throw new InvalidArgumentException("Error en el formato de datos de Sexo, Puesto, Perfil o Fecha de Nacimiento.", 0, $e);
+        }
+
+        // Creación del Objeto Usuario
+        $usuario = new Usuario(
+            null,  // null al inicio
+            $perfilAcceso, 
+            $dto->passTextoPlano,
+            true
+        );
+
+        // Creación del Objeto Personal
+        $personal = new Personal(
+            null,
+            $dto->dni,
+            $dto->nombre,
+            $dto->apellido,
+            $fechaNacimiento,
+            $dto->email,
+            $dto->telefono,
+            $sexo,
+            $puesto,
+            null,  // Fecha Contratación: null, se asigna en la DB y se recupera en el Repository.
+            $usuario
+        );
+
+        return $personal;
+    }
 }
