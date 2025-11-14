@@ -179,6 +179,7 @@ class PersonalRepository {
         return (bool)$stmt->fetchColumn();
     }
 
+    
     public function updatePersonal(Personal $personal): void {
         $sql = "CALL sp_personal_update(
             :p_id, :p_dni, :p_nombre, :p_apellido, :p_email, :p_telefono, :p_fecha_nacimiento, :p_sexo, :p_puesto,
@@ -218,6 +219,5 @@ class PersonalRepository {
             throw new \Exception("Error al actualizar personal con ID {$personal->getId()}: " . $e->getMessage());
         }
     }
-
 }
 ?>
