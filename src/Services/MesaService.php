@@ -15,12 +15,12 @@ class MesaService {
     }
 
 
-    public function listarMesasActivas(): array {
-        return $this->mesaRepository->listarMesas(true); 
-    }
-
-    
-    public function listarTodasLasMesas(): array {
-        return $this->mesaRepository->listarMesas(false);
+    public function listarMesasPorUbicacion(string $ubicacion): array {
+        // Validación a nivel de Service (aunque el Controller ya lo hizo, es una buena práctica)
+        if (!in_array($ubicacion, ['salon', 'exterior'])) {
+            throw new InvalidArgumentException("Ubicación de mesa no válida.");
+        }
+        
+        return $this->mesaRepository->listarMesasPorUbicacion($ubicacion);
     }
 }

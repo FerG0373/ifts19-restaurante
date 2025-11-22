@@ -3,7 +3,9 @@ namespace App\Core;
 
 use Exception;
 use App\Services\PersonalService;
+use App\Services\MesaService;
 use App\Repositories\PersonalRepository;
+use App\Repositories\MesaRepository;
 
 // Contenedor para gestionar la única instancia de DataAccess (Patrón de diseño Singleton).
 class Container {
@@ -41,6 +43,7 @@ class Container {
             $dependencias = [
                 // "CLASE A INSTANCIAR" => ["DEPENDENCIAS QUE NECESITA"]
                 PersonalService::class => [PersonalRepository::class],
+                MesaService::class => [MesaRepository::class],
                 // Agregar acá otros services:
             ];
             // Verifica si la clase Service en cuestión existe en el array de dependencias.

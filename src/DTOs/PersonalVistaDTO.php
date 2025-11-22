@@ -3,8 +3,7 @@ namespace App\DTOs;
 
 use App\Models\Personal;
 
-class PersonalVistaDTO
-{
+class PersonalVistaDTO {
     // Atributos de Personal.
     public int $id;
     public string $dni;

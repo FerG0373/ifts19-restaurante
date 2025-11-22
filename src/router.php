@@ -3,6 +3,7 @@ use App\Core\Router;
 use App\Core\ViewRenderer;
 use App\Core\Container;  // Para obtener la instancia de DataAccess de Container.php
 use App\Controllers\PersonalController; // Importamos el controlador
+use App\Controllers\MesaController;
 
 $directorioVistas = __DIR__ . '/views';
 
@@ -17,11 +18,12 @@ $enrutador->agregarRuta('lista-personal', '2.01-personal-lista.php', false);
 // Rutas dinámicas con datos (Controladores).
 $enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'], true);  // Listado de personal (GET).
 $enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDetalle'], false, 'POST');  // Detalle de personal (POST).
-
 $enrutador->agregarRuta('personal/formulario', [PersonalController::class, 'mostrarFormulario'], false, 'GET');  // GET para mostrar el formulario.
 $enrutador->agregarRuta('personal/formulario/alta', [PersonalController::class, 'altaPersonal'], false, 'POST');  // POST para procesar el envío de datos.
 $enrutador->agregarRuta('personal/formulario/cargar', [PersonalController::class, 'cargarFormularioEdicion'], false, 'POST'); // POST para cargar datos.
 $enrutador->agregarRuta('personal/formulario/editar', [PersonalController::class, 'editarPersonal'], false, 'POST');  // POST para procesar la edición.
+
+$enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicacion'], true);
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);

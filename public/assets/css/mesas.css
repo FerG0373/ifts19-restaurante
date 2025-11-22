@@ -1,0 +1,160 @@
+
+/* Variables y estilos generales */
+:root {
+    --color-fondo: #F0F0F0; /* Gris muy claro */
+    --color-tarjeta: #FFFFFF; /* Tarjetas blancas */
+    --color-texto-principal: #343A40; /* Texto oscuro para el fondo claro */
+    --color-texto-secundario: #6C757D;
+    
+    --color-libre: #28A745; /* Verde */
+    --color-ocupada: #DC3545; /* Rojo */
+    --color-reservada: #FFC107; /* Amarillo/Naranja */
+    --color-inhabilitada: #6C757D; /* Gris */
+    --color-boton-nuevo: #28A745;
+    
+    --color-tabs: #6C757D; /* Gris para pestañas inactivas */
+    --color-tab-activo: #343A40; /* Oscuro para pestaña activa */
+    --color-tab-borde: #6C757D;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto-principal);
+    margin: 0;
+    padding: 40px;
+}
+
+.contenedor-principal {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: var(--color-texto-principal); 
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+/* --- Estilos del botón superior --- */
+.header-acciones {
+    margin-bottom: 25px;
+}
+
+.btn-nueva-mesa {
+    background-color: var(--color-boton-nuevo);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-nueva-mesa:hover {
+    background-color: #1e7e34;
+}
+
+/* --- Estilos de las pestañas (Tabs) --- */
+.tabs {
+    display: flex;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    gap: 25px;
+}
+
+.tab-item {
+    color: var(--color-tabs);
+    cursor: pointer;
+    padding-bottom: 5px;
+}
+
+.tab-item.activo {
+    color: var(--color-tab-activo);
+    border-bottom: 2px solid var(--color-tab-borde);
+}
+
+/* --- Estilos del Tablero de Mesas (Grid) --- */
+.tablero-mesas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* --- Estilos de la Tarjeta de Mesa --- */
+.card-mesa {
+    background-color: var(--color-tarjeta);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-mesa:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-mesa h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-texto-principal);
+}
+
+.card-info-capacidad {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-texto-secundario);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+/* Estilo para los iconos de Font Awesome */
+.icon-fa-persona {
+    color: var(--color-texto-secundario); /* Color del icono */
+    font-size: 1.1rem; /* Tamaño del icono */
+}
+
+/* Opcional: ajustar espacio si es necesario */
+.card-info-capacidad .fa-user {
+    margin-right: 2px; 
+}
+
+/* --- Estilos del Estado de la Mesa --- */
+.estado-mesa {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 0.9rem;
+    color: white; 
+    align-self: flex-start;
+    text-transform: uppercase;
+}
+
+.estado-libre {
+    background-color: var(--color-libre);
+}
+
+.estado-ocupada {
+    background-color: var(--color-ocupada);
+}
+
+.estado-reservada {
+    background-color: var(--color-reservada);
+    color: var(--color-texto-principal); 
+}
+
+.estado-inhabilitada {
+    background-color: var(--color-inhabilitada);
+}
+

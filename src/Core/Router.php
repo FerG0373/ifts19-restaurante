@@ -2,7 +2,10 @@
 namespace App\Core;
 
 use App\Services\PersonalService;
+use App\Services\MesaService;
 use App\Controllers\PersonalController;
+use App\Controllers\MesaController;
+use App\Models\Mesa;
 use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
@@ -68,6 +71,7 @@ class Router {
         $mapeoControllerService = [
             // Para este Controller, éste Service.
             PersonalController::class => PersonalService::class,
+            MesaController::class => MesaService::class,
             // Agregar acá otros controladores:
         ];
         

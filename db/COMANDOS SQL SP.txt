@@ -217,46 +217,6 @@ DELIMITER ;
 
 
 DELIMITER //
-CREATE PROCEDURE sp_mesa_select_all()
-BEGIN
-    SELECT 
-        id, 
-        nroMesa, 
-        capacidad, 
-        ubicacion, 
-        estadoMesa, 
-        activo 
-    FROM 
-        mesa
-    ORDER BY 
-        nroMesa ASC;
-END //
-DELIMITER ;
-
-
-
-DELIMITER //
-CREATE PROCEDURE sp_mesa_select_activo()
-BEGIN
-    SELECT 
-        id, 
-        nroMesa, 
-        capacidad, 
-        ubicacion, 
-        estadoMesa, 
-        activo 
-    FROM 
-        mesa
-    WHERE 
-        activo = 1 
-    ORDER BY 
-        nroMesa ASC;
-END //
-DELIMITER ;
-
-
-
-DELIMITER //
 CREATE PROCEDURE sp_mesa_insert(
     IN p_nroMesa VARCHAR(20),
     IN p_capacidad INT,
@@ -307,3 +267,22 @@ DELIMITER ;
 
 
 
+DELIMITER //
+CREATE PROCEDURE sp_mesa_select_by_ubicacion(
+    IN p_ubicacion VARCHAR(10)
+)
+BEGIN
+    SELECT
+        id,
+        numero_mesa,
+        capacidad,
+        ubicacion,
+        estado_mesa
+    FROM
+        mesa
+    WHERE
+        ubicacion = p_ubicacion
+    ORDER BY
+        numero_mesa ASC;
+END //
+DELIMITER ;
