@@ -192,7 +192,7 @@ CREATE TABLE `personal` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__personal__dni` (`dni`),
   UNIQUE KEY `uq__personal__email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,7 +201,7 @@ CREATE TABLE `personal` (
 
 LOCK TABLES `personal` WRITE;
 /*!40000 ALTER TABLE `personal` DISABLE KEYS */;
-INSERT INTO `personal` VALUES (1,'40123456','Carlos','Sánchez','sanchez.carlos@gmail.com','1123236921','1990-01-01','m','encargado','2023-10-06'),(2,'42664123','Julio','Castro','castro.julio@gmail.com','1152448712','1996-03-09','m','mozo','2023-10-08'),(3,'3811238987','Jose','Conti','jose.conti@gmail.com','1123903112','1994-10-19','m','cocinero','2025-10-15'),(4,'3712332341','Carla','Sanchez','carla.sanchez@gmail.com','1141415341','1993-06-15','f','bartender','2025-10-15'),(5,'34123321','Santiago','Castro','casto.s@gmial.com','1143519098','1989-02-20','m','cocinero','2025-10-15'),(6,'41223456','Luca','Iglesias','inglesias.luca@gmail.com','1123335141','2001-09-06','m','cajero','2025-10-15'),(7,'29123008','Jorge','Casto','castro.jorge@gmail.com','1123412315','1979-10-25','m','cocinero','2025-10-15'),(8,'36123455','Julia','Santoro','santoro.julia@gmail.com','1154679890','1987-09-04','m','bartender','2025-10-15');
+INSERT INTO `personal` VALUES (1,'40123456','Carlos','Sánchez','sanchez.carlos@gmail.com','1123236921','1990-01-01','m','encargado','2023-10-06'),(2,'42664123','Julio','Castro','castro.julio@gmail.com','1152448712','1996-03-09','m','mozo','2023-10-08'),(3,'3811238987','Jose','Conti','jose.conti@gmail.com','1123903112','1994-10-19','m','cocinero','2025-10-15'),(4,'3712332341','Carla','Sanchez','carla.sanchez@gmail.com','1141415341','1993-06-15','f','bartender','2025-10-15'),(5,'34123321','Santiago','Castro','casto.s@gmial.com','1143519098','1989-02-20','m','cocinero','2025-10-15'),(6,'41223456','Luca','Iglesias','inglesias.luca@gmail.com','1123335141','2001-09-06','m','cajero','2025-10-15'),(7,'29123008','Jorge','Casto','castro.jorge@gmail.com','1123412315','1979-10-25','m','cocinero','2025-10-15'),(8,'36123455','Julia','Santoro','santoro.julia@gmail.com','1154679890','1987-09-04','m','bartender','2025-10-15'),(9,'29556123','Jorge','Gonzalez','jorge.gonzalez@gmail.com','1123879131','1984-01-12','m','cajero','2025-11-02'),(10,'31123324','Pablo','Crespo','crespo.pablo@gmail.com','1132435565','1996-12-18','m','bartender','2025-11-03'),(11,'30669321','Javier','Lopez','lopez.javier@gmail.com','1132225689','1988-05-12','m','mozo','2025-11-03'),(12,'29123012','Jose','Hernandez','hernandez.j@gmail.com','1154657712','1985-05-29','m','mozo','2025-11-03'),(13,'41231456','Andrea','Fernandez','andrea.fernandez@gmail.com','1132667612','1999-02-04','f','bartender','2025-11-03');
 /*!40000 ALTER TABLE `personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,13 +287,116 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'encargado','1234',1),(2,'mozo','1234',0),(3,'mozo','$2y$10$XJhwH93erj8RwgVdG.mfPO5CXtJ/IR/LUfnu9m1vFUNnP2yatuhpe',1),(4,'mozo','$2y$10$FFIndJVrSdpFyc6Injqktecnkhd1pAN0ywNtDDsSL5sdTsloVMqj2',1),(5,'mozo','$2y$10$wxJo6zwkS989DHqsyOiygeGu/JMvRkbCNTfrs64RQo98vCIN2ei2C',1),(6,'mozo','$2y$10$C8ADL2EX21Zk8wactPVlseVXIAuuhTV8xf1nfSusA98FWwWRUjKOe',1),(7,'mozo','$2y$10$/vFBdNaLzdPm45RSHOXFS.6hhlVCdYFAB4dzZB9v1hjj1ywrvZxWa',1),(8,'mozo','$2y$10$XHmzYvrE7Ztx6eva5EfvkOneb6/fAIUd9RXXiZK9u2CnTUqSdvRQK',1);
+INSERT INTO `usuario` VALUES (1,'encargado','1234',1),(2,'mozo','1234',0),(3,'mozo','$2y$10$XJhwH93erj8RwgVdG.mfPO5CXtJ/IR/LUfnu9m1vFUNnP2yatuhpe',1),(4,'mozo','$2y$10$FFIndJVrSdpFyc6Injqktecnkhd1pAN0ywNtDDsSL5sdTsloVMqj2',1),(5,'mozo','$2y$10$wxJo6zwkS989DHqsyOiygeGu/JMvRkbCNTfrs64RQo98vCIN2ei2C',1),(6,'mozo','$2y$10$C8ADL2EX21Zk8wactPVlseVXIAuuhTV8xf1nfSusA98FWwWRUjKOe',1),(7,'mozo','$2y$10$/vFBdNaLzdPm45RSHOXFS.6hhlVCdYFAB4dzZB9v1hjj1ywrvZxWa',1),(8,'mozo','$2y$10$XHmzYvrE7Ztx6eva5EfvkOneb6/fAIUd9RXXiZK9u2CnTUqSdvRQK',1),(9,'mozo','$2y$10$8WWZRBTZ25vKDa8W0wpUEu24h2EtqzN/kQEuWUh4GMCchpKKgX83i',0),(10,'mozo','$2y$10$xbe5X/ZkOMfZYichX6p9MOFYnNlLQLSaXRDuFHsx9/CKOpu4vtfVG',0),(11,'mozo','$2y$10$Bw.B9vi0Pw6NYm2gKLfz2OqNIe87WB9SVGx3VCY8/IBbGnqShxWVW',1),(12,'mozo','$2y$10$rPuG1lPfXSpN3pH6xqNPmehXAyk0QHGDQ9QkuRMosRNa/BYBzB7qW',0),(13,'mozo','$2y$10$EkgYi27h9H10CZOIDEY1qOYuhyHYUg1cIBwV432Gjs.tPiRQ53KmC',0);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
 -- Dumping routines for database 'restaurante_db'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_mesa_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_mesa_insert`(
+    IN p_nroMesa VARCHAR(20),
+    IN p_capacidad INT,
+    IN p_ubicacion ENUM('salon', 'barra', 'exterior')
+)
+BEGIN
+    -- Inserta la nueva mesa. Por defecto, 'activo' es 1 y 'estadoMesa' es 'libre'
+    INSERT INTO mesa (
+        nroMesa, 
+        capacidad, 
+        ubicacion, 
+        estadoMesa, 
+        activo
+    ) 
+    VALUES (
+        p_nroMesa, 
+        p_capacidad, 
+        p_ubicacion, 
+        'libre',
+        1
+    );    
+    -- Retorna el ID generado, necesario para recuperar el objeto completo en el Repository
+    SELECT LAST_INSERT_ID();
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_mesa_select_by_ubicacion` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_mesa_select_by_ubicacion`(
+    IN p_ubicacion VARCHAR(10)
+)
+BEGIN
+    SELECT
+        id,
+        numero_mesa,
+        capacidad,
+        ubicacion,
+        estado_mesa
+    FROM
+        mesa
+    WHERE
+        ubicacion = p_ubicacion
+    ORDER BY
+        numero_mesa ASC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_mesa_update` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_mesa_update`(
+    IN p_id INT,
+    IN p_nroMesa VARCHAR(20),
+    IN p_capacidad INT,
+    IN p_ubicacion ENUM('salon', 'barra', 'exterior'),
+    IN p_activo TINYINT(1) 
+)
+BEGIN
+    UPDATE mesa
+    SET 
+        nroMesa = p_nroMesa,
+        capacidad = p_capacidad,
+        ubicacion = p_ubicacion,
+        activo = p_activo
+    WHERE 
+        id = p_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_personal_existe_dni` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -519,6 +622,69 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_personal_update` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_update`(
+    IN p_id INT,
+    IN p_dni VARCHAR(20), 
+    IN p_nombre VARCHAR(100),
+    IN p_apellido VARCHAR(100),
+    IN p_email VARCHAR(100),
+    IN p_telefono VARCHAR(20),
+    IN p_fecha_nacimiento DATE,
+    IN p_sexo CHAR(1),
+    IN p_puesto VARCHAR(50),
+    
+    IN u_id INT,
+    IN u_perfil_acceso VARCHAR(50),
+    IN u_activo TINYINT(1),
+    IN u_pass_hash VARCHAR(255)
+)
+BEGIN
+    -- Definine un manejador para cualquier error SQL.
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Deshacer si algo falló.
+        ROLLBACK;
+        -- Re-lanzar la excepción para que el PDO de PHP la capture.
+        RESIGNAL;
+    END;
+    START TRANSACTION;
+    -- Actualiza la tabla Personal.
+    UPDATE personal
+    SET
+        nombre = p_nombre,
+        apellido = p_apellido,
+        email = p_email,
+        telefono = p_telefono,
+        fecha_nacimiento = p_fecha_nacimiento,
+        sexo = p_sexo,
+        puesto = p_puesto
+    WHERE 
+        id = p_id;        
+    -- Actualizar la tabla Usuario.
+    UPDATE usuario
+    SET
+        perfil_acceso = u_perfil_acceso,
+        activo = u_activo
+    WHERE 
+        id = u_id;
+    -- Si todo es correcto, confirmar la transacción.
+    COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -529,4 +695,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-15 22:16:43
+-- Dump completed on 2025-11-21 22:39:20

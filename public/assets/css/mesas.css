@@ -22,11 +22,10 @@ body {
     background-color: var(--color-fondo);
     color: var(--color-texto-principal);
     margin: 0;
-    padding: 40px;
 }
 
 .contenedor-principal {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
@@ -51,6 +50,7 @@ h1 {
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    text-decoration: none;
 }
 
 .btn-nueva-mesa:hover {
@@ -70,6 +70,7 @@ h1 {
     color: var(--color-tabs);
     cursor: pointer;
     padding-bottom: 5px;
+    text-decoration: none;
 }
 
 .tab-item.activo {

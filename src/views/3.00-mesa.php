@@ -27,7 +27,7 @@ function getUbicacionNombre(string $ubicacion): string {
 <div class="contenedor-principal">
     
     <!-- Título y Mensajes -->
-    <h1><?php echo htmlspecialchars($titulo); ?></h1>
+    <h2 class="text-primary mt-5 mb-4 me-3"><?php echo htmlspecialchars($titulo); ?></h2>
 
     <?php if (!empty($exito)): ?>
         <div class="alert alert-success" role="alert">
@@ -74,14 +74,12 @@ function getUbicacionNombre(string $ubicacion): string {
                     
                     <!-- Estado Operativo -->
                     <?php 
-                        // Usamos ->value para obtener el string del Enum (ej: 'libre')
-                        $claseEstado = getEstadoClase($mesa->estadoMesa->value);
-                        $textoEstado = strtoupper($mesa->estadoMesa->value);
+                        $claseEstado = getEstadoClase($mesa->estadoMesa);
+                        $textoEstado = strtoupper($mesa->estadoMesa);
                     ?>
                     <div class="estado-mesa <?php echo $claseEstado; ?>">
                         <?php echo htmlspecialchars($textoEstado); ?>
-                    </div>
-                    
+                    </div>                    
                 </div>
             <?php endforeach; ?>
         </div>
