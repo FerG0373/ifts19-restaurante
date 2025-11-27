@@ -217,35 +217,6 @@ DELIMITER ;
 
 
 DELIMITER //
-CREATE PROCEDURE sp_mesa_insert(
-    IN p_nroMesa VARCHAR(20),
-    IN p_capacidad INT,
-    IN p_ubicacion ENUM('salon', 'barra', 'exterior')
-)
-BEGIN
-    -- Inserta la nueva mesa. Por defecto, 'activo' es 1 y 'estadoMesa' es 'libre'
-    INSERT INTO mesa (
-        nroMesa, 
-        capacidad, 
-        ubicacion, 
-        estadoMesa, 
-        activo
-    ) 
-    VALUES (
-        p_nroMesa, 
-        p_capacidad, 
-        p_ubicacion, 
-        'libre',
-        1
-    );    
-    -- Retorna el ID generado, necesario para recuperar el objeto completo en el Repository
-    SELECT LAST_INSERT_ID();
-END //
-DELIMITER ;
-
-
-
-DELIMITER //
 CREATE PROCEDURE sp_mesa_update(
     IN p_id INT,
     IN p_nroMesa VARCHAR(20),
@@ -284,5 +255,54 @@ BEGIN
         ubicacion = p_ubicacion
     ORDER BY
         numero_mesa ASC;
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_mesa_select_by_id(
+    IN mesa_id INT
+)
+BEGIN
+    SELECT 
+        m.id,
+        m.numero_mesa,
+        m.capacidad,
+        m.ubicacion,
+        m.estado_mesa
+    FROM 
+        mesa m
+    WHERE 
+        m.id = mesa_id;
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_mesa_insert(
+    IN p_numero_mesa VARCHAR(20),
+    IN p_capacidad INT,
+    IN p_ubicacion ENUM('salon', 'barra', 'exterior')
+)
+BEGIN
+    -- Inserta la nueva mesa. Por defecto, 'activo' es 1 y 'estadoMesa' es 'libre'
+    INSERT INTO mesa (
+        numero_mesa, 
+        capacidad, 
+        ubicacion, 
+        estado_mesa, 
+        activo
+    ) 
+    VALUES (
+        p_numero_mesa, 
+        p_capacidad, 
+        p_ubicacion, 
+        'libre',
+        1
+    );    
+    -- Retorna el ID generado, necesario para recuperar el objeto completo en el Repository
+    SELECT LAST_INSERT_ID();
 END //
 DELIMITER ;

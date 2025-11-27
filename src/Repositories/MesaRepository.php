@@ -54,9 +54,38 @@ class MesaRepository {
     }
 
 
+    public function obtenerMesaPorId(int $id): ?Mesa {
+        $sql = "CALL sp_mesa_select_by_id(:id)";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt->closeCursor();
+
+            if (!$fila) {
+                return null;
+            }
+
+            // MAPEO DE FILA DE DATOS AL OBJETO MESA.
+            return new Mesa(
+                (int)$fila['id'],
+                $fila['numero_mesa'],
+                (int)$fila['capacidad'],
+                Ubicacion::from($fila['ubicacion']), // CONVIERTE STRING A ENUM.
+                EstadoMesa::from($fila['estado_mesa']) // CONVIERTE STRING A ENUM.
+            );
+        } catch (PDOException $e) {
+            throw new \Exception("Error al buscar mesa con ID {$id}: " . $e->getMessage());
+        }
+    }
+
+
     public function insertarMesa(Mesa $mesa): Mesa {
         $sql = "CALL sp_mesa_insert(
-            :p_numero_mesa, :p_capacidad, :p_ubicacion, :p_estado_mesa
+            :p_numero_mesa, :p_capacidad, :p_ubicacion
         )";
 
         try {
@@ -66,8 +95,7 @@ class MesaRepository {
             $stmt->bindValue(':p_numero_mesa', $mesa->getNroMesa());
             $stmt->bindValue(':p_capacidad', $mesa->getCapacidad());
             // Usamos ->value para obtener el string subyacente del Backed Enum
-            $stmt->bindValue(':p_ubicacion', $mesa->getUbicacion()->value); 
-            $stmt->bindValue(':p_estado_mesa', $mesa->getEstadoMesa()->value); 
+            $stmt->bindValue(':p_ubicacion', $mesa->getUbicacion()->value);
             
             $stmt->execute();
             
