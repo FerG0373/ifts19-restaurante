@@ -24,6 +24,8 @@ $enrutador->agregarRuta('personal/formulario/cargar', [PersonalController::class
 $enrutador->agregarRuta('personal/formulario/editar', [PersonalController::class, 'editarPersonal'], false, 'POST');  // POST para procesar la edición.
 
 $enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicacion'], true);
+$enrutador->agregarRuta('mesas/formulario', [MesaController::class, 'mostrarFormulario'], false, 'GET');
+$enrutador->agregarRuta('mesas/formulario/alta', [MesaController::class, 'altaMesa'], false, 'POST');
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);

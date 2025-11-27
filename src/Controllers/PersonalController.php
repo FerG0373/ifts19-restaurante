@@ -102,6 +102,11 @@ class PersonalController {
         }
     }
 
+    // GET /personal/formulario
+    public function mostrarFormulario(): void {
+        $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', ['titulo' => 'Alta de Nuevo Personal']);
+    }
+
     // POST /personal/formulario/alta
     public function altaPersonal(): void {        
         $datos = $_POST;  // Capturamos los datos del formulario.
@@ -128,12 +133,7 @@ class PersonalController {
                 'mensaje' => 'No se pudo completar el alta. Intente nuevamente. Detalles: ' . $e->getMessage()
             ]);
         }
-    }
-
-
-    public function mostrarFormulario(): void {
-        $this->viewRenderer->renderizarVistaConDatos('2.02-personal-formulario', ['titulo' => 'Alta de Nuevo Personal']);
-    }
+    }    
 
     // Método auxiliar para renderizar el formulario de alta con errores y datos precargados.
     private function mostrarErrorDeAlta(string $mensajeError, array $datosPrecargados): void {

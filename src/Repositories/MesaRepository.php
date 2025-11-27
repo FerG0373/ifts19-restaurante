@@ -7,6 +7,8 @@ use App\Shared\Enums\Ubicacion;
 use App\Shared\Enums\EstadoMesa;
 use PDO;
 use PDOException;
+use InvalidArgumentException;
+use RuntimeException;
 
 
 class MesaRepository {
@@ -48,6 +50,45 @@ class MesaRepository {
 
         } catch (PDOException $e) {
             throw new \Exception("Error al listar mesas por ubicación: " . $e->getMessage());
+        }
+    }
+
+
+    public function insertarMesa(Mesa $mesa): Mesa {
+        $sql = "CALL sp_mesa_insert(
+            :p_numero_mesa, :p_capacidad, :p_ubicacion, :p_estado_mesa
+        )";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            
+            // MAPEO DE ATRIBUTOS DEL OBJETO A LOS PARÁMETROS DEL STORED PROCEDURE
+            $stmt->bindValue(':p_numero_mesa', $mesa->getNroMesa());
+            $stmt->bindValue(':p_capacidad', $mesa->getCapacidad());
+            // Usamos ->value para obtener el string subyacente del Backed Enum
+            $stmt->bindValue(':p_ubicacion', $mesa->getUbicacion()->value); 
+            $stmt->bindValue(':p_estado_mesa', $mesa->getEstadoMesa()->value); 
+            
+            $stmt->execute();
+            
+            $idMesa = (int)$stmt->fetchColumn(); // CAPTURAR EL ID DEVUELTO POR EL SP
+            $stmt->closeCursor(); // Cierra el conjunto de resultados para permitir más consultas
+            
+            // Si tu SP devuelve el ID, usamos ese ID para recuperar el objeto completo.
+            $nuevaMesa = $this->obtenerMesaPorId($idMesa); 
+            
+            if ($nuevaMesa === null) {
+                throw new RuntimeException("Registro insertado (ID: {$idMesa}), pero no se pudo recuperar de la DB.");
+            }
+
+            return $nuevaMesa;
+            
+        } catch (PDOException $e) {
+            // Manejo de error de clave duplicada (común en MySQL al usar UNIQUE constraint)
+            if (str_contains($e->getMessage(), 'Duplicate entry') && str_contains($e->getMessage(), 'nroMesa')) {
+                throw new InvalidArgumentException("Ya existe una mesa con el número '{$mesa->getNroMesa()}' en la ubicación '{$mesa->getUbicacion()->value}'.");
+            }
+            throw new \Exception("Error de base de datos al dar de alta la mesa: " . $e->getMessage());
         }
     }
 }

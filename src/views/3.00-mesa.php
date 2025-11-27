@@ -37,7 +37,7 @@ function getUbicacionNombre(string $ubicacion): string {
 
     <!-- Botón de Alta -->
     <div class="header-acciones">
-        <a href="mesas/formulario/alta" class="btn-nueva-mesa">
+        <a href="mesas/formulario" class="btn-nueva-mesa">
             <i class="fas fa-plus"></i> Nueva Mesa
         </a>
     </div>

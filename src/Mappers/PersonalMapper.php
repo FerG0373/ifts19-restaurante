@@ -63,7 +63,7 @@ class PersonalMapper {
 
         // Crea el objeto Personal con la información actualizada.
         $personal = new Personal(
-            $dto->id, // CLAVE: Se pasa el ID
+            $dto->id, // CLAVE: Se pasa el ID.
             $dto->dni,
             $dto->nombre,
             $dto->apellido,
@@ -81,27 +81,24 @@ class PersonalMapper {
 
     // Convierte el DTO en el Objeto de Domino (Personal y Usuario). Realiza el mapeo de tipos (strings a Enums y DateTimeImmutable).
     public static function fromDtoAlta(PersonalAltaDTO $dto): Personal {
-        // Conversión de Tipos (mapeo a Enums y DateTimeImmutable)
+        // Conversión de Tipos (mapeo a Enums y DateTimeImmutable).
         try {
             $fechaNacimiento = new DateTimeImmutable($dto->fechaNacimiento);
             $sexo = Sexo::from($dto->sexo);
             $puesto = Puesto::from($dto->puesto);
-            $perfilAcceso = PerfilAcceso::from($dto->perfilAcceso);
-            
+            $perfilAcceso = PerfilAcceso::from($dto->perfilAcceso);            
         } catch (\Throwable $e) {
             // Captura errores si, por ejemplo, el Enum no existe o la fecha es inválida.
             throw new InvalidArgumentException("Error en el formato de datos de Sexo, Puesto, Perfil o Fecha de Nacimiento.", 0, $e);
         }
-
-        // Creación del Objeto Usuario
+        // Creación del Objeto Usuario.
         $usuario = new Usuario(
-            null,  // null al inicio
+            null,  // null al inicio, se asigna en la DB.
             $perfilAcceso, 
             $dto->passTextoPlano,
             true
         );
-
-        // Creación del Objeto Personal
+        // Creación del Objeto Personal.
         $personal = new Personal(
             null,
             $dto->dni,
