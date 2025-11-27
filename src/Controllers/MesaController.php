@@ -21,39 +21,37 @@ class MesaController {
      * GET /mesa?ubicacion=salon o /mesa?ubicacion=exterior
      */
     public function listarMesasSegunUbicacion(): void {
-        // 1. Inicializa el mensaje de éxito (si viene de una redirección POST)
         $exito = $_SESSION['msj_exito'] ?? null;
         if (isset($_SESSION['msj_exito'])) {
             unset($_SESSION['msj_exito']);
         }
 
         try {
-            // 2. Determinar la ubicación activa de la URL
-            $ubicacionActiva = $_GET['ubicacion'] ?? 'salon'; // 'salon' es el valor por defecto
+            // Determina la ubicación activa de la URL
+            $ubicacionActiva = $_GET['ubicacion'] ?? 'salon'; // 'salon' es el valor por defecto.
 
-            // 3. Validar que la ubicación sea una de las permitidas
+            // Valida que la ubicación sea una de las permitidas
             $ubicacionesPermitidas = ['salon', 'exterior'];
             if (!in_array($ubicacionActiva, $ubicacionesPermitidas)) {
-                // Si la ubicación no es válida, usamos el valor por defecto
+                // Si la ubicación no es válida, usamos el valor por defecto.
                 $ubicacionActiva = 'salon';
             }
 
-            // 4. Obtener las mesas del Service filtradas por la ubicación activa.
-            // Nombre corregido para reflejar que solo filtra por ubicación.
+            // Obtiene las mesas del Service filtradas por la ubicación activa.
             $listaMesaModelos = $this->mesaService->listarMesasPorUbicacion($ubicacionActiva);
             
             $titulo = 'Tablero de Mesas Operativas';
             
-            // 5. Mapeo de Modelo a DTO de Vista.
+            // Mapeo de Modelo a DTO de Vista.
             $listaDTOs = array_map(function($mesaModelo) {
                 return MesaVistaDTO::fromModel($mesaModelo);
             }, $listaMesaModelos);
 
-            // 6. Renderizar la vista con los datos y la ubicación activa.
+            // Renderiza la vista con los datos y la ubicación activa.
             $this->viewRenderer->renderizarVistaConDatos('3.00-mesa', [
                 'mesas' => $listaDTOs,
                 'titulo' => $titulo, 
-                'ubicacionActiva' => $ubicacionActiva, // Variable CLAVE para la vista
+                'ubicacionActiva' => $ubicacionActiva,
                 'exito' => $exito
             ]);
 

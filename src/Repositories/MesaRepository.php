@@ -27,20 +27,18 @@ class MesaRepository {
         try {
             $stmt = $this->db->prepare($sql);
             
-            // Bindeo del parámetro de ubicación
+            // Bindeo del parámetro ubicación.
             $stmt->bindParam(':ubicacion', $ubicacion, PDO::PARAM_STR);
             $stmt->execute();
 
             while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                // Mapeo de la fila de datos al Objeto de Dominio Mesa
-                // Nota: Eliminamos el campo 'activo' del constructor de Mesa.
+                // Mapeo de la fila de datos al Objeto de Dominio Mesa.
                 $listaDeMesas[] = new Mesa(
                     (int)$fila['id'],
                     $fila['numero_mesa'],
                     (int)$fila['capacidad'],
                     Ubicacion::from($fila['ubicacion']),
                     EstadoMesa::from($fila['estado_mesa'])
-                    // El campo 'activo' ya no se mapea.
                 );
             }
 
@@ -49,7 +47,6 @@ class MesaRepository {
             return $listaDeMesas;
 
         } catch (PDOException $e) {
-            // Manejo de errores de base de datos
             throw new \Exception("Error al listar mesas por ubicación: " . $e->getMessage());
         }
     }

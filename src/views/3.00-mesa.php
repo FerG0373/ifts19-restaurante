@@ -37,7 +37,7 @@ function getUbicacionNombre(string $ubicacion): string {
 
     <!-- Botón de Alta -->
     <div class="header-acciones">
-        <a href="mesa/formulario/alta" class="btn-nueva-mesa">
+        <a href="mesas/formulario/alta" class="btn-nueva-mesa">
             <i class="fas fa-plus"></i> Nueva Mesa
         </a>
     </div>
@@ -45,12 +45,12 @@ function getUbicacionNombre(string $ubicacion): string {
     <!-- Pestañas (Tabs) de Ubicación -->
     <div class="tabs">
         <!-- Tab: Salón Principal -->
-        <a href="mesa?ubicacion=salon" class="tab-item <?php echo ($ubicacionActiva === 'salon') ? 'activo' : ''; ?>">
+        <a href="mesas" class="tab-item <?php echo ($ubicacionActiva === 'salon') ? 'activo' : ''; ?>">
             <?php echo getUbicacionNombre('salon'); ?>
         </a>
         
         <!-- Tab: Exterior -->
-        <a href="mesa?ubicacion=exterior" class="tab-item <?php echo ($ubicacionActiva === 'exterior') ? 'activo' : ''; ?>">
+        <a href="mesas?ubicacion=exterior" class="tab-item <?php echo ($ubicacionActiva === 'exterior') ? 'activo' : ''; ?>">
             <?php echo getUbicacionNombre('exterior'); ?>
         </a>
     </div>
