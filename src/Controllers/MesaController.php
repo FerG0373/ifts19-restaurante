@@ -9,6 +9,9 @@ use App\Shared\Enums\Ubicacion;
 use App\Mappers\MesaMapper;
 use InvalidArgumentException;
 use RuntimeException;
+use App\Core\Container; // <-- ASEGÚRATE DE AÑADIR ESTE USE
+use App\Services\PersonalService; // <-- AÑADIR ESTE USE
+use App\Shared\Enums\Puesto; // <--- NUEVO: Necesario para filtrar solo mozos
 
 
 class MesaController {
@@ -41,6 +44,15 @@ class MesaController {
             // Obtiene las mesas del Service filtradas por la ubicación activa.
             $listaMesaModelos = $this->mesaService->listarMesasPorUbicacion($ubicacionActiva);
             
+            // OBTIENE EL SERVICE DE PERSONAL Y LOS MOZOS            
+            $personalService = Container::getService(PersonalService::class);            
+            $mozos = $personalService->listarPersonalActivo(); 
+            
+            // Filtrar solo Mozos (asumiendo que Puesto::Mozo existe y tiene valor 'mozo')
+            $mozosParaAsignacion = array_filter($mozos, function($personal) {
+                return $personal->getPuesto()->value === 'mozo'; 
+            });
+            
             $titulo = 'Tablero de Mesas Operativas';
             
             // Mapeo de Modelo a DTO de Vista.
@@ -53,7 +65,8 @@ class MesaController {
                 'mesas' => $listaDTOs,
                 'titulo' => $titulo, 
                 'ubicacionActiva' => $ubicacionActiva,
-                'exito' => $exito
+                'exito' => $exito,
+                'mozos' => $mozosParaAsignacion, //  <-- PASA LOS MOZOS FILTRADOS A LA VISTA.
             ]);
 
         } catch (\Exception $e) {
