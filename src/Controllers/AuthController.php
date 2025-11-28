@@ -2,15 +2,14 @@
 namespace App\Controllers;
 
 use App\Core\ViewRenderer;
-use App\Services\AuthService; // Necesario para la lógica de autenticación
-
+use App\Services\AuthService;
 
 class AuthController {
     
+    private AuthService $authService;
     private ViewRenderer $viewRenderer;
-    private AuthService $authService; // Para inyectar el servicio de autenticación
 
-    public function __construct(ViewRenderer $viewRenderer, AuthService $authService) {
+    public function __construct(AuthService $authService, ViewRenderer $viewRenderer) {
         $this->viewRenderer = $viewRenderer;
         $this->authService = $authService;
     }

@@ -31,7 +31,7 @@ class Router {
     // Despacha la ruta solicitada. Si es una vista estática, la renderiza. Si es un controlador, lo instancia y llama al método.
     public function despacharRuta(ViewRenderer $renderer): void {
         $rutaSolicitada = $_GET['url'] ?? 'home';
-        $rutaSolicitada = rtrim($rutaSolicitada, '/');
+        $rutaSolicitada = trim($rutaSolicitada, '/');
         
         $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';  // Obtener el método HTTP de la solicitud.
 
@@ -46,25 +46,27 @@ class Router {
         
         // Verificar si se encontró la ruta.
         if (!$rutaEncontrada) {
-            $renderer->renderizarVistaDesdeUrl();  // Si no se encuentra la ruta exacta, intentar renderizar la vista estática 404.
+            // Si la ruta no se encuentra, usamos renderizarVistaConDatos para forzar el 404 y evitar que renderizarVistaDesdeUrl falle al tomar una ruta dinámica por error.
+            $renderer->renderizarVistaConDatos('9.00-notfound'); 
             return;
         }
 
         $destino = $rutaEncontrada['destino'];  // Puede ser string (vista) o array [Clase::class, 'metodo'] (controlador).
         
-        if (is_string($destino)) {            
-            $renderer->renderizarVistaDesdeUrl();
-        // Verifica que es un array y que el array tenga exactamente 2 elementos: [Clase, 'metodo']. Ejemplo: [PersonalController::class, 'mostrarListado']).
+        if (is_string($destino)) {
+            $renderer->renderizarVistaConDatos($destino);
+            
+        // Verifica que es un array y que el array tenga exactamente 2 elementos: [Clase, 'metodo'].
         } elseif (is_array($destino) && count($destino) === 2) {            
-            [$claseController, $metodo] = $destino;  // Destructuring assignment (asignación por desestructuración). Extrae los valores del array $destino into variables separadas.
+            [$claseController, $metodo] = $destino;  // Destructuring assignment.
             
             $service = $this->obtenerServiceParaControladores($claseController);
-            $controlador = new $claseController($service, $renderer);  // Instancia el controlador dinámicamente con los servicios necesarios (inyección de dependencias). dynamic class instantiation
+            $controlador = new $claseController($service, $renderer);  // Inyección de dependencias.
             
             $controlador->$metodo();
 
         } else {            
-            $renderer->renderizarVistaDesdeUrl();  // Si el destino no es ni string ni array válido, renderiza la vista estática 404.
+            $renderer->renderizarVistaConDatos('9.00-notfound'); // Si el destino no es válido, 404.
         }
     }
 

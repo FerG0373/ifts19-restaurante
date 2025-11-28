@@ -1,7 +1,7 @@
 <?php
 use App\Core\Router;
 use App\Core\ViewRenderer;
-use App\Core\Container;  // Para obtener la instancia de DataAccess de Container.php
+use App\Core\Container;// Para obtener la instancia de DataAccess de Container.php
 use App\Controllers\PersonalController; // Importamos el controlador
 use App\Controllers\MesaController;
 use App\Controllers\AuthController;
@@ -12,9 +12,11 @@ $directorioVistas = __DIR__ . '/views';
 $dataAccess = Container::getDataAccess();
 // Inyectar DataAccess en el Router.
 $enrutador = new Router($dataAccess);
+
 // Rutas estáticas.
-$enrutador->agregarRuta('home', '1.01-home.php', true);
-$enrutador->agregarRuta('lista-personal', '2.01-personal-lista.php', false);
+$enrutador->agregarRuta('home', '1.01-home', true);
+$enrutador->agregarRuta('lista-personal', '2.01-personal-lista', false);
+
 // Rutas dinámicas con datos (Controladores).
 $enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'], true);  // Listado de personal (GET).
 $enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDetalle'], false, 'POST');  // Detalle de personal (POST).
@@ -29,9 +31,10 @@ $enrutador->agregarRuta('mesas/formulario/alta', [MesaController::class, 'altaMe
 $enrutador->agregarRuta('mesas/eliminar', [MesaController::class, 'bajaMesa'], false, 'POST');
 $enrutador->agregarRuta('mesas/asignar-mozo', [MesaController::class, 'asignarMozo'], false, 'POST');
 
-$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormulario'], false, 'GET');
-$enrutador->agregarRuta('login', [AuthController::class, 'iniciarSesion'], false, 'POST');
-$enrutador->agregarRuta('logout', [AuthController::class, 'cerrarSesion'], true, 'GET'); // Ruta para cerrar la sesión
+// Rutas de Autenticación
+$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormulario'], true, 'GET');
+$enrutador->agregarRuta('login-procesar', [AuthController::class, 'iniciarSesion'], false, 'POST');
+$enrutador->agregarRuta('logout', [AuthController::class, 'cerrarSesion'], true, 'GET');
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);
