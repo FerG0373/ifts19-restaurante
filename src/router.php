@@ -26,6 +26,7 @@ $enrutador->agregarRuta('personal/formulario/editar', [PersonalController::class
 $enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicacion'], true);
 $enrutador->agregarRuta('mesas/formulario', [MesaController::class, 'mostrarFormulario'], false, 'GET');
 $enrutador->agregarRuta('mesas/formulario/alta', [MesaController::class, 'altaMesa'], false, 'POST');
+$enrutador->agregarRuta('mesas/eliminar/{id}', [MesaController::class, 'bajaMesa'], false, 'POST');
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);

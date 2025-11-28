@@ -12,6 +12,7 @@ class Mesa {
     private int $capacidad;
     private Ubicacion $ubicacion;
     private EstadoMesa $estadoMesa;
+    private bool $activo;
     
 
     public function __construct(
@@ -20,6 +21,7 @@ class Mesa {
         int $capacidad,
         Ubicacion $ubicacion,
         EstadoMesa $estadoMesa,
+        bool $activo = true
     ) {
         if ($capacidad <= 0) {
             throw new InvalidArgumentException("La capacidad de la mesa debe ser un número positivo.");
@@ -30,6 +32,7 @@ class Mesa {
         $this->capacidad = $capacidad;
         $this->ubicacion = $ubicacion;
         $this->estadoMesa = $estadoMesa;
+        $this->activo = $activo;
     }
 
     // --- Getters ---
@@ -44,9 +47,15 @@ class Mesa {
 
     public function getEstadoMesa(): EstadoMesa { return $this->estadoMesa; }
 
+    public function isActivo(): bool { return $this->activo; }
+
     // --- Setters (Opcional, pero útil para edición o inicialización en el Repository) ---
     
     public function setEstadoMesa(EstadoMesa $estadoMesa): void {
         $this->estadoMesa = $estadoMesa;
+    }
+
+    public function setActivo(bool $activo): void {
+        $this->activo = $activo;
     }
 }

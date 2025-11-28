@@ -26,7 +26,8 @@ class MesaMapper {
             $dto->nroMesa,
             $dto->capacidad,
             $ubicacion,
-            EstadoMesa::LIBRE  // Estado inicial al dar de alta.
+            EstadoMesa::LIBRE,  // Estado inicial al dar de alta.
+            true
         );
 
         return $mesa;

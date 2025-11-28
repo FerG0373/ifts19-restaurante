@@ -248,7 +248,8 @@ BEGIN
         numero_mesa,
         capacidad,
         ubicacion,
-        estado_mesa
+        estado_mesa,
+        activo
     FROM
         mesa
     WHERE
@@ -266,11 +267,12 @@ CREATE PROCEDURE sp_mesa_select_by_id(
 )
 BEGIN
     SELECT 
-        m.id,
+        m.id, 
         m.numero_mesa,
-        m.capacidad,
-        m.ubicacion,
-        m.estado_mesa
+        m.capacidad, 
+        m.ubicacion, 
+        m.estado_mesa,
+        m.activo
     FROM 
         mesa m
     WHERE 

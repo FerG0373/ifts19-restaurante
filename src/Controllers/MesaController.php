@@ -80,26 +80,19 @@ class MesaController {
         // Limpia la sesión después de renderizar (para que no aparezca el error en la próxima carga limpia).
         unset($_SESSION['error_form'], $_SESSION['data_form']);
     }
-
-
     
-    // POST /mesas/formulario: Procesa el envío del formulario para crear una mesa.
+    // POST /mesas/formulario
     public function altaMesa(): void {
-        $datos = $_POST; // Capturamos los datos del formulario.
-        
-        try {
-            // DTO: Construir, mapear y validar los datos de $_POST.
-            $dto = MesaAltaDTO::fromArray($datos);
-            // MAPPER: Conversión de DTO a Modelo de Dominio (Mesa).
-            // Esto convierte strings a Enums (Ubicacion, EstadoMesa) y asigna el estado inicial.
-            $mesaModel = MesaMapper::fromDtoAlta($dto);
-            // SERVICE: Lógica de negocio (chequeos extra) y Persistencia (Repository).
-            $mesaModel = $this->mesaService->agregarMesa($mesaModel);            
-            // Redirección con éxito.
+        $datos = $_POST;
+
+        try {            
+            $dto = MesaAltaDTO::fromArray($datos);  // DTO: Construir, mapear y validar los datos de $_POST.
+            $mesaModel = MesaMapper::fromDtoAlta($dto);  // MAPPER: Conversión de DTO a Modelo de Dominio (Mesa).
+            $mesaModel = $this->mesaService->agregarMesa($mesaModel);  // SERVICE: Lógica de negocio (chequeos extra) y Persistencia (Repository).
+
             $_SESSION['msj_exito'] = "Mesa N° {$mesaModel->getNroMesa()} creada con éxito en " . strtoupper($mesaModel->getUbicacion()->value) . ".";            
-            // Redirigir al tablero de mesas, filtrando por la ubicación de la mesa recién creada.
             $ubicacionRedirigir = strtolower($mesaModel->getUbicacion()->value);
-            header("Location: " . APP_BASE_URL . "mesas?ubicacion={$ubicacionRedirigir}");
+            header("Location: " . APP_BASE_URL . "mesas?ubicacion={$ubicacionRedirigir}");  // Redirige al tablero de mesas, filtrando por la ubicación de la mesa recién creada.
             exit;
 
         } catch (InvalidArgumentException $e) {
@@ -111,7 +104,7 @@ class MesaController {
             exit;
 
         } catch (RuntimeException $e) { 
-            // Errores de Negocio (vienen del Service/Repository, ej: nroMesa duplicado, error de BD específico).
+            // Errores de Negocio (vienen del Service/Repository, ej: numero_mesa duplicado, error de BD específico).
             $_SESSION['error_form'] = "Error de negocio: " . $e->getMessage();
             $_SESSION['data_form'] = $datos;            
             header("Location: " . APP_BASE_URL . "mesas/formulario");
@@ -122,6 +115,34 @@ class MesaController {
             $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
                 'titulo' => 'Error de Sistema',
                 'mensaje' => 'No se pudo completar el alta de mesa. Intente nuevamente. Detalles: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // POST /mesas/eliminar/{id}
+    public function eliminarMesa(int $id): void {
+        try {
+            //Llama al Service para ejecutar la lógica de negocio (baja).
+            $mesaDesactivada = $this->mesaService->bajaMesa($id);
+
+            // Redirección con éxito.
+            $_SESSION['msj_exito'] = "La Mesa N° {$mesaDesactivada->getNroMesa()} ha sido dada de baja (Inactiva).";
+            
+            // Redirección.
+            header("Location: " . APP_BASE_URL . "mesas");
+            exit;
+
+        } catch (\RuntimeException $e) {
+            // Error si la mesa no existe, o si hay un error de negocio (ej: mesa ocupada).
+            $_SESSION['error_form'] = "Error al intentar dar de baja la mesa: " . $e->getMessage();
+            header("Location: " . APP_BASE_URL . "mesas");
+            exit;
+            
+        } catch (\Throwable $e) {
+            // Error de sistema (DB, etc.)
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error de Sistema',
+                'mensaje' => 'Error fatal al procesar la baja de mesa: ' . $e->getMessage()
             ]);
         }
     }

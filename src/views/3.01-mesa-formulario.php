@@ -1,25 +1,16 @@
 <?php
-// Variables disponibles desde el Controller:
-// $titulo, $ubicaciones (array de strings: ['salon', 'exterior', ...]), 
-// $datos (datos precargados en caso de error o edición), $error (mensaje de error)
-// $esEdicion (boolean, true si estamos editando una mesa existente)
-
 // Incluir helper de formularios
 require_once __DIR__ . '/../helpers/form_helper.php';
 
-// Inicializar variables usando el helper
-// Nota: Aquí asumimos que $datos, $error y $esEdicion están disponibles en el scope
-// o que se obtienen de $_SESSION en el helper, similar a cómo lo hace Personal.
-init_form_variables($datos, $error, $esEdicion); // Ajustar según tu form_helper
+// Inicializa variables usando el helper.
+init_form_variables($datos, $error, $esEdicion);
 
-// Las ubicaciones deben venir del Controller, pero proveemos un fallback.
 $ubicaciones = $ubicaciones ?? ['salon', 'exterior', 'barra'];
 $datos = $datos ?? [];
 $rutaBase = APP_BASE_URL . 'mesas/';
 
-// Definir la ruta de acción del formulario:
+// Define la ruta de acción del formulario:
 $accionForm = $rutaBase . ($esEdicion ? 'formulario/editar' : 'formulario/alta');
-
 ?>
 
 <div class="container my-5">
@@ -65,10 +56,8 @@ $accionForm = $rutaBase . ($esEdicion ? 'formulario/editar' : 'formulario/alta')
                     <option value="">-- Seleccionar --</option>
                     <?php
                         $ubicacionSeleccionada = get_value($datos, 'ubicacion');
-                        foreach ($ubicaciones as $ubicacionDB): 
-                            // Convertir a mayúsculas para la etiqueta
+                        foreach ($ubicaciones as $ubicacionDB):
                             $etiqueta = strtoupper($ubicacionDB);
-                            // Las ubicaciones de la DB ('salon', 'exterior', etc.) deben ser el valor
                     ?>
                         <option value="<?= $ubicacionDB ?>" <?= ($ubicacionDB == $ubicacionSeleccionada) ? 'selected' : '' ?>>
                             <?= $etiqueta ?>
@@ -83,8 +72,6 @@ $accionForm = $rutaBase . ($esEdicion ? 'formulario/editar' : 'formulario/alta')
                     <select class="form-select" id="estadoMesa" name="estadoMesa" required>
                         <?php 
                             $estadoSeleccionado = get_value($datos, 'estadoMesa');
-                            // Asume que tienes un Enum o array de estados disponibles para iterar
-                            // Ejemplo: ['libre', 'ocupada', 'reservada', 'inhabilitada']
                             $estadosDisponibles = ['libre', 'ocupada', 'reservada', 'inhabilitada'];
                             foreach ($estadosDisponibles as $estadoDB):
                         ?>

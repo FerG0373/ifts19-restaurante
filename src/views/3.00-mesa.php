@@ -14,7 +14,6 @@ function getEstadoClase(string $estadoMesa): string {
 }
 // Función para obtener el nombre del tab
 function getUbicacionNombre(string $ubicacion): string {
-    // Si agregas más ubicaciones en el futuro, solo modificas este match
     return match ($ubicacion) {
         'salon' => 'SALÓN PRINCIPAL',
         'exterior' => 'EXTERIOR',
@@ -30,7 +29,7 @@ function getUbicacionNombre(string $ubicacion): string {
     <h2 class="text-primary mt-5 mb-4 me-3"><?php echo htmlspecialchars($titulo); ?></h2>
 
     <?php if (!empty($exito)): ?>
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-success autoclose-alert" role="alert">
             <?php echo htmlspecialchars($exito); ?>
         </div>
     <?php endif; ?>
@@ -62,7 +61,17 @@ function getUbicacionNombre(string $ubicacion): string {
         <div class="tablero-mesas">
             <!-- Bucle sobre los DTOs de Mesa -->
             <?php foreach ($mesas as $mesa): ?>
-                <div class="card-mesa" data-id="<?php echo $mesa->id; ?>">
+                <div class="card-mesa position-relative" data-id="<?php echo $mesa->id; ?>">
+                    <?php if ($mesa->estadoMesa === 'libre' && $mesa->activo): // Solo si está LIBRE y ACTIVA ?>
+                        <a
+                            href="#" 
+                            class="btn-eliminar-mesa text-danger position-absolute bottom-0 end-0 m-4"
+                            data-id="<?php echo $mesa->id; ?>"
+                            data-nro="<?php echo htmlspecialchars($mesa->nroMesa); ?>"
+                            title="Dar de baja la mesa (Eliminación Lógica)">
+                            <i class="fas fa-trash-alt fa-sm"></i>
+                        </a>
+                    <?php endif; ?>
                     <!-- Número de Mesa -->
                     <h2>Mesa <?php echo htmlspecialchars($mesa->nroMesa); ?></h2>
                     
@@ -79,7 +88,7 @@ function getUbicacionNombre(string $ubicacion): string {
                     ?>
                     <div class="estado-mesa <?php echo $claseEstado; ?>">
                         <?php echo htmlspecialchars($textoEstado); ?>
-                    </div>                    
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>

@@ -40,7 +40,8 @@ class MesaRepository {
                     $fila['numero_mesa'],
                     (int)$fila['capacidad'],
                     Ubicacion::from($fila['ubicacion']),
-                    EstadoMesa::from($fila['estado_mesa'])
+                    EstadoMesa::from($fila['estado_mesa']),
+                    (bool)$fila['activo']
                 );
             }
 
@@ -74,8 +75,9 @@ class MesaRepository {
                 (int)$fila['id'],
                 $fila['numero_mesa'],
                 (int)$fila['capacidad'],
-                Ubicacion::from($fila['ubicacion']), // CONVIERTE STRING A ENUM.
-                EstadoMesa::from($fila['estado_mesa']) // CONVIERTE STRING A ENUM.
+                Ubicacion::from($fila['ubicacion']),  // CONVIERTE STRING A ENUM.
+                EstadoMesa::from($fila['estado_mesa']),  // CONVIERTE STRING A ENUM.
+                (bool)$fila['activo']
             );
         } catch (PDOException $e) {
             throw new \Exception("Error al buscar mesa con ID {$id}: " . $e->getMessage());
@@ -100,7 +102,7 @@ class MesaRepository {
             $stmt->execute();
             
             $idMesa = (int)$stmt->fetchColumn(); // CAPTURAR EL ID DEVUELTO POR EL SP
-            $stmt->closeCursor(); // Cierra el conjunto de resultados para permitir más consultas
+            $stmt->closeCursor(); // Cierra el conjunto de resultados para permitir más consultas.
             
             // Si tu SP devuelve el ID, usamos ese ID para recuperar el objeto completo.
             $nuevaMesa = $this->obtenerMesaPorId($idMesa); 
@@ -112,11 +114,30 @@ class MesaRepository {
             return $nuevaMesa;
             
         } catch (PDOException $e) {
-            // Manejo de error de clave duplicada (común en MySQL al usar UNIQUE constraint)
-            if (str_contains($e->getMessage(), 'Duplicate entry') && str_contains($e->getMessage(), 'nroMesa')) {
+            // Manejo de error de clave duplicada (común en MySQL al usar UNIQUE constraint).
+            if (str_contains($e->getMessage(), 'Duplicate entry') && str_contains($e->getMessage(), 'numero_mesa')) {
                 throw new InvalidArgumentException("Ya existe una mesa con el número '{$mesa->getNroMesa()}' en la ubicación '{$mesa->getUbicacion()->value}'.");
             }
             throw new \Exception("Error de base de datos al dar de alta la mesa: " . $e->getMessage());
+        }
+    }
+
+
+    public function desactivarMesa(Mesa $mesa): Mesa {
+        $sql = "UPDATE mesa SET activo = 0 WHERE id = :id"; 
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id', $mesa->getId(), PDO::PARAM_INT);
+            $stmt->execute();
+            
+            // Actualizar el estado en el objeto de PHP y devolverlo.
+            $mesa->setActivo(false); // Asumiendo que tu modelo tiene un setter para 'activo'
+            
+            return $mesa;
+            
+        } catch (PDOException $e) {
+            throw new \Exception("Error al desactivar la mesa ID {$mesa->getId()}: " . $e->getMessage());
         }
     }
 }

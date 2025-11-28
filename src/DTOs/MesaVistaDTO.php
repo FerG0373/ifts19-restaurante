@@ -9,6 +9,7 @@ class MesaVistaDTO {
     public int $capacidad;
     public string $ubicacion;
     public string $estadoMesa;
+    public bool $activo;
 
     private function __construct() {}
 
@@ -20,6 +21,7 @@ class MesaVistaDTO {
         $dto->capacidad = $mesa->getCapacidad();
         $dto->ubicacion = $mesa->getUbicacion()->value;
         $dto->estadoMesa = $mesa->getEstadoMesa()->value;
+        $dto->activo = $mesa->isActivo();
 
         return $dto;
     }
