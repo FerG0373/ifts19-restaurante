@@ -4,6 +4,8 @@ use App\Core\ViewRenderer;
 use App\Core\Container;  // Para obtener la instancia de DataAccess de Container.php
 use App\Controllers\PersonalController; // Importamos el controlador
 use App\Controllers\MesaController;
+use App\Controllers\ProductoController;
+use App\Controllers\PedidoController;
 
 $directorioVistas = __DIR__ . '/views';
 
@@ -27,6 +29,22 @@ $enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicac
 $enrutador->agregarRuta('mesas/formulario', [MesaController::class, 'mostrarFormulario'], false, 'GET');
 $enrutador->agregarRuta('mesas/formulario/alta', [MesaController::class, 'altaMesa'], false, 'POST');
 $enrutador->agregarRuta('mesas/eliminar', [MesaController::class, 'bajaMesa'], false, 'POST');
+
+// RUTAS DE PRODUCTO ****************
+$enrutador->agregarRuta('producto', [ProductoController::class, 'listarProductos'], true, 'GET');
+$enrutador->agregarRuta('producto/detalle', [ProductoController::class, 'verDetalle'], false, 'POST');
+
+$enrutador->agregarRuta('producto/formulario', [ProductoController::class, 'mostrarFormulario'], false, 'GET');
+$enrutador->agregarRuta('producto/formulario/alta', [ProductoController::class, 'altaProducto'], false, 'POST');
+$enrutador->agregarRuta('producto/formulario/cargar', [ProductoController::class, 'cargarFormularioEdicion'], false, 'POST');
+$enrutador->agregarRuta('producto/formulario/editar', [ProductoController::class, 'editarProducto'], false, 'POST');
+
+//RUTAS DE PEDIDO **************
+$enrutador->agregarRuta('pedido', [PedidoController::class, 'listarPedidos'], true, 'GET');
+$enrutador->agregarRuta('pedido/detalle', [PedidoController::class, 'verDetalle'], false, 'POST');
+$enrutador->agregarRuta('pedido/formulario', [PedidoController::class, 'mostrarFormulario'], false, 'GET');
+$enrutador->agregarRuta('pedido/formulario/alta', [PedidoController::class, 'altaPedido'], false, 'POST');
+$enrutador->agregarRuta('pedido/cambiar-estado', [PedidoController::class, 'cambiarEstado'], false, 'POST');
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());
 $enrutador->despacharRuta($renderizadorVistas);

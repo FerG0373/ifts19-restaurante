@@ -3,8 +3,12 @@ namespace App\Core;
 
 use App\Services\PersonalService;
 use App\Services\MesaService;
+use App\Services\ProductoService;
+use App\Services\PedidoService;
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
+use App\Controllers\ProductoController;
+use App\Controllers\PedidoController;
 use App\Models\Mesa;
 use Exception;
 
@@ -72,6 +76,8 @@ class Router {
             // Para este Controller, éste Service.
             PersonalController::class => PersonalService::class,
             MesaController::class => MesaService::class,
+            ProductoController::class => [ProductoService::class],
+            PedidoController::class => [PedidoService::class, ProductoService::class],
             // Agregar acá otros controladores:
         ];
         
