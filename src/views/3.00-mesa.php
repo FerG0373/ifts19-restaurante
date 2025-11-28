@@ -61,8 +61,9 @@ function getUbicacionNombre(string $ubicacion): string {
         <div class="tablero-mesas">
             <!-- Bucle sobre los DTOs de Mesa -->
             <?php foreach ($mesas as $mesa): ?>
+                <?php if ($mesa->activo): // Solo si la mesa está activa ?>
                 <div class="card-mesa position-relative" data-id="<?php echo $mesa->id; ?>">
-                    <?php if ($mesa->estadoMesa === 'libre' && $mesa->activo): // Solo si está LIBRE y ACTIVA ?>                        
+                    <?php if ($mesa->estadoMesa === 'libre'): // Solo si está LIBRE ?>                        
                         <form 
                             method="POST" 
                             action="<?php echo APP_BASE_URL; ?>mesas/eliminar" 
@@ -97,6 +98,7 @@ function getUbicacionNombre(string $ubicacion): string {
                         <?php echo htmlspecialchars($textoEstado); ?>
                     </div>
                 </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
