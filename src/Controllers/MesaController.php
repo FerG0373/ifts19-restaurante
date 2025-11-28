@@ -120,14 +120,20 @@ class MesaController {
     }
 
     // POST /mesas/eliminar/{id}
-    public function eliminarMesa(int $id): void {
+    public function bajaMesa(): void {        
+        // El ID viene ahora del campo oculto del formulario ($_POST['id'])
+        $id = (int)$_POST['id'] ?? 0;         
+        if ($id <= 0) {
+            // Redirigir al tablero con error si no se encuentra el ID.
+            $_SESSION['error_form'] = "Error: ID de mesa no recibido.";
+            header("Location: " . APP_BASE_URL . "mesas");
+            exit;
+        }        
         try {
-            //Llama al Service para ejecutar la lógica de negocio (baja).
-            $mesaDesactivada = $this->mesaService->bajaMesa($id);
-
+            // Llama al Service con el ID obtenido del POST.
+            $mesaDesactivada = $this->mesaService->eliminarMesa($id);
             // Redirección con éxito.
-            $_SESSION['msj_exito'] = "La Mesa N° {$mesaDesactivada->getNroMesa()} ha sido dada de baja (Inactiva).";
-            
+            $_SESSION['msj_exito'] = "La Mesa N° {$mesaDesactivada->getNroMesa()} ha sido dada de baja (Inactiva).";            
             // Redirección.
             header("Location: " . APP_BASE_URL . "mesas");
             exit;
@@ -146,5 +152,4 @@ class MesaController {
             ]);
         }
     }
-
 }

@@ -28,7 +28,7 @@ class MesaService {
     }
 
 
-    public function bajaMesa(int $id): Mesa {
+    public function eliminarMesa(int $id): Mesa {
         
         // 1. Obtener la mesa actual (para validación y posterior retorno).
         $mesa = $this->mesaRepository->obtenerMesaPorId($id);

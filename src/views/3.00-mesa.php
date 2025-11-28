@@ -62,15 +62,22 @@ function getUbicacionNombre(string $ubicacion): string {
             <!-- Bucle sobre los DTOs de Mesa -->
             <?php foreach ($mesas as $mesa): ?>
                 <div class="card-mesa position-relative" data-id="<?php echo $mesa->id; ?>">
-                    <?php if ($mesa->estadoMesa === 'libre' && $mesa->activo): // Solo si está LIBRE y ACTIVA ?>
-                        <a
-                            href="#" 
-                            class="btn-eliminar-mesa text-danger position-absolute bottom-0 end-0 m-4"
-                            data-id="<?php echo $mesa->id; ?>"
-                            data-nro="<?php echo htmlspecialchars($mesa->nroMesa); ?>"
-                            title="Dar de baja la mesa (Eliminación Lógica)">
-                            <i class="fas fa-trash-alt fa-sm"></i>
-                        </a>
+                    <?php if ($mesa->estadoMesa === 'libre' && $mesa->activo): // Solo si está LIBRE y ACTIVA ?>                        
+                        <form 
+                            method="POST" 
+                            action="<?php echo APP_BASE_URL; ?>mesas/eliminar" 
+                            onsubmit="return confirm('¿Estás seguro de que deseas dar de baja la Mesa N° <?php echo htmlspecialchars($mesa->nroMesa); ?>? Esta acción la dejará inactiva.');" 
+                            class="position-absolute"
+                            style="right: 8px; bottom: 8px;">
+                            <input type="hidden" name="id" value="<?php echo $mesa->id; ?>">                            
+                            <button 
+                                type="submit"
+                                class="btn-eliminar-mesa text-danger position-absolute bottom-0 end-0 m-3"
+                                title="Dar de baja la mesa (Eliminación Lógica)"
+                                style="background: none; border: none; padding: 0;">
+                                <i class="fas fa-trash-alt fa-sm"></i>
+                            </button>
+                        </form>
                     <?php endif; ?>
                     <!-- Número de Mesa -->
                     <h2>Mesa <?php echo htmlspecialchars($mesa->nroMesa); ?></h2>
