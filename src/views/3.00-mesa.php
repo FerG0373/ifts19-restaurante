@@ -60,7 +60,7 @@ function getUbicacionNombre(string $ubicacion): string {
                         <?php // DESPLEGABLE ?>
                         <form 
                             method="POST" 
-                            action="<?php echo APP_BASE_URL; ?>mesas/asignarMozo" 
+                            action="<?php echo APP_BASE_URL; ?>mesas/asignar-mozo" 
                             class="form-asignar-mozo"
                             style="position: absolute; top: 8px; right: 8px; z-index: 10;">
                             <input type="hidden" name="id_mesa" value="<?php echo $mesa->id; ?>">

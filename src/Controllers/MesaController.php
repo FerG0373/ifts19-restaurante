@@ -165,4 +165,30 @@ class MesaController {
             ]);
         }
     }
+
+
+    public function asignarMozo(): void {        
+        // Los IDs vienen del formulario POST.
+        $idMesa = (int)$_POST['id_mesa'] ?? 0;
+        $idPersonal = (int)$_POST['id_personal'] ?? 0;
+
+        if ($idMesa <= 0 || $idPersonal <= 0) {
+            $_SESSION['error_form'] = "Error de asignación: Faltan datos de mesa o mozo.";
+            header("Location: " . APP_BASE_URL . "mesas");
+            exit;
+        }
+        
+        try {
+            // Llama al Service para que registre la asignación en la DB.
+            $this->mesaService->asignarMozo($idMesa, $idPersonal); 
+
+            $_SESSION['msj_exito'] = "Mesa asignada con éxito al mozo (ID: {$idPersonal}).";
+            
+        } catch (\Exception $e) {
+            $_SESSION['error_form'] = "Error al asignar mozo: " . $e->getMessage();
+        }
+        
+        header("Location: " . APP_BASE_URL . "mesas");
+        exit;
+    }
 }

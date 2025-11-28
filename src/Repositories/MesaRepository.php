@@ -140,4 +140,23 @@ class MesaRepository {
             throw new \Exception("Error al desactivar la mesa ID {$mesa->getId()}: " . $e->getMessage());
         }
     }
+
+
+    public function insertarAsignacionMozo(int $idMesa, int $idPersonal): void {
+        $sql = "CALL sp_asignacion_mesa_insert(:p_mesa_id, :p_personal_id)";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            
+            // Bindeo de parámetros
+            $stmt->bindValue(':p_mesa_id', $idMesa, PDO::PARAM_INT);
+            $stmt->bindValue(':p_personal_id', $idPersonal, PDO::PARAM_INT);
+            
+            $stmt->execute();
+            $stmt->closeCursor();
+
+        } catch (PDOException $e) {
+            throw new \Exception("Error de base de datos al asignar mozo a la mesa: " . $e->getMessage());
+        }
+    }
 }
