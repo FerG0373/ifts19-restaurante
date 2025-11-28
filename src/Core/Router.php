@@ -1,10 +1,12 @@
 <?php
 namespace App\Core;
 
+use App\Controllers\AuthController;
 use App\Services\PersonalService;
 use App\Services\MesaService;
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
+use App\Services\AuthService;
 use App\Models\Mesa;
 use Exception;
 
@@ -72,6 +74,7 @@ class Router {
             // Para este Controller, éste Service.
             PersonalController::class => PersonalService::class,
             MesaController::class => MesaService::class,
+            AuthController::class => AuthService::class,
             // Agregar acá otros controladores:
         ];
         
