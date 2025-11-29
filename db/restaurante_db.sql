@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `restaurante_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `restaurante_db`;
--- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
 -- Host: localhost    Database: restaurante_db
 -- ------------------------------------------------------
--- Server version	9.4.0
+-- Server version	8.0.44
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -125,7 +125,7 @@ CREATE TABLE `mesa` (
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__mesa__numero_mesa` (`numero_mesa`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +134,6 @@ CREATE TABLE `mesa` (
 
 LOCK TABLES `mesa` WRITE;
 /*!40000 ALTER TABLE `mesa` DISABLE KEYS */;
-INSERT INTO `mesa` VALUES (1,'S-01',4,'salon','libre',1),(2,'S-02',2,'salon','libre',1),(3,'S-03',6,'salon','libre',1),(4,'S-04',4,'salon','libre',1),(5,'S-05',2,'salon','libre',1),(6,'S-06',4,'salon','libre',1),(7,'S-07',2,'salon','ocupada',1),(8,'E-01',4,'exterior','libre',1),(9,'E-02',2,'exterior','libre',1);
 /*!40000 ALTER TABLE `mesa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -193,7 +192,7 @@ CREATE TABLE `personal` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__personal__dni` (`dni`),
   UNIQUE KEY `uq__personal__email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -202,7 +201,7 @@ CREATE TABLE `personal` (
 
 LOCK TABLES `personal` WRITE;
 /*!40000 ALTER TABLE `personal` DISABLE KEYS */;
-INSERT INTO `personal` VALUES (1,'40123456','Carlos','Sánchez','sanchez.carlos@gmail.com','1123236921','1990-01-01','m','encargado','2023-10-06'),(2,'42664123','Julio','Castro','castro.julio@gmail.com','1152448712','1996-03-09','m','mozo','2023-10-08'),(3,'3811238987','Jose','Conti','jose.conti@gmail.com','1123903112','1994-10-19','m','cocinero','2025-10-15'),(4,'3712332341','Carla','Sanchez','carla.sanchez@gmail.com','1141415341','1993-06-15','f','bartender','2025-10-15'),(5,'34123321','Santiago','Castro','casto.s@gmial.com','1143519098','1989-02-20','m','cocinero','2025-10-15'),(6,'41223456','Luca','Iglesias','inglesias.luca@gmail.com','1123335141','2001-09-06','m','cajero','2025-10-15'),(7,'29123008','Jorge','Casto','castro.jorge@gmail.com','1123412315','1979-10-25','m','cocinero','2025-10-15'),(8,'36123455','Julia','Santoro','santoro.julia@gmail.com','1154679890','1987-09-04','m','bartender','2025-10-15'),(9,'29556123','Jorge','Gonzalez','jorge.gonzalez@gmail.com','1123879131','1984-01-12','m','cajero','2025-11-02'),(10,'31123324','Pablo','Crespo','crespo.pablo@gmail.com','1132435565','1996-12-18','m','bartender','2025-11-03'),(11,'30669321','Javier','Lopez','lopez.javier@gmail.com','1132225689','1988-05-12','m','mozo','2025-11-03'),(12,'29123012','Jose','Hernandez','hernandez.j@gmail.com','1154657712','1985-05-29','m','mozo','2025-11-03'),(13,'41231456','Andrea','Fernandez','andrea.fernandez@gmail.com','1132667612','1999-02-04','f','bartender','2025-11-03'),(14,'29564123','Felipe','Aguirre','f.aguirre@outlook.com','1123567412','1987-02-15','m','mozo','2025-11-28');
+INSERT INTO `personal` VALUES (1,'37221123','Joaquin','Garcia','garcia.joaquin@outlook.com','1123567748','1992-10-13','m','encargado','2025-11-29'),(2,'41231459','Vanesa','Martin','vanesa.martin@gmail.com','1156741596','1997-12-03','f','mozo','2025-11-29'),(3,'29123964','Carlos','Lopez','carlos.lopez@outlook.com','1155294789','1988-06-21','m','mozo','2025-11-29'),(4,'37898122','Christian','Diaz','christian.diaz@gmail.com','1147896541','1994-05-09','m','mozo','2025-11-29');
 /*!40000 ALTER TABLE `personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -288,7 +287,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'encargado','1234',1),(2,'mozo','1234',0),(3,'mozo','$2y$10$XJhwH93erj8RwgVdG.mfPO5CXtJ/IR/LUfnu9m1vFUNnP2yatuhpe',1),(4,'mozo','$2y$10$FFIndJVrSdpFyc6Injqktecnkhd1pAN0ywNtDDsSL5sdTsloVMqj2',1),(5,'mozo','$2y$10$wxJo6zwkS989DHqsyOiygeGu/JMvRkbCNTfrs64RQo98vCIN2ei2C',1),(6,'mozo','$2y$10$C8ADL2EX21Zk8wactPVlseVXIAuuhTV8xf1nfSusA98FWwWRUjKOe',1),(7,'mozo','$2y$10$/vFBdNaLzdPm45RSHOXFS.6hhlVCdYFAB4dzZB9v1hjj1ywrvZxWa',1),(8,'mozo','$2y$10$XHmzYvrE7Ztx6eva5EfvkOneb6/fAIUd9RXXiZK9u2CnTUqSdvRQK',0),(9,'mozo','$2y$10$8WWZRBTZ25vKDa8W0wpUEu24h2EtqzN/kQEuWUh4GMCchpKKgX83i',0),(10,'mozo','$2y$10$xbe5X/ZkOMfZYichX6p9MOFYnNlLQLSaXRDuFHsx9/CKOpu4vtfVG',0),(11,'mozo','$2y$10$Bw.B9vi0Pw6NYm2gKLfz2OqNIe87WB9SVGx3VCY8/IBbGnqShxWVW',1),(12,'mozo','$2y$10$rPuG1lPfXSpN3pH6xqNPmehXAyk0QHGDQ9QkuRMosRNa/BYBzB7qW',0),(13,'mozo','$2y$10$EkgYi27h9H10CZOIDEY1qOYuhyHYUg1cIBwV432Gjs.tPiRQ53KmC',0),(14,'mozo','$2y$10$4VxfVSBwx6AwRTamuQQXu..44IN/Dd6KzX0ANBN2QFzMb0mV0s/ee',1);
+INSERT INTO `usuario` VALUES (1,'encargado','$2y$10$3HgdVtQaBwSEkSfom6icsumDTVWJ/Jpx/z6HJe5vbBS3HpVUoZL6.',1),(2,'mozo','$2y$10$y6AywW9wjGbyf/unbbf2dushUdl15pzq/pT.vkvsh4gMTWGZWjiU2',1),(3,'mozo','$2y$10$Uu5Rs//26DNdKHJWy64ZiO/SfZiB2wqQpUNsr2ol05XNr/1o5HP7S',1),(4,'mozo','$2y$10$ij50apYLisHV4PC1KUy13uj6Mt5/32Dvinul3Tm4Mgi7oPUFx6jS.',0);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -728,4 +727,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-28  8:24:18
+-- Dump completed on 2025-11-29  0:48:54
