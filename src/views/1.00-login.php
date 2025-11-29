@@ -4,7 +4,7 @@
             <h2 class="text-center mb-4">Iniciar Sesión</h2>
             
             <?php if (isset($error)): ?>
-                <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                <div class="alert alert-danger autoclose-alert"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
             
             <div class="mb-3">

@@ -17,9 +17,8 @@ class UsuarioRepository {
     }
 
     
-    public function buscarUsuarioPorId(int $dni): ?Usuario {
-        // Usamos el ID de la tabla 'usuario' que corresponde al DNI/ID del personal.
-        $sql = "SELECT id, perfil_acceso, pass_hash, activo FROM usuario WHERE id = :dni";
+    public function buscarUsuarioPorDni(string $dni): ?Usuario {
+        $sql = "CALL sp_usuario_select_by_dni(:dni)";
 
         try {
             $stmt = $this->db->prepare($sql);

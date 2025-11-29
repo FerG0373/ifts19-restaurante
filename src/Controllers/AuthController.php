@@ -35,12 +35,12 @@ class AuthController {
             $this->authService->login($username, $password);
             
             // Si el login es exitoso, redirige al tablero principal
-            header("Location: " . APP_BASE_URL . "mesas");
+            header("Location: " . APP_BASE_URL . "home");
             exit;
 
         } catch (\Exception $e) {
             // Si falla, guarda el mensaje de error en la sesión y redirige al GET /login
-            $_SESSION['auth_error'] = "Error de inicio de sesión: " . $e->getMessage();
+            $_SESSION['auth_error'] = $e->getMessage();
             header("Location: " . APP_BASE_URL . "login");
             exit;
         }

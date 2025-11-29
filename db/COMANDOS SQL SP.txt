@@ -308,3 +308,24 @@ BEGIN
     SELECT LAST_INSERT_ID();
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_usuario_select_by_dni(
+    IN p_dni VARCHAR(20)
+)
+BEGIN
+    SELECT 
+        u.id, 
+        u.perfil_acceso, 
+        u.pass_hash, 
+        u.activo 
+    FROM 
+        usuario u
+    INNER JOIN 
+        personal p ON u.id = p.id
+    WHERE 
+        p.dni = p_dni;
+END //
+DELIMITER ;

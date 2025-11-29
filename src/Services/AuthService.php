@@ -25,10 +25,10 @@ class AuthService {
             throw new RuntimeException("El usuario (DNI) debe contener solo números.");
         }
         
-        $dni = (int)$username;
+        $dni = $username;
 
         // Busca usuario por DNI.
-        $usuario = $this->usuarioRepository->buscarUsuarioPorId($dni);
+        $usuario = $this->usuarioRepository->buscarUsuarioPorDni($dni);
 
         if (!$usuario) {
             throw new RuntimeException("Credenciales inválidas.");

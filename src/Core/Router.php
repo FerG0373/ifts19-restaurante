@@ -7,7 +7,6 @@ use App\Services\MesaService;
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
 use App\Services\AuthService;
-use App\Models\Mesa;
 use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
