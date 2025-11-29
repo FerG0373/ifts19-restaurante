@@ -32,8 +32,8 @@ $enrutador->agregarRuta('mesas/eliminar', [MesaController::class, 'bajaMesa'], f
 $enrutador->agregarRuta('mesas/asignar-mozo', [MesaController::class, 'asignarMozo'], false, 'POST');
 
 // Rutas de Autenticación
-$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormulario'], true, 'GET');
-$enrutador->agregarRuta('login-procesar', [AuthController::class, 'iniciarSesion'], false, 'POST');
+$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormularioLogin'], true, 'GET');
+$enrutador->agregarRuta('login/procesar', [AuthController::class, 'iniciarSesion'], false, 'POST');
 $enrutador->agregarRuta('logout', [AuthController::class, 'cerrarSesion'], true, 'GET');
 
 $renderizadorVistas = new ViewRenderer($directorioVistas, $enrutador->getRutas());

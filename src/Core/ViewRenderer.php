@@ -37,7 +37,7 @@ class ViewRenderer {
         $layout = $this->directorioVistas . '/0.00-layout.php';
         $notFound = $this->directorioVistas . '/9.00-notfound.php';
 
-        // 1. Intentar encontrar la vista estática o el 404
+        // Intenta encontrar la vista estática o el 404.
         $rutaEstatica = $this->directorioVistas . '/' . $url . '.php'; 
 
         if (file_exists($rutaEstatica) && is_string($this->rutas[$url]['destino'] ?? null)) {
@@ -60,8 +60,7 @@ class ViewRenderer {
         $viewRenderer = $this;
 
         $rutaLayout = $this->directorioVistas . '/0.00-layout.php';
-        $rutaNotFound = $this->directorioVistas . '/9.00-notfound.php';
-        
+        $rutaNotFound = $this->directorioVistas . '/9.00-notfound.php';        
         $rutaVista = $this->directorioVistas . '/' . $vista . '.php';        
 
         if (file_exists($rutaVista)) {

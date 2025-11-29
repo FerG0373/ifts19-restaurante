@@ -1,7 +1,6 @@
 <?php
 namespace App\Core;
 
-use App\Controllers\AuthController;
 use App\Services\PersonalService;
 use App\Services\MesaService;
 use App\Services\AuthService;
@@ -38,8 +37,8 @@ class Container {
         return self::$accesoDatos;
     }
 
-    //  * Método centralizado para obtener instancias de Services de forma dinámica y aplica el patrón Singleton.
-    //  * Gestiona automáticamente las dependencias.
+    //  Método centralizado para obtener instancias de Services de forma dinámica y aplica el patrón Singleton.
+    //  Gestiona automáticamente las dependencias.
     public static function getService(string $claseService) {
         if (!isset(self::$instancias[$claseService])) {
             // Mapeo de dependencias

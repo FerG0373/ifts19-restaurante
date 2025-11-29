@@ -34,7 +34,7 @@ function getUbicacionNombre(string $ubicacion): string {
 
     <div class="header-acciones">
         <a href="mesas/formulario" class="btn-nueva-mesa">
-            <i class="fas fa-plus"></i> Nueva Mesa
+            <i class="fas fa-plus mt-4 mb-4"></i> Nueva Mesa
         </a>
     </div>
 
@@ -64,16 +64,16 @@ function getUbicacionNombre(string $ubicacion): string {
                             class="form-asignar-mozo"
                             style="position: absolute; top: 8px; right: 8px; z-index: 10;">
                             <input type="hidden" name="id_mesa" value="<?php echo $mesa->id; ?>">
-                            <select name="id_personal" class="form-select form-select-sm" required style="width: auto; display: inline-block;">
-                                <option value="" selected disabled>Asignar Mozo...</option>
-                                
+                            <select name="id_personal" class="form-select form-select-sm" style="width: auto; display: inline-block;" title="Seleccionar un item de la lista" required>
+                                <option value="" selected disabled>Asignar Mozo...</option>                                
                                 <?php foreach ($mozos as $mozo): ?>
                                     <option value="<?php echo $mozo->getId(); ?>">
                                         <?php echo htmlspecialchars($mozo->getNombre() . ' ' . $mozo->getApellido()); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <button type="submit" class="btn btn-sm btn-primary ms-2" title="Confirmar Asignación">
+                            <?php // BOTÓN CONFIRMAR ?>
+                            <button type="submit" class="btn btn-sm btn-primary ms-2 mb-1" title="Confirmar Asignación">
                                 <i class="fas fa-check"></i>
                             </button>
                         </form>
@@ -82,7 +82,7 @@ function getUbicacionNombre(string $ubicacion): string {
                             method="POST" 
                             action="<?php echo APP_BASE_URL; ?>mesas/eliminar" 
                             onsubmit="return confirm('¿Estás seguro de que deseas dar de baja la Mesa N° <?php echo htmlspecialchars($mesa->nroMesa); ?>? Esta acción la dejará inactiva.');" 
-                            class="position-absolute"
+                            class="position-absolute mb-3 me-3"
                             style="right: 8px; bottom: 8px;">
                             <input type="hidden" name="id" value="<?php echo $mesa->id; ?>">
                             <button 

@@ -15,20 +15,17 @@ class AuthController {
     }
 
     // GET /login
-    // Muestra el formulario de inicio de sesión.
-    public function mostrarFormulario(): void {
-        // En este punto, puedes recuperar errores de la sesión si hubo un intento fallido
+    public function mostrarFormularioLogin(): void {
+        // Verifica si hay un mensaje de error en la sesión (establecido por el POST /login).
         $error = $_SESSION['auth_error'] ?? null;
-        unset($_SESSION['auth_error']); // Limpia el error después de mostrarlo
+        unset($_SESSION['auth_error']);  // Limpia el error después de mostrarlo.
         
-        $this->viewRenderer->renderizarVistaConDatos('9.00-login', [
-            'error' => $error,
-            'titulo' => 'Iniciar Sesión',
+        $this->viewRenderer->renderizarVistaConDatos('1.00-login', [
+            'error' => $error
         ]);
     }
 
     // POST /login
-    // Procesa el formulario de inicio de sesión.
     public function iniciarSesion(): void {
         $username = $_POST['username'] ?? null;
         $password = $_POST['pass'] ?? null;
@@ -50,7 +47,6 @@ class AuthController {
     }
     
     // GET /logout
-    // Cierra la sesión activa.
     public function cerrarSesion(): void {
         $this->authService->logout();
         
