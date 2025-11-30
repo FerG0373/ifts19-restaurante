@@ -7,6 +7,8 @@ use App\Controllers\MesaController;
 use App\Controllers\AuthController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RoleMiddleware;
+use App\Middleware\GuestMiddleware;
+
 
 
 $directorioVistas = __DIR__ . '/views';
@@ -20,24 +22,20 @@ $enrutador = new Router($dataAccess);
 // RUTAS PÚBLICAS (SIN MIDDLEWARE)
 // =================================================================
 // Son las puertas de entrada para iniciar sesión, no pueden tener protección.
-$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormularioLogin'], true, 'GET');
-$enrutador->agregarRuta('login/procesar', [AuthController::class, 'iniciarSesion'], false, 'POST');
+$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormularioLogin'], true, 'GET', [GuestMiddleware::class]);
+$enrutador->agregarRuta('login/procesar', [AuthController::class, 'iniciarSesion'], false, 'POST', [GuestMiddleware::class]);
 
 // =================================================================
 // RUTAS PRIVADAS (REQUIEREN MIDDLEWARE DE AUTENTICACIÓN Y ROL)
 // =================================================================
 // Ruta de Logout - Requiere autenticación (cualquier usuario logueado).
-$enrutador->agregarRuta('logout', [AuthController::class, 'cerrarSesion'], true, 'GET', 
-    [AuthMiddleware::class]
-);
+$enrutador->agregarRuta('logout', [AuthController::class, 'cerrarSesion'], true, 'GET', [AuthMiddleware::class]);
 
 // -----------------------------------------------------------------
 // Rutas de Acceso Básico (Mozo y Encargado)
 // -----------------------------------------------------------------
 // Home - Vista estática.
-$enrutador->agregarRuta('home', '1.01-home', true, 'GET', 
-    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
-);
+$enrutador->agregarRuta('home', '1.01-home', true, 'GET', [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]);
 
 // Rutas de Mesas.
 $enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicacion'], true, 'GET', 

@@ -4,24 +4,17 @@ namespace App\Middleware;
 use App\Core\Container;
 use App\Services\AuthService;
 
-
+// ¿Está autenticado?" → protege rutas privadas.
 class AuthMiddleware {
     private AuthService $authService;
 
     public function __construct() {
-        // El Middleware necesita el AuthService para verificar el estado.
-        $this->authService = Container::getService(AuthService::class);
+        $this->authService = Container::getService(AuthService::class);  // Depende de AuthService para verficar la autenticación.
     }
     
-    // Verifica la autenticación. Si el usuario no está logueado, redirige y termina la ejecución.
-    public function requerirAutenticacion(string $rutaActual): bool {        
-        // Verifica si el usuario está autenticado.
-        if (!$this->authService->estaAutenticado()) {            
-            // Redirige a login y termina la ejecución.
-            header("Location: " . APP_BASE_URL . "login");
-            exit;
-        }        
-        // Si está autenticado, permite el paso.
-        return true;
+    // El método procesar recibe la ruta y un array de argumentos (no usados aquí).
+    public function procesar(string $ruta, array $argumentos = []): bool {
+        // SOLO verifica - retorna true/false.
+        return $this->authService->estaAutenticado();
     }
 }

@@ -9,6 +9,7 @@ use App\Controllers\MesaController;
 use App\Controllers\AuthController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RoleMiddleware;
+use App\Middleware\GuestMiddleware;
 use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
@@ -150,38 +151,50 @@ class Router {
         $controlador->$metodo();
     }
     /**
-     * Ejecuta el middleware asociado a una ruta. Si el middleware redirige, termina la ejecución.
-     * Retorna false si el middleware detuvo la ejecución (redirigió), o true si continúa.
+     * Ejecuta los middlewares asociados a la ruta.
+     * Retorna true si todos los middlewares pasan, false si alguno falla.
      */
     private function ejecutarMiddleware(?array $middlewares, string $rutaSolicitada): bool {
-        if (!$middlewares) {
-            return true;
-        }
+        if (!$middlewares) return true;  // Si $middlewares es null o array vacío, no hay middlewares que ejecutar, pasa directo.
 
         foreach ($middlewares as $middlewareConfig) {            
-            // Creamos una copia local para manipular si es un array, o usamos el string directo.
             if (is_array($middlewareConfig)) {
-                $tempConfig = $middlewareConfig; // Copia del array.
-                $claseMiddleware = array_shift($tempConfig); // Extraemos la clase.
-                $argumentos = $tempConfig; // El resto son los argumentos.
+                $tempConfig = $middlewareConfig;  // Crea copia para no modificar el original.
+                $claseMiddleware = array_shift($tempConfig);  //Extrae y remueve el primer elemento (la clase).
+                $argumentos = $tempConfig;  // Lo que queda son los argumentos para el middleware
             } else {
-                $claseMiddleware = $middlewareConfig;
-                $argumentos = [];
+                $claseMiddleware = $middlewareConfig;  // Si es string, lo toma directamente como clase.
+                $argumentos = [];  // Argumentos vacíos porque no se pasaron parámetros.
             }
             
-            $instanciaMiddleware = new $claseMiddleware(); 
-
-            if ($claseMiddleware === AuthMiddleware::class) {
-                $instanciaMiddleware->requerirAutenticacion($rutaSolicitada);
-            } elseif ($claseMiddleware === RoleMiddleware::class) {
-                $rolRequerido = $argumentos[0] ?? null;
-                if (!$rolRequerido) {
-                    throw new \Exception("RoleMiddleware requiere un rol como argumento.");
-                }
-                $instanciaMiddleware->requiereRol($rolRequerido, $rutaSolicitada);
+            $instanciaMiddleware = new $claseMiddleware();
+            
+            // Ejecuta el método procesar del middleware. Si retorna false, el middleware falló la verificación.
+            if (!$instanciaMiddleware->procesar($rutaSolicitada, $argumentos)) {
+                // Ejecuta la lógica de fallo (redirecciones, mensajes de error)
+                $this->manejarFalloMiddleware($claseMiddleware, $rutaSolicitada);
+                // Retorna false inmediatamente, corta la ejecución de más middlewares.
+                return false;
             }
         }
-
-        return true;  // Todos los middlewares pasaron.
+        // Si llegó acá: Todos los middlewares pasaron sus verificaciones.
+        return true;
+    }
+    /**
+     * Maneja la redirección o acción cuando un middleware falla.
+     */
+    private function manejarFalloMiddleware(string $claseMiddleware, string $rutaSolicitada): void {
+        if ($claseMiddleware === AuthMiddleware::class) {
+            $_SESSION['redirect_to'] = $rutaSolicitada;
+            header("Location: " . APP_BASE_URL . "login");
+        } elseif ($claseMiddleware === RoleMiddleware::class) {
+            $_SESSION['auth_error'] = "Acceso denegado para la ruta: {$rutaSolicitada}";
+            header("Location: " . APP_BASE_URL . "home");
+        } elseif ($claseMiddleware === GuestMiddleware::class) {
+            // Usuario autenticado intentando acceder a ruta para guests (ej: login)
+            header("Location: " . APP_BASE_URL . "home");
+        }
+        
+        exit;
     }
 }
