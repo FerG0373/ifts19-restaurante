@@ -14,7 +14,7 @@ class AuthService {
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    
+    // ========== MÉTODOS PÚBLICOS ==========
     public function login(?string $username, ?string $password): void {
         if (empty($username) || empty($password)) {
             throw new RuntimeException("El DNI y la contraseña son obligatorios.");
@@ -47,21 +47,17 @@ class AuthService {
         // Autenticación exitosa: Crear sesión.
         $this->crearSesion($usuario);
     }
-    
-    
-    private function crearSesion(Usuario $usuario): void {
-        // Asegúrate de que session_start() se haya llamado al inicio de la aplicación
-        $_SESSION['usuario_id'] = $usuario->getId();
-        $_SESSION['perfil_acceso'] = $usuario->getPerfilAcceso()->value;
-        // Opcional: registrar la última actividad, etc.
-    }
 
-    
+    // Verifica si hay una sesión de usuario activa.
+    public function estaAutenticado(): bool {
+        return isset($_SESSION['usuario_id']);
+    }    
+        
     public function logout(): void {
-        // Destruye todas las variables de sesión
+        // Destruye todas las variables de sesión.
         $_SESSION = [];
         
-        // Si se usa cookies de sesión, también debe ser destruida
+        // Si se usa cookies de sesión, también hay que destruirlas.
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000,
@@ -70,7 +66,18 @@ class AuthService {
             );
         }
 
-        // Finalmente, destruye la sesión
+        // Finalmente, destruye la sesión.
         session_destroy();
+    }
+
+    // ========== MÉTODOS PRIVADOS ==========
+    private function crearSesion(Usuario $usuario): void {
+        // Inicia la sesión si no está iniciada.
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        // Guarda datos del usuario en la sesión.
+        $_SESSION['usuario_id'] = $usuario->getId();
+        $_SESSION['perfil_acceso'] = $usuario->getPerfilAcceso()->value;
     }
 }

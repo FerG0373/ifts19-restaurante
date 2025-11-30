@@ -41,6 +41,7 @@ class UsuarioRepository {
 
         } catch (PDOException $e) {
             throw new RuntimeException("Error de base de datos al buscar usuario con DNI {$dni}: " . $e->getMessage());
+            
         } catch (\ValueError $e) {
             throw new RuntimeException("Error de datos: Perfil de acceso inválido en la base de datos.");
         }

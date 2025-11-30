@@ -1,12 +1,12 @@
 <?php
 namespace App\Core;
 
-use App\Controllers\AuthController;
 use App\Services\PersonalService;
 use App\Services\MesaService;
+use App\Services\AuthService;
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
-use App\Services\AuthService;
+use App\Controllers\AuthController;
 use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
@@ -18,58 +18,45 @@ class Router {
         $this->dataAccess = $dataAccess;
     }
 
+
+    // ========== MÉTODOS PÚBLICOS ==========
+
     // Agrega una ruta al array. La variable $destino puede ser string (nombre de archivo de vista) o array [Clase::class, 'metodo'] para controladores, ya que mixed lo permite.
-    public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader, string $metodo = 'GET'): void {
+    public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader, string $metodo = 'GET', ?string $middleware = null): void {
         $this->rutas[$nombreRuta] = [
             'destino' => $destino,
             'nav' => $enNavHeader,
-            'metodo' => strtoupper($metodo)  // Guarda el método en mayúsculas.
+            'metodo' => strtoupper($metodo),  // Guarda el método en mayúsculas.
+            'middleware' => $middleware
         ];
     }
 
-    // Despacha la ruta solicitada. Si es una vista estática, la renderiza. Si es un controlador, lo instancia y llama al método.
+    /***
+     * Despacha la ruta solicitada, buscando coincidencia en las rutas registradas.
+     * Ejecuta la vista o controlador correspondiente, o muestra error 404 si no encuentra la ruta.
+     */
     public function despacharRuta(ViewRenderer $renderer): void {
-        $rutaSolicitada = $_GET['url'] ?? 'home';
-        $rutaSolicitada = trim($rutaSolicitada, '/');
+        $rutaSolicitada = $this->obtenerRutaSolicitada();
+        $metodoHttp = $this->obtenerMetodoHttp();
         
-        $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';  // Obtener el método HTTP de la solicitud.
-
-        // Buscar la ruta que coincide tanto con la URL solicitada como con el Método HTTP usado.
-        $rutaEncontrada = null;
-        foreach ($this->rutas as $nombreRuta => $definicionRuta) {
-            if ($nombreRuta === $rutaSolicitada && $definicionRuta['metodo'] === $metodo) {
-                $rutaEncontrada = $definicionRuta;
-                break;
-            }
-        }
+        $rutaEncontrada = $this->buscarRutaCoincidente($rutaSolicitada, $metodoHttp);
         
-        // Verificar si se encontró la ruta.
         if (!$rutaEncontrada) {
-            // Si la ruta no se encuentra, usamos renderizarVistaConDatos para forzar el 404 y evitar que renderizarVistaDesdeUrl falle al tomar una ruta dinámica por error.
-            $renderer->renderizarVistaConDatos('9.00-notfound'); 
+            $this->manejarRutaNoEncontrada($renderer);
             return;
         }
 
-        $destino = $rutaEncontrada['destino'];  // Puede ser string (vista) o array [Clase::class, 'metodo'] (controlador).
-        
-        if (is_string($destino)) {
-            $renderer->renderizarVistaConDatos($destino);
-            
-        // Verifica que es un array y que el array tenga exactamente 2 elementos: [Clase, 'metodo'].
-        } elseif (is_array($destino) && count($destino) === 2) {            
-            [$claseController, $metodo] = $destino;  // Destructuring assignment.
-            
-            $service = $this->obtenerServiceParaControladores($claseController);
-            $controlador = new $claseController($service, $renderer);  // Inyección de dependencias.
-            
-            $controlador->$metodo();
-
-        } else {            
-            $renderer->renderizarVistaConDatos('9.00-notfound'); // Si el destino no es válido, 404.
-        }
+        // Ejecución del Middleware ANTES del controlador/vista
+        $middleware = $rutaEncontrada['middleware'] ?? null;
+        if (!$this->ejecutarMiddleware($middleware, $rutaSolicitada)) {
+            // El Middleware se encargó de la redirección y el exit, si falla.
+            return; 
+        }        
+        // Ejecución del Destino (solo si el middleware no detuvo la solicitud).
+        $this->ejecutarDestino($rutaEncontrada['destino'], $renderer);
     }
 
-
+    // Obtiene el service correspondiente para un controlador dado.
     private function obtenerServiceParaControladores(string $claseController) {
         $mapeoControllerService = [
             // Para este Controller, éste Service.
@@ -89,5 +76,90 @@ class Router {
     
     public function getRutas(): array {
         return $this->rutas;
+    }
+
+
+    // ========== MÉTODOS PRIVADOS ==========
+
+    /**
+     * Obtiene y limpia la ruta solicitada desde los parámetros GET.
+     * Retorna 'home' como ruta por defecto si no se especifica ruta.
+     */
+    private function obtenerRutaSolicitada(): string {
+        $ruta = $_GET['url'] ?? 'home';
+        return trim($ruta, '/');
+    }
+    /**
+     * Obtiene el método HTTP de la solicitud actual (GET, POST, etc.).
+     * Retorna 'GET' como método por defecto si no se puede determinar.
+     */
+    private function obtenerMetodoHttp(): string {
+        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    }
+    /**
+     * Busca en las rutas registradas una que coincida con la URL y método HTTP solicitados.
+     * Retorna la definición de la ruta si encuentra coincidencia, o null si no.
+     */
+    private function buscarRutaCoincidente(string $ruta, string $metodo): ?array {
+        foreach ($this->rutas as $nombreRuta => $definicionRuta) {
+            if ($nombreRuta === $ruta && $definicionRuta['metodo'] === $metodo) {
+                return $definicionRuta;
+            }
+        }
+        return null;
+    }
+    /**
+     * Maneja el caso cuando no se encuentra la ruta solicitada.
+     * Renderiza la vista de error 404.
+     */
+    private function manejarRutaNoEncontrada(ViewRenderer $renderer): void {
+        $renderer->renderizarVistaConDatos('9.00-notfound');
+    }
+    /**
+     * Ejecuta el destino de la ruta encontrada.
+     * Puede ser una vista (string) o un controlador (array [Clase::class, 'metodo']).
+     * Si el destino no es válido, muestra error 404.
+     */
+    private function ejecutarDestino($destino, ViewRenderer $renderer): void {
+        if (is_string($destino)) {
+            $this->ejecutarVista($destino, $renderer);
+        } elseif (is_array($destino) && count($destino) === 2) {
+            $this->ejecutarControlador($destino, $renderer);
+        } else {
+            $this->manejarRutaNoEncontrada($renderer);
+        }
+    }
+    /**
+     * Ejecuta una vista simple, renderizándola directamente.
+     */
+    private function ejecutarVista(string $vista, ViewRenderer $renderer): void {
+        $renderer->renderizarVistaConDatos($vista);
+    }
+    /**
+     * Ejecuta un controlador y su método específico.
+     * Instancia el controlador con inyección de dependencias y llama al método.
+     */
+    private function ejecutarControlador(array $destino, ViewRenderer $renderer): void {
+        [$claseController, $metodo] = $destino;
+        
+        $service = $this->obtenerServiceParaControladores($claseController);
+        $controlador = new $claseController($service, $renderer);
+        
+        $controlador->$metodo();
+    }
+    /**
+     * Ejecuta el middleware asociado a una ruta. Si el middleware redirige, termina la ejecución.
+     * Retorna false si el middleware detuvo la ejecución (redirigió), o true si continúa.
+     */
+    private function ejecutarMiddleware(?string $claseMiddleware, string $rutaSolicitada): bool {
+        if ($claseMiddleware) {
+            // Instancia el middleware. Su constructor usa el Container.
+            $instanciaMiddleware = new $claseMiddleware(); 
+            
+            // Si el método requerirAutenticacion() redirige y hace exit, esta línea nunca se alcanzará.
+            // Si devuelve false, significa que hubo un fallo de autorización, aunque el AuthMiddleware hace el exit() directamente.
+            $instanciaMiddleware->requerirAutenticacion($rutaSolicitada);
+        }
+        return true; // Si no hay middleware o el middleware pasa, continuamos.
     }
 }
