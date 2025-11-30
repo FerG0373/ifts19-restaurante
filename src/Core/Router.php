@@ -7,6 +7,8 @@ use App\Services\AuthService;
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
 use App\Controllers\AuthController;
+use App\Middleware\AuthMiddleware;
+use App\Middleware\RoleMiddleware;
 use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
@@ -22,12 +24,12 @@ class Router {
     // ========== MÉTODOS PÚBLICOS ==========
 
     // Agrega una ruta al array. La variable $destino puede ser string (nombre de archivo de vista) o array [Clase::class, 'metodo'] para controladores, ya que mixed lo permite.
-    public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader, string $metodo = 'GET', ?string $middleware = null): void {
+    public function agregarRuta(string $nombreRuta, mixed $destino, bool $enNavHeader, string $metodo = 'GET', ?array $middlewares = null): void {
         $this->rutas[$nombreRuta] = [
             'destino' => $destino,
             'nav' => $enNavHeader,
             'metodo' => strtoupper($metodo),  // Guarda el método en mayúsculas.
-            'middleware' => $middleware
+            'middlewares' => $middlewares
         ];
     }
 
@@ -47,7 +49,7 @@ class Router {
         }
 
         // Ejecución del Middleware ANTES del controlador/vista
-        $middleware = $rutaEncontrada['middleware'] ?? null;
+        $middleware = $rutaEncontrada['middlewares'] ?? null;
         if (!$this->ejecutarMiddleware($middleware, $rutaSolicitada)) {
             // El Middleware se encargó de la redirección y el exit, si falla.
             return; 
@@ -151,15 +153,35 @@ class Router {
      * Ejecuta el middleware asociado a una ruta. Si el middleware redirige, termina la ejecución.
      * Retorna false si el middleware detuvo la ejecución (redirigió), o true si continúa.
      */
-    private function ejecutarMiddleware(?string $claseMiddleware, string $rutaSolicitada): bool {
-        if ($claseMiddleware) {
-            // Instancia el middleware. Su constructor usa el Container.
-            $instanciaMiddleware = new $claseMiddleware(); 
-            
-            // Si el método requerirAutenticacion() redirige y hace exit, esta línea nunca se alcanzará.
-            // Si devuelve false, significa que hubo un fallo de autorización, aunque el AuthMiddleware hace el exit() directamente.
-            $instanciaMiddleware->requerirAutenticacion($rutaSolicitada);
+    private function ejecutarMiddleware(?array $middlewares, string $rutaSolicitada): bool {
+        if (!$middlewares) {
+            return true;
         }
-        return true; // Si no hay middleware o el middleware pasa, continuamos.
+
+        foreach ($middlewares as $middlewareConfig) {            
+            // Creamos una copia local para manipular si es un array, o usamos el string directo.
+            if (is_array($middlewareConfig)) {
+                $tempConfig = $middlewareConfig; // Copia del array.
+                $claseMiddleware = array_shift($tempConfig); // Extraemos la clase.
+                $argumentos = $tempConfig; // El resto son los argumentos.
+            } else {
+                $claseMiddleware = $middlewareConfig;
+                $argumentos = [];
+            }
+            
+            $instanciaMiddleware = new $claseMiddleware(); 
+
+            if ($claseMiddleware === AuthMiddleware::class) {
+                $instanciaMiddleware->requerirAutenticacion($rutaSolicitada);
+            } elseif ($claseMiddleware === RoleMiddleware::class) {
+                $rolRequerido = $argumentos[0] ?? null;
+                if (!$rolRequerido) {
+                    throw new \Exception("RoleMiddleware requiere un rol como argumento.");
+                }
+                $instanciaMiddleware->requiereRol($rolRequerido, $rutaSolicitada);
+            }
+        }
+
+        return true;  // Todos los middlewares pasaron.
     }
 }

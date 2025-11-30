@@ -16,8 +16,7 @@ class AuthMiddleware {
     // Verifica la autenticación. Si el usuario no está logueado, redirige y termina la ejecución.
     public function requerirAutenticacion(string $rutaActual): bool {        
         // Verifica si el usuario está autenticado.
-        if (!$this->authService->estaAutenticado()) {
-            
+        if (!$this->authService->estaAutenticado()) {            
             // Redirige a login y termina la ejecución.
             header("Location: " . APP_BASE_URL . "login");
             exit;
