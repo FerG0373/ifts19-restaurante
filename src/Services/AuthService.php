@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Repositories\UsuarioRepository;
+use App\Repositories\PersonalRepository;
 use App\Models\Usuario;
 use RuntimeException;
 
@@ -9,9 +10,11 @@ use RuntimeException;
 class AuthService {
     
     private UsuarioRepository $usuarioRepository;
+    private PersonalRepository $personalRepository;
 
-    public function __construct(UsuarioRepository $usuarioRepository) {
+    public function __construct(UsuarioRepository $usuarioRepository, PersonalRepository $personalRepository) {
         $this->usuarioRepository = $usuarioRepository;
+        $this->personalRepository = $personalRepository;
     }
 
     // ========== MÉTODOS PÚBLICOS ==========
@@ -76,8 +79,12 @@ class AuthService {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        $personal = $this->personalRepository->obtenerPersonalPorId($usuario->getId());
         // Guarda datos del usuario en la sesión.
         $_SESSION['usuario_id'] = $usuario->getId();
         $_SESSION['perfil_acceso'] = $usuario->getPerfilAcceso()->value;
+        if ($personal) {
+            $_SESSION['usuario_dni'] = $personal->getDni(); 
+        }
     }
 }

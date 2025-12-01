@@ -185,16 +185,23 @@ class Router {
      */
     private function manejarFalloMiddleware(string $claseMiddleware, string $rutaSolicitada): void {
         if ($claseMiddleware === AuthMiddleware::class) {
+            // Usuario NO logueado intentando acceder a ruta protegida.
+            $_SESSION['auth_error'] = "Debe iniciar sesión para acceder a {$rutaSolicitada}.";
             $_SESSION['redirect_to'] = $rutaSolicitada;
             header("Location: " . APP_BASE_URL . "login");
-        } elseif ($claseMiddleware === RoleMiddleware::class) {
-            $_SESSION['auth_error'] = "Acceso denegado para la ruta: {$rutaSolicitada}";
+        }
+        // El resto de fallos (RoleMiddleware, GuestMiddleware) asumen que el usuario está logueado y lo redirigen a home.
+        elseif ($claseMiddleware === RoleMiddleware::class) {
+            // RoleMiddleware debe haber seteado ya un mensaje de error en la sesión (o lo dejamos genérico si no lo hizo).
+            $_SESSION['auth_error'] = $_SESSION['auth_error'] ?? "Acceso denegado.";
             header("Location: " . APP_BASE_URL . "home");
-        } elseif ($claseMiddleware === GuestMiddleware::class) {
-            // Usuario autenticado intentando acceder a ruta para guests (ej: login)
+        } 
+        
+        elseif ($claseMiddleware === GuestMiddleware::class) {
+            // Usuario logueado intentando acceder a login. Redirigir a home sin mensaje de error.
             header("Location: " . APP_BASE_URL . "home");
         }
-        
+        // Ejecuta el exit para cortar la ejecución del script después de la redirección.
         exit;
     }
 }

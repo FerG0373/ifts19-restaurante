@@ -22,7 +22,7 @@ $enrutador = new Router($dataAccess);
 // RUTAS PÚBLICAS (SIN MIDDLEWARE)
 // =================================================================
 // Son las puertas de entrada para iniciar sesión, no pueden tener protección.
-$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormularioLogin'], true, 'GET', [GuestMiddleware::class]);
+$enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormularioLogin'], false, 'GET', [GuestMiddleware::class]);
 $enrutador->agregarRuta('login/procesar', [AuthController::class, 'iniciarSesion'], false, 'POST', [GuestMiddleware::class]);
 
 // =================================================================

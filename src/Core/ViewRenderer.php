@@ -1,17 +1,21 @@
 <?php
 namespace App\Core;
 
+use App\Services\AuthService;
+
 
 class ViewRenderer {
     private string $directorioVistas;
     private array $rutas;
     private array $rutasNav;
+    private AuthService $authService;
 
     public function __construct(string $directorioVistas, array $rutas) {
         $this->directorioVistas = $directorioVistas;  // Ruta base de las vistas.
         $this->rutas = $rutas;  // Array de rutas desde Router.
         $this->rutasNav = $this->obtenerRutasNav();  // Rutas para la navegación.
         $this->cargarHelpers();
+        $this->authService = Container::getService(AuthService::class);
     }
 
 
@@ -53,6 +57,17 @@ class ViewRenderer {
 
     
     public function renderizarVistaConDatos(string $vista, array $datos = []): void {
+        // INYECTAR VARIABLES GLOBALES DE SESIÓN.
+        $datos['estaAutenticado'] = $this->authService->estaAutenticado();
+        // Si está autenticado, inyectamos el perfil para la lógica de navegación
+        if ($datos['estaAutenticado']) {
+            $datos['perfilAcceso'] = $_SESSION['perfil_acceso'] ?? null;
+            $datos['usuarioDni'] = $_SESSION['usuario_dni'] ?? null;
+        } else {
+            $datos['perfilAcceso'] = null;
+            $datos['usuarioDni'] = null;
+        }
+
         extract($datos);  // Extrae las variables del array para usarlas en la vista.
 
         // Las variables $rutasNav y $viewRenderer (this) están disponibles en el layout.

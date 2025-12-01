@@ -37,30 +37,39 @@ class Container {
         return self::$accesoDatos;
     }
     
-    /***
-     * Método centralizado para obtener instancias de Services de forma dinámica y aplica el patrón Singleton.
-     * Gestiona automáticamente las dependencias.
+    /**
+     * Método centralizado para obtener instancias de Services (Singleton) con inyección de dependencias.
+     * Si la instancia del Service ya existe, la retorna (patrón Singleton).
+     * Si no existe, la crea, inyectando automáticamente sus Repositorios dependientes.
+     * $claseService El nombre de la clase Service a instanciar (ej: AuthService::class).
+     * Retorna La única instancia del Service solicitado.
      */
-    public static function getService(string $claseService) {
-        if (!isset(self::$instancias[$claseService])) {
-            // Mapeo de dependencias
+    public static function getService(string $claseService): object {        
+        // Verifica si la instancia ya existe (Singleton Pattern)
+        if (!isset(self::$instancias[$claseService])) {            
+            // Mapeo de dependencias de Services a Repositorios.
             $dependencias = [
-                // "CLASE A INSTANCIAR" => ["DEPENDENCIAS QUE NECESITA"]
+                // 'CLASE SERVICE' => ['DEPENDENCIAS REQUERIDAS']
                 PersonalService::class => [PersonalRepository::class],
                 MesaService::class => [MesaRepository::class],
-                AuthService::class => [UsuarioRepository::class],
-                // Agregar acá otros services:
-            ];
-            // Verifica si la clase Service en cuestión existe en el array de dependencias.
-            if (isset($dependencias[$claseService])) {
-                // Accede al array y de ese Service obtiene el primer elemento (el repository).
-                $claseRepository = $dependencias[$claseService][0];
-                $repository = new $claseRepository(self::getDataAccess());  // Instancia de ese Repository dinámico.
-                self::$instancias[$claseService] = new $claseService($repository);  // Ahora puedo instanciar el Service e inyectarle su Repository.
-            } else {
-                self::$instancias[$claseService] = new $claseService();  // Clases que se pueden crear sin dependencias.
-            }
-        }
+                AuthService::class => [UsuarioRepository::class, PersonalRepository::class],
+                // Agregar acá otros services y sus dependencias (Repositories).
+            ];            
+            $argumentos = [];
+            // Verifica si el Service requiere dependencias (Repositorios).
+            if (isset($dependencias[$claseService])) {                
+                // Instanciar todas las dependencias requeridas (Repositorios)
+                foreach ($dependencias[$claseService] as $claseRepository) {                    
+                    // Instanciamos cada Repository y le inyectamos la DataAccess (conexión a la DB)
+                    $argumentos[] = new $claseRepository(self::getDataAccess());
+                }
+            }            
+            // Instancia y almacena el Service.
+            // Usamos el operador `...` (spread operator) para desempaquetar el array $argumentos y pasarlos como argumentos posicionales al constructor del Service.
+            self::$instancias[$claseService] = new $claseService(...$argumentos);
+            
+        }        
+        // Retorna la instancia única (existente o recién creada)
         return self::$instancias[$claseService];
     }
 }
