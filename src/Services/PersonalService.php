@@ -104,5 +104,12 @@ class PersonalService {
         // Persistencia: Enviar el objeto fusionado al Repository para la actualización.
         $this->personalRepository->updatePersonal($personalFusionado);
     }
+
+
+    public function obtenerPersonalPorIdUsuario(int $idUsuario): ?Personal {
+        
+        // DELEGAMOS la búsqueda al PersonalRepository, asumiendo que tiene el método.
+        return $this->personalRepository->obtenerPersonalPorIdUsuario($idUsuario);
+    }
 }
 ?>

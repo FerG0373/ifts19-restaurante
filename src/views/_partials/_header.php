@@ -1,22 +1,20 @@
 <?php 
-// IMPORTANTE: $estaAutenticado y $perfilAcceso ya están disponibles aquí gracias a extract($datos) en ViewRenderer.
-
-// Helper para determinar si mostrar un enlace. Útil para separar lógica en el NAV.
+// Las variables $estaAutenticado, $perfilAcceso y $usuarioDni están disponibles aquí.
+// Helper para determinar si mostrar un enlace (Mantener la función debeMostrarEnlace aquí si la definiste antes).
 function debeMostrarEnlace(string $url, bool $estaAutenticado, ?string $perfilAcceso): bool {
-    // Rutas públicas (se ven si NO estás autenticado)
-    $rutasPublicas = ['login'];
-    // Rutas accesibles por Mozo (y Encargado por herencia)
-    $rutasMozo = ['home', 'mesas', 'logout'];
+    // Rutas públicas 
+    $rutasPublicas = ['login']; 
+    // Rutas accesibles por Mozo (y Encargado)
+    $rutasMozo = ['home', 'mesas', 'logout']; // 'logout' debe ser accesible para todos los logueados.
     // Rutas accesibles solo por Encargado
     $rutasEncargado = ['personal'];
 
     if (!$estaAutenticado) {
         return in_array($url, $rutasPublicas);
-    }
-    
+    }    
     // Si está autenticado:
     if (in_array($url, $rutasMozo)) {
-        return true; // Todos los logueados ven Mozo/Home
+        return true; 
     }
     if (in_array($url, $rutasEncargado)) {
         return $perfilAcceso === 'encargado';
@@ -25,7 +23,6 @@ function debeMostrarEnlace(string $url, bool $estaAutenticado, ?string $perfilAc
     return false;
 }
 ?>
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand fw-bold" href="<?=APP_BASE_URL?>">App Restaurante</a>
@@ -37,11 +34,12 @@ function debeMostrarEnlace(string $url, bool $estaAutenticado, ?string $perfilAc
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <?php
-                // Recorremos las rutas marcadas con 'nav' => true
-                $rutasNav = $viewRenderer->rutasNav; // Usamos $viewRenderer para acceder a la propiedad
+                // Navegación principal (filtrada por rol)
+                $rutasNav = $viewRenderer->rutasNav; 
                 
                 foreach ($rutasNav as $url => $rutaArchivo) {
-                    if (debeMostrarEnlace($url, $estaAutenticado, $perfilAcceso)) {
+                    // Excluimos 'logout' de este bucle para ponerlo en el desplegable.
+                    if ($url !== 'logout' && debeMostrarEnlace($url, $estaAutenticado, $perfilAcceso)) {
                         $nombreEnlace = ucfirst($url);
                 ?>
                         <li class="nav-item">
@@ -54,20 +52,42 @@ function debeMostrarEnlace(string $url, bool $estaAutenticado, ?string $perfilAc
                 }
                 ?>
             </ul>
+            
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <?php if ($estaAutenticado): ?>
-                        <a class="nav-link" href="#">
+                <?php if ($estaAutenticado): ?>
+                    <li class="nav-item dropdown">
+                        
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user"></i> 
-                            <?php echo htmlspecialchars(strtoupper($usuarioDni ?? $perfilAcceso ?? 'USUARIO')); ?>
+                            <?php 
+                            // Muestra el DNI o el Perfil de Acceso como fallback
+                            echo htmlspecialchars(strtoupper($usuarioDni ?? $perfilAcceso ?? 'USUARIO')); 
+                            ?>
                         </a>
-                    <?php else: ?>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="<?php echo APP_BASE_URL; ?>personal/mi-detalle">
+                                    Ver Detalle
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item" href="<?php echo APP_BASE_URL; ?>logout">
+                                    Cerrar Sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?php echo APP_BASE_URL; ?>login">
                             <i class="fas fa-sign-in-alt"></i> 
-                            INICIAR SESIÓN
+                            Iniciar Sesión
                         </a>
-                    <?php endif; ?>
-                </li>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

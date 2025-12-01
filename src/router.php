@@ -55,7 +55,11 @@ $enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'
 ); 
 $enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDetalle'], false, 'POST', 
     [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
-); 
+);
+// NUEVA RUTA: Permite a CUALQUIER USUARIO logueado ver su propio detalle (Mozo y Encargado)
+$enrutador->agregarRuta('personal/mi-detalle', [PersonalController::class, 'verMiDetalle'], false, 'GET', 
+    [AuthMiddleware::class] // Solo necesita estar autenticado, no requiere rol específico.
+);
 $enrutador->agregarRuta('personal/formulario', [PersonalController::class, 'mostrarFormulario'], false, 'GET', 
     [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
 );

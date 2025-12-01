@@ -3,23 +3,38 @@ use App\DTOs\PersonalVistaDTO;
 ?>
 
 <div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">        
-        <div class="d-flex align-items-center">            
-            <h2 class="text-primary mb-0 me-3"><?php echo htmlspecialchars($titulo); ?></h2>                        
-            <form action="<?= APP_BASE_URL ?>personal/formulario/cargar" method="POST" class="d-inline">
-                <input type="hidden" name="id" value="<?= htmlspecialchars($personal->id); ?>">
-                <button type="submit" class="btn btn-link fa-lg mt-2" title="Editar Personal">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </form>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <h2 class="text-primary mb-0 me-3"><?php echo htmlspecialchars($titulo); ?></h2>
+            
+            <?php
+            // Mostrar el botón Editar SOLO si NO es "Mi Detalle" (es decir, el Administrador viendo a alguien más).
+            if (!isset($esMiDetalle) || $esMiDetalle === false): ?>
+                <form action="<?= APP_BASE_URL ?>personal/formulario/cargar" method="POST" class="d-inline">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($personal->id); ?>">
+                    <button type="submit" class="btn btn-link fa-lg mt-2" title="Editar Información">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </form>
+            <?php endif; ?>
         </div>
-        <a href="<?=APP_BASE_URL?>personal" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver a la lista
-        </a>
+        
+        <?php
+        // El botón es visible siempre, pero su acción cambia según la ruta:
+        if (isset($esMiDetalle) && $esMiDetalle === true): ?>
+            <!-- MODO "MI DETALLE": El botón usa JavaScript para ir a la página anterior del historial. -->
+            <button onclick="history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        <?php else: ?>
+            <!-- MODO "DETALLE DE ADMIN": El botón enlaza directamente al listado de personal. -->
+            <a href="<?=APP_BASE_URL?>personal" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a la lista
+            </a>
+        <?php endif; ?>
     </div>
 
     <?php
-    /** @var PersonalVistaDTO $personal */
     if (empty($personal)): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($mensaje ?? 'No se encontró el personal.'); ?></div>
     <?php else: ?>

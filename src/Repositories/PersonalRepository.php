@@ -219,5 +219,57 @@ class PersonalRepository {
             throw new \Exception("Error al actualizar personal con ID {$personal->getId()}: " . $e->getMessage());
         }
     }
+
+
+    public function obtenerPersonalPorIdUsuario(int $idUsuario): ?Personal {
+        // Debes tener un Stored Procedure (SP) llamado sp_personal_select_by_user_id
+        $sql = "CALL sp_personal_select_by_user_id(:idUsuario)";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            // El ID del usuario es un entero.
+            $stmt->bindValue(':idUsuario', $idUsuario, PDO::PARAM_INT);
+            $stmt->execute();
+            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            if (!$fila) {
+                return null; // No se encontró el personal asociado a ese usuario.
+            }
+
+            // Mapeo del Objeto Usuario
+            if (!empty($fila['idUsuario'])) {
+                $usuario = new Usuario(
+                    (int)$fila['idUsuario'],
+                    PerfilAcceso::from($fila['perfil_acceso']),
+                    $fila['pass_hash'],
+                    (bool)$fila['activo']
+                );
+            } else {
+                // Esto no debería pasar si el SP está bien.
+                $usuario = null; 
+            }
+
+            // MAPEO DEL OBJETO PERSONAL (Debe coincidir exactamente con el mapeo de obtenerPersonalPorId)
+            return new Personal(
+                (int)$fila['id'], // Asumiendo que el SP retorna el ID de la tabla personal como 'id'
+                $fila['dni'],
+                $fila['nombre'],
+                $fila['apellido'],
+                new DateTimeImmutable($fila['fecha_nacimiento']),
+                $fila['email'],
+                $fila['telefono'],
+                Sexo::from($fila['sexo']),
+                Puesto::from($fila['puesto']),
+                new DateTimeImmutable($fila['fecha_contratacion']),
+                $usuario
+            );
+        } catch (PDOException $e) {
+            // Lanza una excepción específica para que el Controller la capture.
+            throw new \RuntimeException("Error de base de datos al buscar personal por ID de Usuario {$idUsuario}: " . $e->getMessage());
+        } catch (\Throwable $e) {
+             throw new \RuntimeException("Error de mapeo de datos (ID de Usuario {$idUsuario}): " . $e->getMessage());
+        }
+    }
 }
 ?>

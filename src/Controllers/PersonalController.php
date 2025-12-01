@@ -88,7 +88,8 @@ class PersonalController {
             // Renderizar la vista de detalle con los datos.
             $this->viewRenderer->renderizarVistaConDatos('2.01-personal-detalle', [
                 'personal' => $personalDTO,
-                'titulo' => 'Detalle de ' . $personalDTO->apellido . ', ' . $personalDTO->nombre
+                'titulo' => 'Detalle de ' . $personalDTO->apellido . ', ' . $personalDTO->nombre,
+                'esMiDetalle' => false  // Para el admin, no es su detalle.
             ]);
 
         } catch (\Exception $e) {
@@ -211,6 +212,45 @@ class PersonalController {
             $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
                 'titulo' => 'Error de Sistema',
                 'mensaje' => 'No se pudo completar la edición. Detalles: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+    // GET /personal/mi-detalle
+    public function verMiDetalle(): void {
+        // Obtiene el ID de usuario desde la sesión.
+        $idUsuario = $_SESSION['usuario_id'] ?? null;
+        
+        if (!$idUsuario) {
+            // Esto no debería pasar si AuthMiddleware está activo, pero es un buen fallback.
+            $_SESSION['auth_error'] = "Error: No se encontró su ID de usuario en la sesión.";
+            header("Location: " . APP_BASE_URL . "home");
+            exit;
+        }
+        try {
+            // OBTIENE MODELO DE DOMINIO (Objeto Personal completo) usando el ID de Usuario.
+            $personalModelo = $this->personalService->obtenerPersonalPorIdUsuario($idUsuario);
+
+            if (!$personalModelo) {
+                $this->viewRenderer->renderizarVistaConDatos('9.01-error', [
+                    'tituloError' => 'Error de Acceso', 
+                    'mensajeError' => 'No se encontró la información personal asociada a su cuenta.'
+                ]);
+                return;
+            }            
+            // Mapeo de Modelo a DTO DE VISTA (PersonalVistaDTO). Necesario porque la vista espera un DTO.
+            $personalDTO = PersonalVistaDTO::fromModel($personalModelo); 
+            // Renderiza la vista con el DTO
+            $this->viewRenderer->renderizarVistaConDatos('2.01-personal-detalle', [
+                'personal' => $personalDTO,
+                'titulo' => 'Detalle Personal de ' . $personalDTO->nombre . ' ' . $personalDTO->apellido,
+                'esMiDetalle' => true
+            ]);
+        } catch (\Exception $e) {
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [
+                'tituloError' => 'Error Interno', 
+                'mensajeError' => $e->getMessage()
             ]);
         }
     }
