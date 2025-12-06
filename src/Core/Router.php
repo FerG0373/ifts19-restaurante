@@ -86,10 +86,10 @@ class Router {
 
     /**
      * Obtiene y limpia la ruta solicitada desde los parámetros GET.
-     * Retorna 'home' como ruta por defecto si no se especifica ruta.
+     * Retorna 'login' como ruta por defecto si no se especifica ruta.
      */
     private function obtenerRutaSolicitada(): string {
-        $ruta = $_GET['url'] ?? 'home';
+        $ruta = $_GET['url'] ?? 'login';
         return trim($ruta, '/');
     }
     /**
