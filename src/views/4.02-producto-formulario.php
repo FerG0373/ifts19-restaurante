@@ -3,6 +3,9 @@
 require_once __DIR__ . '/../helpers/form_helper.php';
 
 // Inicializar variables usando el helper
+if (!isset($datos) || !is_array($datos)) {
+    $datos = [];
+}
 init_form_variables($datos, $error, $esEdicion);
 ?>
 

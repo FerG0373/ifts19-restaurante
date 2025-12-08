@@ -45,7 +45,7 @@ class PedidoController {
             }, $listaPedidosModelos);
 
             // Renderizar la vista con los datos
-            $this->viewRenderer->renderizarVistaConDatos('4.00-pedido', [
+            $this->viewRenderer->renderizarVistaConDatos('5.00-pedido', [
                 'pedidos' => $listaDTOs,
                 'titulo' => $titulo,
                 'filtroEstado' => $filtroEstado,
@@ -82,7 +82,7 @@ class PedidoController {
             $pedidoDTO = PedidoVistaDTO::fromModel($pedidoModelo);
 
             // Renderizar la vista de detalle con los datos
-            $this->viewRenderer->renderizarVistaConDatos('4.01-pedido-detalle', [
+            $this->viewRenderer->renderizarVistaConDatos('5.01-pedido-detalle', [
                 'pedido' => $pedidoDTO,
                 'titulo' => 'Pedido #' . $pedidoDTO->id . ' - Mesa ' . $pedidoDTO->numeroMesa
             ]);
@@ -97,36 +97,36 @@ class PedidoController {
 
     // GET /pedido/formulario (Mostrar formulario de nuevo pedido)
     public function mostrarFormulario(): void {
-    try {
-        // Obtener mesas disponibles
-        $mesas = $this->pedidoService->obtenerMesasDisponibles();
-        
-        // Obtener productos activos
-        $productos = $this->productoService->listarProductosActivos();
-        
-        // Buscar ID de mesa virtual
-        $mesaVirtualId = null;
-        foreach ($mesas as $mesa) {
-            if ($mesa['numero_mesa'] === 'VIRTUAL') {
-                $mesaVirtualId = $mesa['id'];
-                break;
+        try {
+            // Obtener mesas disponibles
+            $mesas = $this->pedidoService->obtenerMesasDisponibles();
+            
+            // Obtener productos activos
+            $productos = $this->productoService->listarProductosActivos();
+            
+            // Buscar ID de mesa virtual
+            $mesaVirtualId = null;
+            foreach ($mesas as $mesa) {
+                if ($mesa['numero_mesa'] === 'VIRTUAL') {
+                    $mesaVirtualId = $mesa['id'];
+                    break;
+                }
             }
-        }
-        
-        $this->viewRenderer->renderizarVistaConDatos('4.02-pedido-formulario', [
-            'titulo' => 'Nuevo Pedido',
-            'mesas' => $mesas,
-            'productos' => $productos,
-            'mesaVirtualId' => $mesaVirtualId  // ⬅️ PASAR A LA VISTA
-        ]);
+            
+            $this->viewRenderer->renderizarVistaConDatos('5.02-pedido-formulario', [
+                'titulo' => 'Nuevo Pedido',
+                'mesas' => $mesas,
+                'productos' => $productos,
+                'mesaVirtualId' => $mesaVirtualId  // ⬅️ PASAR A LA VISTA
+            ]);
 
-    } catch (\Exception $e) {
-        $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
-            'titulo' => 'Error al Cargar Formulario',
-            'mensaje' => $e->getMessage()
-        ]);
+        } catch (\Exception $e) {
+            $this->viewRenderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error al Cargar Formulario',
+                'mensaje' => $e->getMessage()
+            ]);
+        }
     }
-}
 
     // POST /pedido/formulario/alta
     public function altaPedido(): void {
@@ -200,7 +200,7 @@ class PedidoController {
             $mesas = $this->pedidoService->obtenerMesasDisponibles();
             $productos = $this->productoService->listarProductosActivos();
             
-            $this->viewRenderer->renderizarVistaConDatos('4.02-pedido-formulario', [
+            $this->viewRenderer->renderizarVistaConDatos('5.02-pedido-formulario', [
                 'titulo' => 'Nuevo Pedido (Error)',
                 'error' => $mensajeError,
                 'datos' => $datosPrecargados,

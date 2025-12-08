@@ -46,7 +46,7 @@ class ProductoController {
             }, $listaProductosModelos);
 
             // Renderizar la vista con los datos
-            $this->viewRenderer->renderizarVistaConDatos('3.00-producto', [
+            $this->viewRenderer->renderizarVistaConDatos('4.00-producto', [
                 'productos' => $listaDTOs,
                 'titulo' => $titulo, 
                 'esActivo' => $esActivo,
@@ -85,7 +85,7 @@ class ProductoController {
             $productoDTO = ProductoVistaDTO::fromModel($productoModelo);
 
             // Renderizar la vista de detalle con los datos
-            $this->viewRenderer->renderizarVistaConDatos('3.01-producto-detalle', [
+            $this->viewRenderer->renderizarVistaConDatos('4.01-producto-detalle', [
                 'producto' => $productoDTO,
                 'titulo' => 'Detalle de ' . $productoDTO->nombre
             ]);
@@ -126,14 +126,14 @@ class ProductoController {
     }
 
     public function mostrarFormulario(): void {
-        $this->viewRenderer->renderizarVistaConDatos('3.02-producto-formulario', [
+        $this->viewRenderer->renderizarVistaConDatos('4.02-producto-formulario', [
             'titulo' => 'Alta de Nuevo Producto'
         ]);
     }
 
     // Método auxiliar para renderizar el formulario de alta con errores y datos precargados
     private function mostrarErrorDeAlta(string $mensajeError, array $datosPrecargados): void {
-        $this->viewRenderer->renderizarVistaConDatos('3.02-producto-formulario', [
+        $this->viewRenderer->renderizarVistaConDatos('4.02-producto-formulario', [
             'titulo' => 'Alta de Producto (Error)',
             'error' => $mensajeError,
             'datos' => $datosPrecargados,
@@ -162,7 +162,7 @@ class ProductoController {
             $productoDTO = ProductoMapper::toDtoEdicion($productoModelo);
 
             // Renderizar la vista de formulario de edición con los datos
-            $this->viewRenderer->renderizarVistaConDatos('3.02-producto-formulario', [
+            $this->viewRenderer->renderizarVistaConDatos('4.02-producto-formulario', [
                 'titulo' => 'Editar Producto',
                 'datos' => $productoDTO->toArray(),
                 'esEdicion' => true 
@@ -205,7 +205,7 @@ class ProductoController {
 
     // MÉTODO AUXILIAR para renderizar el formulario de edición con errores y datos precargados
     private function mostrarErrorDeEdicion(string $mensajeError, array $datosPrecargados): void {
-        $this->viewRenderer->renderizarVistaConDatos('3.02-producto-formulario', [
+        $this->viewRenderer->renderizarVistaConDatos('4.02-producto-formulario', [
             'titulo' => 'Editar Producto (Error)',
             'error' => $mensajeError,
             'datos' => $datosPrecargados,
