@@ -1,17 +1,17 @@
 <?php
 namespace App\Controllers;
 
-use App\Services\MesaService;
+use App\Core\Container;
 use App\Core\ViewRenderer;
+use App\Services\MesaService;
+use App\Services\PersonalService;
 use App\DTOs\MesaVistaDTO;
 use App\DTOs\MesaAltaDTO;
 use App\Shared\Enums\Ubicacion;
+use App\Shared\Enums\Puesto;
 use App\Mappers\MesaMapper;
 use InvalidArgumentException;
 use RuntimeException;
-use App\Core\Container; // <-- ASEGÚRATE DE AÑADIR ESTE USE
-use App\Services\PersonalService; // <-- AÑADIR ESTE USE
-use App\Shared\Enums\Puesto; // <--- NUEVO: Necesario para filtrar solo mozos
 
 
 class MesaController {
@@ -44,11 +44,11 @@ class MesaController {
             // Obtiene las mesas del Service filtradas por la ubicación activa.
             $listaMesaModelos = $this->mesaService->listarMesasPorUbicacion($ubicacionActiva);
             
-            // OBTIENE EL SERVICE DE PERSONAL Y LOS MOZOS            
+            // OBTIENE EL SERVICE DE PERSONAL Y LOS MOZOS.   
             $personalService = Container::getService(PersonalService::class);            
             $mozos = $personalService->listarPersonalActivo(); 
             
-            // Filtrar solo Mozos (asumiendo que Puesto::Mozo existe y tiene valor 'mozo')
+            // Filtra solo Mozos.
             $mozosParaAsignacion = array_filter($mozos, function($personal) {
                 return $personal->getPuesto()->value === 'mozo'; 
             });
@@ -57,7 +57,15 @@ class MesaController {
             
             // Mapeo de Modelo a DTO de Vista.
             $listaDTOs = array_map(function($mesaModelo) {
-                return MesaVistaDTO::fromModel($mesaModelo);
+                $dto = MesaVistaDTO::fromModel($mesaModelo);
+                
+                // 1. OBTENER LA ASIGNACIÓN ACTIVA DE LA MESA
+                $asignacion = $this->mesaService->obtenerAsignacionActiva($mesaModelo->getId());
+                
+                // 2. CARGAR LA ASIGNACIÓN EN EL DTO
+                $dto->setMozoAsignado($asignacion);
+
+                return $dto;
             }, $listaMesaModelos);
 
             // Renderiza la vista con los datos y la ubicación activa.
@@ -66,7 +74,7 @@ class MesaController {
                 'titulo' => $titulo, 
                 'ubicacionActiva' => $ubicacionActiva,
                 'exito' => $exito,
-                'mozos' => $mozosParaAsignacion, //  <-- PASA LOS MOZOS FILTRADOS A LA VISTA.
+                'mozos' => $mozosParaAsignacion, //  PASA LOS MOZOS FILTRADOS A LA VISTA.
             ]);
 
         } catch (\Exception $e) {
@@ -166,8 +174,8 @@ class MesaController {
         }
     }
 
-
-    public function asignarMozo(): void {        
+    // POST /mesas/asignar-mozo
+    public function asignarMozo(): void {
         // Los IDs vienen del formulario POST.
         $idMesa = (int)$_POST['id_mesa'] ?? 0;
         $idPersonal = (int)$_POST['id_personal'] ?? 0;
@@ -186,6 +194,32 @@ class MesaController {
             
         } catch (\Exception $e) {
             $_SESSION['error_form'] = "Error al asignar mozo: " . $e->getMessage();
+        }
+        
+        header("Location: " . APP_BASE_URL . "mesas");
+        exit;
+    }
+
+
+    // POST /mesas/quitar-mozo
+    public function quitarMozo(): void { 
+        $idMesa = (int)$_POST['id_mesa'] ?? 0;
+        $idPersonal = (int)$_POST['id_personal'] ?? 0; // Se necesita para validar que sea la asignación correcta
+
+        if ($idMesa <= 0 || $idPersonal <= 0) {
+            $_SESSION['error_form'] = "Error al quitar mozo: Faltan IDs de mesa o personal.";
+            header("Location: " . APP_BASE_URL . "mesas");
+            exit;
+        }
+        
+        try {
+            // Llama al Service para que registre la hora_fin en la asignación.
+            $this->mesaService->finalizarAsignacionMozo($idMesa, $idPersonal); 
+
+            $_SESSION['msj_exito'] = "Asignación de mozo quitada correctamente de la mesa.";
+            
+        } catch (\Exception $e) {
+            $_SESSION['error_form'] = "Error al quitar mozo: " . $e->getMessage();
         }
         
         header("Location: " . APP_BASE_URL . "mesas");

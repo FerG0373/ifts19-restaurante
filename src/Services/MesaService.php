@@ -57,4 +57,17 @@ class MesaService {
 
         $this->mesaRepository->insertarAsignacionMozo($idMesa, $idPersonal);
     }
+
+
+    public function obtenerAsignacionActiva(int $idMesa): ?array {
+        return $this->mesaRepository->obtenerAsignacionActiva($idMesa);
+    }
+
+
+    public function finalizarAsignacionMozo(int $idMesa, int $idPersonal): void {
+    // Aquí puedes agregar validaciones de negocio si las necesitas.
+    // Por ejemplo: ¿Es realmente el mozo asignado? ¿La mesa sigue libre?
+    
+    $this->mesaRepository->finalizarAsignacionMozo($idMesa, $idPersonal);
+}
 }

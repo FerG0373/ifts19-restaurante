@@ -113,6 +113,9 @@ $enrutador->agregarRuta('mesas/formulario/alta', [MesaController::class, 'altaMe
 $enrutador->agregarRuta('mesas/eliminar', [MesaController::class, 'bajaMesa'], false, 'POST', 
     [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
 );
+$enrutador->agregarRuta('mesas/quitar-mozo', [MesaController::class, 'quitarMozo'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']] // Solo el encargado o administrador pueden quitar
+);
 
 // RUTAS DE PRODUCTO (Administración - Encargado)
 $enrutador->agregarRuta('producto', [ProductoController::class, 'listarProductos'], true, 'GET',

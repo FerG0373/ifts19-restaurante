@@ -11,7 +11,13 @@ class MesaVistaDTO {
     public string $estadoMesa;
     public bool $activo;
 
-    private function __construct() {}
+    public ?int $mozoId; 
+    public ?string $mozoNombreCompleto;
+
+    private function __construct() {
+        $this->mozoId = null;
+        $this->mozoNombreCompleto = null;
+    }
 
     
     public static function fromModel(Mesa $mesa): self {
@@ -24,5 +30,14 @@ class MesaVistaDTO {
         $dto->activo = $mesa->isActivo();
 
         return $dto;
+    }
+
+
+    public function setMozoAsignado(?array $asignacion): void {
+        if ($asignacion) {
+            $this->mozoId = (int)$asignacion['personal_id'];
+            // Combina nombre y apellido para una fácil visualización en la vista.
+            $this->mozoNombreCompleto = $asignacion['nombre'] . ' ' . $asignacion['apellido'];
+        }
     }
 }

@@ -150,13 +150,47 @@ class MesaRepository {
             
             // Bindeo de parámetros
             $stmt->bindValue(':p_mesa_id', $idMesa, PDO::PARAM_INT);
-            $stmt->bindValue(':p_personal_id', $idPersonal, PDO::PARAM_INT);
-            
+            $stmt->bindValue(':p_personal_id', $idPersonal, PDO::PARAM_INT);            
             $stmt->execute();
             $stmt->closeCursor();
 
         } catch (PDOException $e) {
             throw new \Exception("Error de base de datos al asignar mozo a la mesa: " . $e->getMessage());
+        }
+    }
+
+
+    public function obtenerAsignacionActiva(int $idMesa): ?array {
+        $sql = "CALL sp_asignacion_mesa_select_activa(:p_mesa_id)";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':p_mesa_id', $idMesa, PDO::PARAM_INT);
+            $stmt->execute();            
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+            // Retorna el array con el id, nombre y apellido del mozo asignado, o null si no hay.
+            return $resultado ?: null;
+
+        } catch (PDOException $e) {
+            throw new \Exception("Error al buscar asignación activa para la mesa {$idMesa} (SP): " . $e->getMessage());
+        }
+    }
+
+
+    public function finalizarAsignacionMozo(int $idMesa, int $idPersonal): void {
+        // Usaremos un SP para asegurar que solo se actualice la asignación ACTIVA de ese mozo en esa mesa.
+        $sql = "CALL sp_asignacion_mesa_finalizar(:p_mesa_id, :p_personal_id)";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':p_mesa_id', $idMesa, PDO::PARAM_INT);
+            $stmt->bindValue(':p_personal_id', $idPersonal, PDO::PARAM_INT);
+            $stmt->execute();
+            $stmt->closeCursor();
+            
+        } catch (PDOException $e) {
+            throw new \Exception("Error de base de datos al finalizar la asignación de mozo: " . $e->getMessage());
         }
     }
 }

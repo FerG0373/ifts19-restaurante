@@ -818,3 +818,41 @@ BEGIN
     );
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_asignacion_mesa_select_activa (
+    IN p_mesa_id INT
+)
+BEGIN
+    SELECT 
+        p.id AS personal_id, 
+        p.nombre, 
+        p.apellido 
+    FROM asignacion_mesa am
+    JOIN personal p ON am.personal_id = p.id
+    WHERE am.mesa_id = p_mesa_id 
+      AND am.hora_fin IS NULL 
+    ORDER BY am.hora_inicio DESC
+    LIMIT 1;
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_asignacion_mesa_finalizar (
+    IN p_mesa_id INT, 
+    IN p_personal_id INT
+)
+BEGIN    
+    UPDATE asignacion_mesa AS am
+    SET am.hora_fin = NOW()
+    WHERE am.mesa_id = p_mesa_id
+      AND am.personal_id = p_personal_id
+      AND am.hora_fin IS NULL
+    ORDER BY am.hora_inicio DESC
+    LIMIT 1;
+END //
+DELIMITER ;
