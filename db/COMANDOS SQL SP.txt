@@ -797,3 +797,24 @@ BEGIN
         id = p_id;
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_asignacion_mesa_insert (
+    IN p_mesa_id INT, 
+    IN p_personal_id INT
+)
+BEGIN
+    INSERT INTO asignacion_mesa (
+        mesa_id, 
+        personal_id, 
+        hora_inicio 
+    )
+    VALUES (
+        p_mesa_id, 
+        p_personal_id, 
+        NOW()
+    );
+END //
+DELIMITER ;

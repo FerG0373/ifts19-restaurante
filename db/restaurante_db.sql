@@ -35,7 +35,7 @@ CREATE TABLE `asignacion_mesa` (
   KEY `fk__asignacion_mesa__personal_id` (`personal_id`),
   CONSTRAINT `fk__asignacion_mesa__personal_id` FOREIGN KEY (`personal_id`) REFERENCES `personal` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk__asignacion_mesa_id` FOREIGN KEY (`mesa_id`) REFERENCES `mesa` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +44,7 @@ CREATE TABLE `asignacion_mesa` (
 
 LOCK TABLES `asignacion_mesa` WRITE;
 /*!40000 ALTER TABLE `asignacion_mesa` DISABLE KEYS */;
+INSERT INTO `asignacion_mesa` VALUES (1,1,3,'2025-12-08 00:03:08',NULL);
 /*!40000 ALTER TABLE `asignacion_mesa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +126,7 @@ CREATE TABLE `mesa` (
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__mesa__numero_mesa` (`numero_mesa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,6 +135,7 @@ CREATE TABLE `mesa` (
 
 LOCK TABLES `mesa` WRITE;
 /*!40000 ALTER TABLE `mesa` DISABLE KEYS */;
+INSERT INTO `mesa` VALUES (1,'S-01',4,'salon','libre',1),(2,'S-02',2,'salon','libre',1),(3,'S-03',2,'salon','libre',1),(4,'S-04',4,'salon','libre',1),(5,'S-05',6,'salon','libre',1),(6,'E-01',4,'exterior','libre',1),(7,'E-02',2,'exterior','libre',1),(8,'E-03',2,'exterior','libre',1);
 /*!40000 ALTER TABLE `mesa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,7 +224,7 @@ CREATE TABLE `producto` (
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__producto__nombre` (`nombre`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,6 +233,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
+INSERT INTO `producto` VALUES (1,'Bife de Chorizo a la Parrilla','Corte magro de bife de chorizo de 350 gramos, cocido a la parrilla al punto deseado (jugoso, a punto o cocido). Servido con una porción de papas fritas rústicas o ensalada mixta.',11500.00,35,'principal',1);
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -294,6 +297,37 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'restaurante_db'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_asignacion_mesa_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_asignacion_mesa_insert`(
+    IN p_mesa_id INT, 
+    IN p_personal_id INT
+)
+BEGIN
+    INSERT INTO asignacion_mesa (
+        mesa_id, 
+        personal_id, 
+        hora_inicio 
+    )
+    VALUES (
+        p_mesa_id, 
+        p_personal_id, 
+        NOW()
+    );
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_detalle_pedido_insert` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1416,4 +1450,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-07 22:36:10
+-- Dump completed on 2025-12-08  0:05:56
