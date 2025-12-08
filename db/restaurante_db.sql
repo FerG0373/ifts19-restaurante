@@ -192,7 +192,7 @@ CREATE TABLE `personal` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq__personal__dni` (`dni`),
   UNIQUE KEY `uq__personal__email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,7 +201,7 @@ CREATE TABLE `personal` (
 
 LOCK TABLES `personal` WRITE;
 /*!40000 ALTER TABLE `personal` DISABLE KEYS */;
-INSERT INTO `personal` VALUES (1,'37221123','Joaquin','Garcia','garcia.joaquin@outlook.com','1123567748','1992-10-13','m','encargado','2025-11-29'),(2,'41231459','Vanesa','Martin','vanesa.martin@gmail.com','1156741596','1997-12-03','f','mozo','2025-11-29'),(3,'29123964','Carlos','Lopez','carlos.lopez@outlook.com','1155294789','1988-06-21','m','mozo','2025-11-29'),(4,'37898122','Christian','Diaz','christian.diaz@gmail.com','1147896541','1994-05-09','m','mozo','2025-11-29');
+INSERT INTO `personal` VALUES (1,'37221123','Joaquin','Garcia','garcia.joaquin@outlook.com','1123567748','1992-10-13','m','encargado','2025-11-29'),(2,'41231459','Vanesa','Martin','vanesa.martin@gmail.com','1156741596','1997-12-03','f','mozo','2025-11-29'),(3,'29123964','Carlos','Lopez','carlos.lopez@outlook.com','1155294789','1988-06-21','m','mozo','2025-11-29'),(4,'37898122','Christian','Diaz','christian.diaz@gmail.com','1147896541','1994-05-09','m','mozo','2025-11-29'),(5,'37433373','Fernando','Gonzalez','fernando.gonzalez@gmail.com','1123234566','1993-03-29','m','encargado','2025-12-07'),(6,'29497004','Paulina','Schirliski','paulina.schirliski@gmail.com','1155237769','1982-08-02','f','encargado','2025-12-07');
 /*!40000 ALTER TABLE `personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,13 +287,249 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'encargado','$2y$10$3HgdVtQaBwSEkSfom6icsumDTVWJ/Jpx/z6HJe5vbBS3HpVUoZL6.',1),(2,'mozo','$2y$10$y6AywW9wjGbyf/unbbf2dushUdl15pzq/pT.vkvsh4gMTWGZWjiU2',1),(3,'mozo','$2y$10$Uu5Rs//26DNdKHJWy64ZiO/SfZiB2wqQpUNsr2ol05XNr/1o5HP7S',1),(4,'mozo','$2y$10$ij50apYLisHV4PC1KUy13uj6Mt5/32Dvinul3Tm4Mgi7oPUFx6jS.',0);
+INSERT INTO `usuario` VALUES (1,'encargado','$2y$10$3HgdVtQaBwSEkSfom6icsumDTVWJ/Jpx/z6HJe5vbBS3HpVUoZL6.',1),(2,'mozo','$2y$10$y6AywW9wjGbyf/unbbf2dushUdl15pzq/pT.vkvsh4gMTWGZWjiU2',1),(3,'mozo','$2y$10$Uu5Rs//26DNdKHJWy64ZiO/SfZiB2wqQpUNsr2ol05XNr/1o5HP7S',1),(4,'mozo','$2y$10$ij50apYLisHV4PC1KUy13uj6Mt5/32Dvinul3Tm4Mgi7oPUFx6jS.',0),(5,'encargado','$2y$10$GfqlHyH14mtBzcozFNJHXuO/grijZgBIkHrZI7yk6zYmX2lkT2NhC',1),(6,'encargado','$2y$10$JgAPFS56L3vAHkPHeU.DL.ir1LQjAx5AthHBVJqM.nToDFExbZjcK',1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
 -- Dumping routines for database 'restaurante_db'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_detalle_pedido_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_detalle_pedido_insert`(
+    IN p_pedido_id INT,
+    IN p_producto_id INT,
+    IN p_cantidad INT,
+    IN p_precio_unitario DECIMAL(10,2),
+    IN p_instrucciones VARCHAR(255)
+)
+BEGIN
+    INSERT INTO detalle_pedido (
+        pedido_id,
+        producto_id,
+        cantidad,
+        precio_unitario,
+        instrucciones_preparacion
+    )
+    VALUES (
+        p_pedido_id,
+        p_producto_id,
+        p_cantidad,
+        p_precio_unitario,
+        p_instrucciones
+    );
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_detalle_pedido_select_by_pedido_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_detalle_pedido_select_by_pedido_id`(
+    IN p_pedido_id INT
+)
+BEGIN
+    SELECT 
+        dp.id,
+        dp.pedido_id,
+        dp.producto_id,
+        prod.nombre AS nombre_producto,
+        dp.cantidad,
+        dp.precio_unitario,
+        dp.instrucciones_preparacion
+    FROM 
+        detalle_pedido dp
+    INNER JOIN producto prod ON dp.producto_id = prod.id
+    WHERE 
+        dp.pedido_id = p_pedido_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_factura_existe_por_pedido` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_factura_existe_por_pedido`(
+    IN p_pedido_id INT
+)
+BEGIN
+    SELECT 
+        COUNT(*) AS 'existe'
+    FROM 
+        factura
+    WHERE 
+        pedido_id = p_pedido_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_factura_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_factura_insert`(
+    IN p_pedido_id INT,
+    IN p_subtotal DECIMAL(10,2),
+    IN p_impuestos DECIMAL(10,2),
+    IN p_total DECIMAL(10,2)
+)
+BEGIN
+    INSERT INTO factura (
+        pedido_id,
+        fecha_emision,
+        subtotal,
+        impuestos,
+        total,
+        metodo_pago,
+        estado
+    )
+    VALUES (
+        p_pedido_id,
+        NOW(),
+        p_subtotal,
+        p_impuestos,
+        p_total,
+        NULL,
+        'pendiente'
+    );
+
+    SET @factura_id = LAST_INSERT_ID();
+    
+    -- Devolver el ID de la nueva factura
+    SELECT @factura_id AS 'nuevoId';
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_factura_procesar_pago` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_factura_procesar_pago`(
+    IN p_factura_id INT,
+    IN p_metodo_pago VARCHAR(50)
+)
+BEGIN
+    UPDATE factura
+    SET 
+        metodo_pago = p_metodo_pago,
+        estado = 'pagada'
+    WHERE 
+        id = p_factura_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_factura_select_by_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_factura_select_by_id`(
+    IN p_id INT
+)
+BEGIN
+    SELECT 
+        id,
+        pedido_id,
+        fecha_emision,
+        subtotal,
+        impuestos,
+        total,
+        metodo_pago,
+        estado
+    FROM 
+        factura
+    WHERE 
+        id = p_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_factura_select_by_pedido_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_factura_select_by_pedido_id`(
+    IN p_pedido_id INT
+)
+BEGIN
+    SELECT 
+        id,
+        pedido_id,
+        fecha_emision,
+        subtotal,
+        impuestos,
+        total,
+        metodo_pago,
+        estado
+    FROM 
+        factura
+    WHERE 
+        pedido_id = p_pedido_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_mesa_insert` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -423,6 +659,186 @@ BEGIN
         activo = p_activo
     WHERE 
         id = p_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_pedido_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pedido_insert`(
+	IN p_mesa_id INT,
+    IN p_personal_id INT,
+    IN p_tipo_pedido VARCHAR(50),
+    IN p_total DECIMAL(10,2),
+    IN p_observaciones VARCHAR(255)
+)
+BEGIN
+    INSERT INTO pedido (
+        mesa_id,
+        personal_id,
+        fecha_hora,
+        tipo_pedido,
+        estado_pedido,
+        total,
+        observaciones
+    )
+    VALUES (
+        p_mesa_id,
+        p_personal_id,
+        NOW(),
+        p_tipo_pedido,
+        'pendiente',
+        p_total,
+        p_observaciones
+    );
+
+    SET @pedido_id = LAST_INSERT_ID();
+    
+    -- Devolver el ID del nuevo pedido
+    SELECT @pedido_id AS 'nuevoId';
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_pedido_select_all` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pedido_select_all`()
+BEGIN
+    SELECT 
+        p.id,
+        p.mesa_id,
+        m.numero_mesa,
+        p.personal_id,
+        CONCAT(per.apellido, ', ', per.nombre) AS nombre_mozo,
+        p.fecha_hora,
+        p.tipo_pedido,
+        p.estado_pedido,
+        p.total,
+        p.observaciones
+    FROM 
+        pedido p
+    INNER JOIN mesa m ON p.mesa_id = m.id
+    INNER JOIN personal per ON p.personal_id = per.id
+    ORDER BY p.fecha_hora DESC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_pedido_select_by_estado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pedido_select_by_estado`(
+    IN p_estado VARCHAR(50)
+)
+BEGIN
+    SELECT 
+        p.id,
+        p.mesa_id,
+        m.numero_mesa,
+        p.personal_id,
+        CONCAT(per.apellido, ', ', per.nombre) AS nombre_mozo,
+        p.fecha_hora,
+        p.tipo_pedido,
+        p.estado_pedido,
+        p.total,
+        p.observaciones
+    FROM 
+        pedido p
+    INNER JOIN mesa m ON p.mesa_id = m.id
+    INNER JOIN personal per ON p.personal_id = per.id
+    WHERE 
+        p.estado_pedido = p_estado
+    ORDER BY p.fecha_hora DESC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_pedido_select_by_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pedido_select_by_id`(
+    IN p_id INT
+)
+BEGIN
+    SELECT 
+        p.id,
+        p.mesa_id,
+        m.numero_mesa,
+        p.personal_id,
+        CONCAT(per.apellido, ', ', per.nombre) AS nombre_mozo,
+        p.fecha_hora,
+        p.tipo_pedido,
+        p.estado_pedido,
+        p.total,
+        p.observaciones
+    FROM 
+        pedido p
+    INNER JOIN mesa m ON p.mesa_id = m.id
+    INNER JOIN personal per ON p.personal_id = per.id
+    WHERE 
+        p.id = p_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_pedido_update_estado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pedido_update_estado`(
+    IN p_id INT,
+    IN p_nuevo_estado VARCHAR(50)
+)
+BEGIN
+    UPDATE pedido
+    SET estado_pedido = p_nuevo_estado
+    WHERE id = p_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -759,6 +1175,206 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_producto_existe_nombre` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_producto_existe_nombre`(
+    IN producto_nombre VARCHAR(100)
+)
+BEGIN
+    SELECT 
+        1 
+    FROM 
+        producto
+    WHERE 
+        nombre = producto_nombre
+    LIMIT 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_producto_insert` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_producto_insert`(
+    IN p_nombre VARCHAR(100),
+    IN p_descripcion VARCHAR(255),
+    IN p_precio DECIMAL(10,2),
+    IN p_cantidad_stock INT,
+    IN p_categoria VARCHAR(50)
+)
+BEGIN
+    INSERT INTO producto (
+        nombre, 
+        descripcion, 
+        precio, 
+        cantidad_stock, 
+        categoria,
+        activo
+    )
+    VALUES (
+        p_nombre, 
+        p_descripcion, 
+        p_precio, 
+        p_cantidad_stock, 
+        p_categoria,
+        TRUE
+    );
+
+    SET @producto_id = LAST_INSERT_ID();
+    
+    -- Devolver el ID del nuevo producto
+    SELECT @producto_id 'nuevoId';
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_producto_select_activo` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_producto_select_activo`()
+BEGIN
+    SELECT 
+        id,
+        nombre,
+        descripcion,
+        precio,
+        cantidad_stock,
+        categoria,
+        activo
+    FROM 
+        producto
+    WHERE
+        activo = 1
+    ORDER BY nombre;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_producto_select_all` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_producto_select_all`()
+BEGIN
+    SELECT 
+        id,
+        nombre,
+        descripcion,
+        precio,
+        cantidad_stock,
+        categoria,
+        activo
+    FROM 
+        producto
+    ORDER BY nombre;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_producto_select_by_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_producto_select_by_id`(
+    IN producto_id INT
+)
+BEGIN
+    SELECT 
+        id,
+        nombre,
+        descripcion,
+        precio,
+        cantidad_stock,
+        categoria,
+        activo
+    FROM 
+        producto
+    WHERE 
+        id = producto_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_producto_update` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_producto_update`(
+    IN p_id INT,
+    IN p_nombre VARCHAR(100),
+    IN p_descripcion VARCHAR(255),
+    IN p_precio DECIMAL(10,2),
+    IN p_cantidad_stock INT,
+    IN p_categoria VARCHAR(50),
+    IN p_activo TINYINT(1)
+)
+BEGIN
+    UPDATE producto
+    SET 
+        nombre = p_nombre,
+        descripcion = p_descripcion,
+        precio = p_precio,
+        cantidad_stock = p_cantidad_stock,
+        categoria = p_categoria,
+        activo = p_activo
+    WHERE 
+        id = p_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_usuario_select_by_dni` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -800,4 +1416,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-01  8:20:07
+-- Dump completed on 2025-12-07 22:36:10

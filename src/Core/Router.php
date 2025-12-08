@@ -1,18 +1,6 @@
 <?php
 namespace App\Core;
 
-use App\Services\PersonalService;
-use App\Services\MesaService;
-use App\Services\AuthService;
-use App\Services\ProductoService;
-use App\Services\PedidoService;
-use App\Services\FacturaService;
-use App\Controllers\PersonalController;
-use App\Controllers\MesaController;
-use App\Controllers\AuthController;
-use App\Controllers\ProductoController;
-use App\Controllers\PedidoController;
-use App\Controllers\FacturaController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RoleMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -66,15 +54,11 @@ class Router {
         $this->ejecutarDestino($rutaEncontrada['destino'], $renderer);
     }
     
-    // NOTA: Se ha ELIMINADO la función obtenerServiceParaControladores
-    // porque ahora la inyección de dependencias se maneja directamente en ejecutarControlador()
-    
     
     public function getRutas(): array {
         return $this->rutas;
     }
-
-
+    
     // ========== MÉTODOS PRIVADOS ==========
 
     /**
