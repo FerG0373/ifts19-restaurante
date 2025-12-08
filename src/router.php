@@ -5,6 +5,9 @@ use App\Core\Container;  // Para obtener la instancia de DataAccess de Container
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
 use App\Controllers\AuthController;
+use App\Controllers\ProductoController;
+use App\Controllers\PedidoController;
+use App\Controllers\FacturaController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RoleMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -41,8 +44,35 @@ $enrutador->agregarRuta('home', '1.01-home', true, 'GET', [AuthMiddleware::class
 $enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicacion'], true, 'GET', 
     [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
 );
-
 $enrutador->agregarRuta('mesas/asignar-mozo', [MesaController::class, 'asignarMozo'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+
+// RUTAS DE PEDIDOS (Acceso Básico - Mozo)
+$enrutador->agregarRuta('pedido', [PedidoController::class, 'listarPedidos'], true, 'GET', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+$enrutador->agregarRuta('pedido/detalle', [PedidoController::class, 'verDetalle'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+$enrutador->agregarRuta('pedido/formulario', [PedidoController::class, 'mostrarFormulario'], false, 'GET', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+$enrutador->agregarRuta('pedido/formulario/alta', [PedidoController::class, 'altaPedido'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+$enrutador->agregarRuta('pedido/cambiar-estado', [PedidoController::class, 'cambiarEstado'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+
+// RUTAS DE FACTURACIÓN (Acceso Básico - Mozo)
+$enrutador->agregarRuta('factura/generar', [FacturaController::class, 'generarFactura'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+$enrutador->agregarRuta('factura/ver', [FacturaController::class, 'verFactura'], false, 'GET', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
+);
+$enrutador->agregarRuta('factura/pagar', [FacturaController::class, 'procesarPago'], false, 'POST', 
     [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]
 );
 
@@ -56,7 +86,7 @@ $enrutador->agregarRuta('personal', [PersonalController::class, 'listarPersonal'
 $enrutador->agregarRuta('personal/detalle', [PersonalController::class, 'verDetalle'], false, 'POST', 
     [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
 );
-// NUEVA RUTA: Permite a CUALQUIER USUARIO logueado ver su propio detalle (Mozo y Encargado)
+// Permite a CUALQUIER USUARIO logueado ver su propio detalle (Mozo y Encargado)
 $enrutador->agregarRuta('personal/mi-detalle', [PersonalController::class, 'verMiDetalle'], false, 'GET', 
     [AuthMiddleware::class] // Solo necesita estar autenticado, no requiere rol específico.
 );
@@ -81,6 +111,26 @@ $enrutador->agregarRuta('mesas/formulario/alta', [MesaController::class, 'altaMe
     [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
 );
 $enrutador->agregarRuta('mesas/eliminar', [MesaController::class, 'bajaMesa'], false, 'POST', 
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
+);
+
+// RUTAS DE PRODUCTO (Administración - Encargado)
+$enrutador->agregarRuta('producto', [ProductoController::class, 'listarProductos'], true, 'GET',
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
+);
+$enrutador->agregarRuta('producto/detalle', [ProductoController::class, 'verDetalle'], false, 'POST',
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
+);
+$enrutador->agregarRuta('producto/formulario', [ProductoController::class, 'mostrarFormulario'], false, 'GET',
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
+);
+$enrutador->agregarRuta('producto/formulario/alta', [ProductoController::class, 'altaProducto'], false, 'POST',
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
+);
+$enrutador->agregarRuta('producto/formulario/cargar', [ProductoController::class, 'cargarFormularioEdicion'], false, 'POST',
+    [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
+);
+$enrutador->agregarRuta('producto/formulario/editar', [ProductoController::class, 'editarProducto'], false, 'POST',
     [AuthMiddleware::class, [RoleMiddleware::class, 'encargado']]
 );
 

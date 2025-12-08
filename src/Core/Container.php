@@ -4,9 +4,15 @@ namespace App\Core;
 use App\Services\PersonalService;
 use App\Services\MesaService;
 use App\Services\AuthService;
+use App\Services\ProductoService;
+use App\Services\PedidoService;
+use App\Services\FacturaService;
 use App\Repositories\PersonalRepository;
 use App\Repositories\MesaRepository;
 use App\Repositories\UsuarioRepository;
+use App\Repositories\ProductoRepository;
+use App\Repositories\PedidoRepository;
+use App\Repositories\FacturaRepository;
 use Exception;
 
 // Contenedor para gestionar la única instancia de DataAccess (Patrón de diseño Singleton).
@@ -53,6 +59,9 @@ class Container {
                 PersonalService::class => [PersonalRepository::class],
                 MesaService::class => [MesaRepository::class],
                 AuthService::class => [UsuarioRepository::class, PersonalRepository::class],
+                ProductoService::class => [ProductoRepository::class],
+                PedidoService::class => [PedidoRepository::class],
+                FacturaService::class => [FacturaRepository::class, PedidoRepository::class, MesaRepository::class], // 3 repositorios
                 // Agregar acá otros services y sus dependencias (Repositories).
             ];            
             $argumentos = [];

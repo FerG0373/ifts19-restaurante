@@ -4,12 +4,19 @@ namespace App\Core;
 use App\Services\PersonalService;
 use App\Services\MesaService;
 use App\Services\AuthService;
+use App\Services\ProductoService;
+use App\Services\PedidoService;
+use App\Services\FacturaService;
 use App\Controllers\PersonalController;
 use App\Controllers\MesaController;
 use App\Controllers\AuthController;
+use App\Controllers\ProductoController;
+use App\Controllers\PedidoController;
+use App\Controllers\FacturaController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RoleMiddleware;
 use App\Middleware\GuestMiddleware;
+use ReflectionClass;
 use Exception;
 
 // Se encarga de mapear las URLs a vistas estáticas o controladores.
@@ -58,23 +65,9 @@ class Router {
         // Ejecución del Destino (solo si el middleware no detuvo la solicitud).
         $this->ejecutarDestino($rutaEncontrada['destino'], $renderer);
     }
-
-    // Obtiene el service correspondiente para un controlador dado.
-    private function obtenerServiceParaControladores(string $claseController) {
-        $mapeoControllerService = [
-            // Para este Controller, éste Service.
-            PersonalController::class => PersonalService::class,
-            MesaController::class => MesaService::class,
-            AuthController::class => AuthService::class,
-            // Agregar acá otros controladores:
-        ];
-        
-        $claseService = $mapeoControllerService[$claseController] ?? null;
-        if ($claseService) {
-            return Container::getService($claseService);
-        }
-        throw new Exception("No se encontró service para el controlador: $claseController");
-    }
+    
+    // NOTA: Se ha ELIMINADO la función obtenerServiceParaControladores
+    // porque ahora la inyección de dependencias se maneja directamente en ejecutarControlador()
     
     
     public function getRutas(): array {
@@ -141,14 +134,55 @@ class Router {
     /**
      * Ejecuta un controlador y su método específico.
      * Instancia el controlador con inyección de dependencias y llama al método.
+     * Implementa Inyección de Dependencias (DI) dinámica usando Reflection para leer los argumentos del constructor del controlador.
      */
     private function ejecutarControlador(array $destino, ViewRenderer $renderer): void {
         [$claseController, $metodo] = $destino;
+        $argumentosConstructor = [];
         
-        $service = $this->obtenerServiceParaControladores($claseController);
-        $controlador = new $claseController($service, $renderer);
-        
-        $controlador->$metodo();
+        try {
+            // 1. Usar Reflection para obtener el constructor del controlador.
+            $reflectionClass = new ReflectionClass($claseController);
+            $constructor = $reflectionClass->getConstructor();
+
+            if ($constructor) {
+                // 2. Iterar sobre los parámetros del constructor.
+                foreach ($constructor->getParameters() as $parametro) {
+                    $tipo = $parametro->getType();
+
+                    if ($tipo && !$tipo->isBuiltin()) {
+                        $nombreClase = $tipo->getName();
+                        
+                        // 3. Resuelve la dependencia según el tipo de clase.
+                        if ($nombreClase === ViewRenderer::class) {
+                            // Inyecta el ViewRenderer que ya está disponible.
+                            $argumentosConstructor[] = $renderer;
+                        } else {
+                            // Esto maneja 1 o N Services de forma automática.
+                            $argumentosConstructor[] = Container::getService($nombreClase);
+                        }
+                    } else {
+                        // Si el parámetro no tiene un tipo de clase (ej. string, int), no podemos resolverlo automáticamente.
+                        throw new Exception("El parámetro '{$parametro->getName()}' en el constructor de $claseController no es una dependencia de clase resoluble (debe ser ViewRenderer o un Service).");
+                    }
+                }
+            }
+
+            // 4. Instancia el controlador con los argumentos resueltos.
+            $controlador = $reflectionClass->newInstanceArgs($argumentosConstructor);
+            
+            // 5. Ejecuta el método.
+            $controlador->$metodo();
+
+        } catch (\ReflectionException $e) {
+            $this->manejarRutaNoEncontrada($renderer);
+        } catch (Exception $e) {
+            // Esto captura errores si Container::getService falla o la lógica de DI falla
+            $renderer->renderizarVistaConDatos('9.01-error', [ 
+                'titulo' => 'Error de Inyección de Dependencias',
+                'mensaje' => "No se pudo instanciar el controlador {$claseController}. Detalles: " . $e->getMessage()
+            ]);
+        }
     }
     /**
      * Ejecuta los middlewares asociados a la ruta.

@@ -4,18 +4,24 @@
 function debeMostrarEnlace(string $url, bool $estaAutenticado, ?string $perfilAcceso): bool {
     // Rutas públicas 
     $rutasPublicas = ['login']; 
+    
     // Rutas accesibles por Mozo (y Encargado)
-    $rutasMozo = ['home', 'mesas', 'logout']; // 'logout' debe ser accesible para todos los logueados.
+    // Se agregan 'pedido' y las rutas de facturación/mesas que tienen acceso básico.
+    $rutasMozo = ['home', 'mesas', 'pedido', 'logout']; // 'logout' debe ser accesible para todos los logueados.
+    
     // Rutas accesibles solo por Encargado
-    $rutasEncargado = ['personal'];
+    // Se agrega 'personal' y 'producto' (administración de menú).
+    $rutasEncargado = ['personal', 'producto'];
 
     if (!$estaAutenticado) {
         return in_array($url, $rutasPublicas);
-    }    
+    } 
+    
     // Si está autenticado:
     if (in_array($url, $rutasMozo)) {
         return true; 
     }
+    
     if (in_array($url, $rutasEncargado)) {
         return $perfilAcceso === 'encargado';
     }
