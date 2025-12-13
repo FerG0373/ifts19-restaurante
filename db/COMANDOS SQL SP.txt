@@ -856,3 +856,54 @@ BEGIN
     LIMIT 1;
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_personal_select_by_dni (
+    IN p_dni VARCHAR(20)
+)
+BEGIN
+    SELECT 
+        p.id, 
+        p.dni, 
+        p.nombre, 
+        p.apellido, 
+        p.fecha_nacimiento, 
+        p.email, 
+        p.telefono,
+        p.sexo, 
+        p.puesto, 
+        p.fecha_contratacion,
+        
+        u.id AS idUsuario, -- Se utiliza el alias 'idUsuario' para el mapeo en PHP
+        u.pass_hash,
+        u.perfil_acceso,
+        u.activo 
+    FROM 
+        personal p
+    INNER JOIN 
+        usuario u
+    -- CORRECCIÓN: Usamos p.id = u.id para el JOIN, como en tu plantilla
+    ON 
+        p.id = u.id 
+    WHERE
+        -- Agregamos la condición para filtrar por el DNI
+        p.dni = p_dni
+    LIMIT 1;
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE sp_personal_update_password (
+    IN p_id_usuario INT, 
+    IN p_password_hash VARCHAR(255)
+)
+BEGIN
+    UPDATE usuario 
+    SET pass_hash = p_password_hash
+    WHERE id = p_id_usuario;
+END //
+DELIMITER ;

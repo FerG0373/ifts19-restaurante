@@ -8,6 +8,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ProductoController;
 use App\Controllers\PedidoController;
 use App\Controllers\FacturaController;
+use App\Controllers\RecoveryPassController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\RoleMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -28,6 +29,11 @@ $enrutador = new Router($dataAccess);
 $enrutador->agregarRuta('login', [AuthController::class, 'mostrarFormularioLogin'], false, 'GET', [GuestMiddleware::class]);
 $enrutador->agregarRuta('login/procesar', [AuthController::class, 'iniciarSesion'], false, 'POST', [GuestMiddleware::class]);
 
+// --- NUEVAS RUTAS DE RECUPERACIÓN DE CONTRASEÑA ---
+$enrutador->agregarRuta('recuperar-password', [RecoveryPassController::class, 'mostrarFormulario'], false, 'GET', [GuestMiddleware::class]);
+$enrutador->agregarRuta('recuperar-password/procesar', [RecoveryPassController::class, 'procesarRestablecimiento'], false, 'POST', [GuestMiddleware::class]);
+// ---------------------------------------------------
+
 // =================================================================
 // RUTAS PRIVADAS (REQUIEREN MIDDLEWARE DE AUTENTICACIÓN Y ROL)
 // =================================================================
@@ -38,7 +44,7 @@ $enrutador->agregarRuta('logout', [AuthController::class, 'cerrarSesion'], true,
 // Rutas de Acceso Básico (Mozo y Encargado)
 // -----------------------------------------------------------------
 // Home - Vista estática.
-$enrutador->agregarRuta('home', '1.01-home', true, 'GET', [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]);
+$enrutador->agregarRuta('home', '1.02-home', true, 'GET', [AuthMiddleware::class, [RoleMiddleware::class, 'mozo']]);
 
 // Rutas de Mesas.
 $enrutador->agregarRuta('mesas', [MesaController::class, 'listarMesasSegunUbicacion'], true, 'GET', 

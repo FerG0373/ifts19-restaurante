@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `restaurante_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `restaurante_db`;
--- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
--- Host: localhost    Database: restaurante_db
+-- Host: 127.0.0.1    Database: restaurante_db
 -- ------------------------------------------------------
--- Server version	8.0.44
+-- Server version	9.4.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -290,7 +290,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'encargado','$2y$10$3HgdVtQaBwSEkSfom6icsumDTVWJ/Jpx/z6HJe5vbBS3HpVUoZL6.',1),(2,'mozo','$2y$10$y6AywW9wjGbyf/unbbf2dushUdl15pzq/pT.vkvsh4gMTWGZWjiU2',1),(3,'mozo','$2y$10$Uu5Rs//26DNdKHJWy64ZiO/SfZiB2wqQpUNsr2ol05XNr/1o5HP7S',1),(4,'mozo','$2y$10$ij50apYLisHV4PC1KUy13uj6Mt5/32Dvinul3Tm4Mgi7oPUFx6jS.',0),(5,'encargado','$2y$10$GfqlHyH14mtBzcozFNJHXuO/grijZgBIkHrZI7yk6zYmX2lkT2NhC',1),(6,'encargado','$2y$10$JgAPFS56L3vAHkPHeU.DL.ir1LQjAx5AthHBVJqM.nToDFExbZjcK',1);
+INSERT INTO `usuario` VALUES (1,'encargado','$2y$10$3HgdVtQaBwSEkSfom6icsumDTVWJ/Jpx/z6HJe5vbBS3HpVUoZL6.',1),(2,'mozo','$2y$10$y6AywW9wjGbyf/unbbf2dushUdl15pzq/pT.vkvsh4gMTWGZWjiU2',1),(3,'mozo','$2y$10$Uu5Rs//26DNdKHJWy64ZiO/SfZiB2wqQpUNsr2ol05XNr/1o5HP7S',1),(4,'mozo','$2y$10$ij50apYLisHV4PC1KUy13uj6Mt5/32Dvinul3Tm4Mgi7oPUFx6jS.',0),(5,'encargado','$2y$10$r7ROFPwEQa1uNG1S9.ThhuFJh4jnnEgC8jp0B/jclru/CVg26Ix9O',1),(6,'encargado','$2y$10$JgAPFS56L3vAHkPHeU.DL.ir1LQjAx5AthHBVJqM.nToDFExbZjcK',1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1119,6 +1119,53 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_personal_select_by_dni` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_select_by_dni`(
+    IN p_dni VARCHAR(20)
+)
+BEGIN
+    SELECT 
+        p.id, 
+        p.dni, 
+        p.nombre, 
+        p.apellido, 
+        p.fecha_nacimiento, 
+        p.email, 
+        p.telefono,
+        p.sexo, 
+        p.puesto, 
+        p.fecha_contratacion,
+        
+        u.id AS idUsuario, -- Se utiliza el alias 'idUsuario' para el mapeo en PHP
+        u.pass_hash,
+        u.perfil_acceso,
+        u.activo 
+    FROM 
+        personal p
+    INNER JOIN 
+        usuario u
+    -- CORRECCIÓN: Usamos p.id = u.id para el JOIN, como en tu plantilla
+    ON 
+        p.id = u.id 
+    WHERE
+        -- Agregamos la condición para filtrar por el DNI
+        p.dni = p_dni
+    LIMIT 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_personal_select_by_id` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1261,6 +1308,30 @@ BEGIN
         id = u_id;
     -- Si todo es correcto, confirmar la transacción.
     COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_personal_update_password` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_personal_update_password`(
+    IN p_id_usuario INT, 
+    IN p_password_hash VARCHAR(255)
+)
+BEGIN
+    UPDATE usuario 
+    SET pass_hash = p_password_hash
+    WHERE id = p_id_usuario;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1508,4 +1579,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-08  8:42:12
+-- Dump completed on 2025-12-13 17:20:51

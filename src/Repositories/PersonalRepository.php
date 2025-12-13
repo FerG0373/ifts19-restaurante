@@ -271,5 +271,71 @@ class PersonalRepository {
              throw new \RuntimeException("Error de mapeo de datos (ID de Usuario {$idUsuario}): " . $e->getMessage());
         }
     }
+
+
+    public function buscarPersonalPorDni(string $dni): ?Personal {
+        // Asume que tienes un SP o usaremos un SELECT directo,
+        // o crearemos el SP: sp_personal_select_by_dni.
+        $sql = "CALL sp_personal_select_by_dni(:dni)"; 
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':dni', $dni, PDO::PARAM_STR);
+            $stmt->execute();
+            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            if (!$fila) {
+                return null;
+            }
+
+            // Mapeo del Objeto Usuario (usando tu lógica existente)
+            $usuario = null;
+            if (!empty($fila['idUsuario'])) {
+                $usuario = new Usuario(
+                    (int)$fila['idUsuario'],
+                    PerfilAcceso::from($fila['perfil_acceso']),
+                    $fila['pass_hash'],
+                    (bool)$fila['activo']
+                );
+            }
+            
+            // MAPEO DEL OBJETO PERSONAL (Usando tu lógica existente)
+            return new Personal(
+                (int)$fila['id'],
+                $fila['dni'],
+                $fila['nombre'],
+                $fila['apellido'],
+                new DateTimeImmutable($fila['fecha_nacimiento']),
+                $fila['email'],
+                $fila['telefono'],
+                Sexo::from($fila['sexo']),
+                Puesto::from($fila['puesto']),
+                new DateTimeImmutable($fila['fecha_contratacion']),
+                $usuario
+            );
+        } catch (PDOException $e) {
+            throw new \RuntimeException("Error de base de datos al buscar personal por DNI {$dni}: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            throw new \RuntimeException("Error de mapeo de datos al buscar personal por DNI {$dni}: " . $e->getMessage());
+        }
+    }
+
+
+    public function actualizarPassword(int $idUsuario, string $passwordHash): void {
+        // Usaremos el SP que definimos previamente: sp_personal_update_password
+        $sql = "CALL sp_personal_update_password(:idUsuario, :passwordHash)"; 
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':idUsuario', $idUsuario, PDO::PARAM_INT);
+            $stmt->bindValue(':passwordHash', $passwordHash, PDO::PARAM_STR);
+            $stmt->execute();
+            $stmt->closeCursor();
+
+        } catch (PDOException $e) {
+            throw new \Exception("Error de base de datos al actualizar la contraseña del Usuario ID {$idUsuario}: " . $e->getMessage());
+        }
+    }
 }
 ?>

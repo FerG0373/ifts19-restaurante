@@ -111,5 +111,21 @@ class PersonalService {
         // DELEGAMOS la búsqueda al PersonalRepository, asumiendo que tiene el método.
         return $this->personalRepository->obtenerPersonalPorIdUsuario($idUsuario);
     }
+
+
+    public function buscarPersonalPorDni(string $dni): ?Personal {
+        return $this->personalRepository->buscarPersonalPorDni($dni);
+    }
+
+
+    public function actualizarPassword(int $idUsuario, string $nuevaPassword): void {
+        if (strlen($nuevaPassword) < 4) {
+            throw new InvalidArgumentException("La contraseña debe tener al menos 4 caracteres.");
+        }
+        
+        $passwordHash = password_hash($nuevaPassword, PASSWORD_DEFAULT);
+
+        $this->personalRepository->actualizarPassword($idUsuario, $passwordHash);
+    }
 }
 ?>
