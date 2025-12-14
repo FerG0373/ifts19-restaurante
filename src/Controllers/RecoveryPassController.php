@@ -2,7 +2,8 @@
 namespace App\Controllers;
 
 use App\Core\ViewRenderer;
-use App\Services\PersonalService; // Usaremos los métodos nuevos: buscarPersonalPorDni y actualizarPassword
+use App\Services\PersonalService;
+use App\Models\Usuario;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -16,6 +17,8 @@ class RecoveryPassController {
         $this->personalService = $personalService;
     }
 
+    // ========== MÉTODOS PÚBLICOS ==========
+    
     // GET /recuperar-password
     public function mostrarFormulario(): void {
         // Renderiza la vista del formulario simple
@@ -33,64 +36,81 @@ class RecoveryPassController {
 
     // POST /recuperar-password/procesar
     public function procesarRestablecimiento(): void {
-        $username = $_POST['username'] ?? '';
-        $nuevaPass = $_POST['nueva_pass'] ?? '';
-        $confirmarPass = $_POST['confirmar_pass'] ?? '';
-        
-        // Guarda el username en sesión por si hay un error de validación y hay que redirigir.
-        $_SESSION['username_recuperar'] = $username; 
-
         try {
-            // Validaciones de entrada.
-            if (empty($username)) {
-                throw new InvalidArgumentException("Debe ingresar su Usuario (DNI).");
-            }
-            if (empty($nuevaPass) || empty($confirmarPass)) {
-                throw new InvalidArgumentException("Debe ingresar y confirmar la nueva contraseña.");
-            }
-            if ($nuevaPass !== $confirmarPass) {
-                throw new InvalidArgumentException("La nueva contraseña y la confirmación no coinciden.");
-            }
-            
-            // BUSCAR EL USUARIO POR DNI.
-            $personal = $this->personalService->buscarPersonalPorDni($username);
-            
-            if (!$personal || !$personal->getUsuario()->isActivo()) {
-                // Usamos un mensaje genérico por si no existe o no está activo, por seguridad.
-                throw new RuntimeException("No se encontró el usuario o no está habilitado para restablecer la contraseña.");
-            }
-            
-            $idUsuario = $personal->getUsuario()->getId();
-
-            // ACTUALIZAR LA CONTRASEÑA (el Service se encarga del hashing y el Repository de la persistencia).
-            $this->personalService->actualizarPassword($idUsuario, $nuevaPass);
-
-            $_SESSION['exito_recuperar'] = "Contraseña restablecida con éxito para el usuario '{$username}'. Ya puedes iniciar sesión.";
-            
-            // Limpia el dato del username después del éxito.
-            unset($_SESSION['username_recuperar']);
-            
-            // Redirige al formulario para mostrar el mensaje de éxito.
-            header("Location: " . APP_BASE_URL . "recuperar-password");
-            exit;
-            
-        } catch (InvalidArgumentException $e) {
-            // Error de validación de campos
+            $this->procesarSolicitudRestablecimiento();
+        } catch (InvalidArgumentException | RuntimeException $e) {
             $_SESSION['error_recuperar'] = $e->getMessage();
-            header("Location: " . APP_BASE_URL . "recuperar-password");
-            exit;
-
-        } catch (RuntimeException $e) {
-            // Error de negocio (usuario no encontrado/inactivo)
-            $_SESSION['error_recuperar'] = $e->getMessage();
-            header("Location: " . APP_BASE_URL . "recuperar-password");
-            exit;
-            
+            $this->redirigirConError();
         } catch (\Exception $e) {
-            // Error de sistema/base de datos
             $_SESSION['error_recuperar'] = "Error del sistema al intentar restablecer: " . $e->getMessage();
-            header("Location: " . APP_BASE_URL . "recuperar-password");
-            exit;
+            $this->redirigirConError();
         }
+    }
+
+
+    // ========== MÉTODOS PRIVADOS ==========
+
+    private function procesarSolicitudRestablecimiento(): void {
+        $username = $this->obtenerInputPost('username');
+        $nuevaPass = $this->obtenerInputPost('nueva_pass');
+        $confirmarPass = $this->obtenerInputPost('confirmar_pass');
+        
+        $_SESSION['username_recuperar'] = $username;
+        
+        $this->validarCampos($username, $nuevaPass, $confirmarPass);
+        
+        $usuario = $this->obtenerUsuarioValido($username);
+        $this->actualizarPasswordUsuario($usuario->getId(), $nuevaPass);
+        
+        $this->finalizarProcesoExitoso($username);
+    }
+
+    private function obtenerInputPost(string $key): string {
+        return trim($_POST[$key] ?? '');
+    }
+
+    private function validarCampos(string $username, string $nuevaPass, string $confirmarPass): void {
+        if (empty($username)) {
+            throw new InvalidArgumentException("Debe ingresar su Usuario (DNI).");
+        }
+        
+        if (empty($nuevaPass) || empty($confirmarPass)) {
+            throw new InvalidArgumentException("Debe ingresar y confirmar la nueva contraseña.");
+        }
+        
+        if ($nuevaPass !== $confirmarPass) {
+            throw new InvalidArgumentException("La nueva contraseña y la confirmación no coinciden.");
+        }
+    }
+
+    private function obtenerUsuarioValido(string $username): Usuario {
+        $personal = $this->personalService->buscarPersonalPorDni($username);
+        
+        if (!$personal || !$personal->getUsuario()->isActivo()) {
+            throw new RuntimeException("No se encontró el usuario o no está habilitado para restablecer la contraseña.");
+        }
+        
+        return $personal->getUsuario();
+    }
+
+    private function actualizarPasswordUsuario(int $idUsuario, string $nuevaPass): void {
+        $this->personalService->actualizarPassword($idUsuario, $nuevaPass);
+    }
+
+    private function finalizarProcesoExitoso(string $username): void {
+        $_SESSION['exito_recuperar'] = "Contraseña restablecida con éxito para el usuario '{$username}'. Ya puedes iniciar sesión.";
+        
+        unset($_SESSION['username_recuperar']);
+        
+        $this->redirigir();
+    }
+
+    private function redirigir(): void {
+        header("Location: " . APP_BASE_URL . "recuperar-password");
+        exit;
+    }
+
+    private function redirigirConError(): void {
+        $this->redirigir();
     }
 }
